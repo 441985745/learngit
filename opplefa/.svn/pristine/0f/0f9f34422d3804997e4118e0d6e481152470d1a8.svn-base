@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:jee="http://www.springframework.org/schema/jee"
+	xmlns:lang="http://www.springframework.org/schema/lang"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="
+     http://www.springframework.org/schema/beans 
+     http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+     http://www.springframework.org/schema/tx
+     http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
+     http://www.springframework.org/schema/aop 
+     http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+     http://www.springframework.org/schema/jee 
+     http://www.springframework.org/schema/jee/spring-jee-3.1.xsd
+     http://www.springframework.org/schema/context
+     http://www.springframework.org/schema/context/spring-context-3.1.xsd
+     http://www.springframework.org/schema/lang
+     http://www.springframework.org/schema/lang/spring-lang-3.1.xsd
+     http://www.springframework.org/schema/util
+     http://www.springframework.org/schema/util/spring-util-3.1.xsd">
+	<!-- DAO -->
+	<bean id="createAssetSapDAO" class="org.mybatis.spring.mapper.MapperFactoryBean" parent="baseDAO">
+		<property name="mapperInterface" value="com.opple.fa.sap.dao.CreateAssetSapDAO" />
+	</bean>
+	<bean id="purchaseOrderSapDAO" class="org.mybatis.spring.mapper.MapperFactoryBean" parent="baseDAO">
+		<property name="mapperInterface" value="com.opple.fa.sap.dao.PurchaseOrderSapDAO" />
+	</bean>
+	<bean id="payDocumentSapDAO" class="org.mybatis.spring.mapper.MapperFactoryBean" parent="baseDAO">
+		<property name="mapperInterface" value="com.opple.fa.sap.dao.PayDocumentSapDAO" />
+	</bean>
+	<bean id="voucherpostSapDAO" class="org.mybatis.spring.mapper.MapperFactoryBean" parent="baseDAO">
+		<property name="mapperInterface" value="com.opple.fa.sap.dao.VoucherpostSapDAO" />
+	</bean>
+	<bean id="voucherpostChildSapDAO" class="org.mybatis.spring.mapper.MapperFactoryBean" parent="baseDAO">
+		<property name="mapperInterface" value="com.opple.fa.sap.dao.VoucherpostChildSapDAO" />
+	</bean>
+	<bean id="assetChangeSapDAO" class="org.mybatis.spring.mapper.MapperFactoryBean" parent="baseDAO">
+		<property name="mapperInterface" value="com.opple.fa.sap.dao.AssetChangeSapDAO" />
+	</bean>
+	<bean id="receiveGoodsSapDAO" class="org.mybatis.spring.mapper.MapperFactoryBean" parent="baseDAO">
+		<property name="mapperInterface" value="com.opple.fa.sap.dao.ReceiveGoodsSapDAO" />
+	</bean>
+	<bean id="receiveGoodsMainSapDAO" class="org.mybatis.spring.mapper.MapperFactoryBean" parent="baseDAO">
+		<property name="mapperInterface" value="com.opple.fa.sap.dao.ReceiveGoodsMainSapDAO" />
+	</bean>
+		<bean id="receiveGoodsISapDAO" class="org.mybatis.spring.mapper.MapperFactoryBean" parent="baseDAO">
+		<property name="mapperInterface" value="com.opple.fa.sap.dao.ReceiveGoodsISapDAO" />
+	</bean>
+	<bean id="payHeaderDocumentSapDAO" class="org.mybatis.spring.mapper.MapperFactoryBean" parent="baseDAO">
+		<property name="mapperInterface" value="com.opple.fa.sap.dao.PayHeaderDocumentSapDAO" />
+	</bean>
+	<bean id="assetRetireMainSapDAO" class="org.mybatis.spring.mapper.MapperFactoryBean" parent="baseDAO">
+		<property name="mapperInterface" value="com.opple.fa.sap.dao.AssetRetireMainSapDAO" />
+	</bean>
+	<bean id="assetRetireRSapDAO" class="org.mybatis.spring.mapper.MapperFactoryBean" parent="baseDAO">
+		<property name="mapperInterface" value="com.opple.fa.sap.dao.AssetRetireRSapDAO" />
+	</bean>
+	<bean id="assetRetireGSapDAO" class="org.mybatis.spring.mapper.MapperFactoryBean" parent="baseDAO">
+		<property name="mapperInterface" value="com.opple.fa.sap.dao.AssetRetireGSapDAO" />
+	</bean>
+	<bean id="billCheckSapDAO" class="org.mybatis.spring.mapper.MapperFactoryBean" parent="baseDAO">
+		<property name="mapperInterface" value="com.opple.fa.sap.dao.BillCheckSapDAO" />
+	</bean>
+	<bean id="assetChangeCompanyISapDAO" class="org.mybatis.spring.mapper.MapperFactoryBean" parent="baseDAO">
+		<property name="mapperInterface" value="com.opple.fa.sap.dao.AssetChangeCompanyISapDAO" />
+	</bean>
+	<bean id="assetChangeCompanyOSapDAO" class="org.mybatis.spring.mapper.MapperFactoryBean" parent="baseDAO">
+		<property name="mapperInterface" value="com.opple.fa.sap.dao.AssetChangeCompanyOSapDAO" />
+	</bean>
+	
+	<bean id="purchaseCommonDAO" class="org.mybatis.spring.mapper.MapperFactoryBean" parent="baseDAO">
+		<property name="mapperInterface" value="com.opple.fa.purchase.dao.PurchaseCommonDAO" />
+	</bean>
+	<bean id="purchaseCommonLoggerDAO" class="org.mybatis.spring.mapper.MapperFactoryBean" parent="baseDAO">
+		<property name="mapperInterface" value="com.opple.fa.purchase.dao.PurchaseCommonLoggerDAO" />
+	</bean>
+	<!-- Service -->
+	<bean id="sapUtilService" class="com.opple.fa.sap.service.impl.SapUtilServiceImpl">
+		<property name="createAssetSapDAO" ref="createAssetSapDAO"/>
+		<property name="purchaseOrderSapDAO" ref="purchaseOrderSapDAO"/>
+		<property name="assetChangeSapDAO" ref="assetChangeSapDAO"/>
+		<property name="receiveGoodsSapDAO" ref="receiveGoodsSapDAO"/>
+		<property name="receiveGoodsMainSapDAO" ref="receiveGoodsMainSapDAO"/>
+		<property name="receiveGoodsISapDAO" ref="receiveGoodsISapDAO"/>
+		<property name="billCheckSapDAO" ref="billCheckSapDAO"/>
+		<property name="payDocumentSapDAO" ref="payDocumentSapDAO"/>
+		<property name="voucherpostChildSapDAO" ref="voucherpostChildSapDAO"/>
+		<property name="voucherpostSapDAO" ref="voucherpostSapDAO"/>
+		<property name="purchaseCommonDAO" ref="purchaseCommonDAO"/>
+		<property name="purchaseCommonLoggerDAO" ref="purchaseCommonLoggerDAO"/>
+	</bean>
+	<bean id="sapUtilTailService" class="com.opple.fa.sap.service.impl.SapUtilTailServiceImpl">
+		<property name="payDocumentSapDAO" ref="payDocumentSapDAO"/>
+		<property name="payHeaderDocumentSapDAO" ref="payHeaderDocumentSapDAO"/>
+		<property name="assetRetireMainSapDAO" ref="assetRetireMainSapDAO"/>
+		<property name="assetRetireRSapDAO" ref="assetRetireRSapDAO"/>
+		<property name="assetRetireGSapDAO" ref="assetRetireGSapDAO"/>
+		<property name="assetChangeCompanyISapDAO" ref="assetChangeCompanyISapDAO"/>
+		<property name="assetChangeCompanyOSapDAO" ref="assetChangeCompanyOSapDAO"/>
+	</bean>
+</beans>

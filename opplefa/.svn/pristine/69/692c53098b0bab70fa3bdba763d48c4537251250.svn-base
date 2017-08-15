@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.opple.fa.sap.dao.CreateAssetSapDAO">
+	<resultMap id="createAssetMap" type="createAsset">
+		<result property="assetclass" column="ASSETCLASS" />
+		<result property="companycode" column="COMPANYCODE" />
+		<result property="subnumber" column="SUBNUMBER" />
+		<result property="descript" column="DESCRIPT" />
+		<result property="quantity" column="QUANTITY" />
+		<result property="baseUom" column="BASE_UOM" />
+		<result property="costcenter" column="COSTCENTER" />
+		<result property="zflag" column="ZFLAG" />
+		<result property="assetno" column="ASSETNO" />
+	</resultMap>
+
+	<insert id="save" parameterType="createAsset">
+		<!-- <selectKey resultType="java.lang.Long" order="AFTER" keyProperty="IID"> 
+			SELECT SEQ_FA_IP_POHEADER1.currval AS IID FROM DUAL </selectKey> -->
+		insert into TB_FA_SAP_CREATE_ASSETS
+		(
+		ASSETCLASS
+		,COMPANYCODE
+		,SUBNUMBER
+		,DESCRIPT
+		,QUANTITY
+		,BASE_UOM
+		,COSTCENTER
+		,ZFLAG
+		,ASSETNO
+		)
+		values
+		(
+		#{createAsset.assetclass },
+		#{createAsset.companycode },
+		#{createAsset.subnumber },
+		#{createAsset.descript },
+		#{createAsset.quantity },
+		#{createAsset.baseUom },
+		#{createAsset.costcenter},
+		#{createAsset.zflag},
+		#{createAsset.assetno}
+		)
+
+	</insert>
+</mapper>
+

@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.opple.fa.sap.dao.VoucherpostSapDAO">
+	<resultMap id="voucherpostMap" type="voucherpost">
+		
+		<result property="cdocuments"		 column="CDOCUMENTS"/>      <!--				核销流程单号-->	
+<result property="cadvdocuments"		 column="CADVDOCUMENTS"/>      <!--				预制凭证号 （核销单号+行号） 未用-->	
+<result property="cvoudocuments"		 column="CVOUDOCUMENTS"/>      <!--				冲销凭证号 未用-->	
+<result property="casvoudocuments"		 column="CASVOUDOCUMENTS"/>      <!--				被冲销凭证号 未用-->	
+<result property="ctype"		 column="CTYPE"/>      <!--				凭证类型-->	
+<result property="cdocumentsgroup"		 column="CDOCUMENTSGROUP"/>      <!--				凭证组号  未用-->	
+<result property="cdocumentsno"		 column="CDOCUMENTSNO"/>      <!--				凭证序号  未用-->	
+<result property="iyear"		 column="IYEAR"/>      <!--				凭证年度-->	
+<result property="imonth"		 column="IMONTH"/>      <!--				凭证月度-->	
+<result property="cvouchersysno"		 column="CVOUCHERSYSNO"/>      <!--				凭证流水号-->	
+<result property="dvoucherdate"		 column="DVOUCHERDATE"/>      <!--				凭证日期-->	
+<result property="cpassdocuments"		 column="CPASSDOCUMENTS"/>      <!--				过账凭证号 未用-->	
+<result property="cpassusercode"		 column="CPASSUSERCODE"/>      <!--				过账人编码 未用-->	
+<result property="cpassusername"		 column="CPASSUSERNAME"/>      <!--				过账人名称 未用-->	
+<result property="cpassstatus"		 column="CPASSSTATUS"/>      <!--				过账状态  未用-->	
+<result property="dpassdate"		 column="DPASSDATE"/>      <!--				过账日期  未用-->	
+<result property="cpassfailedcause"		 column="CPASSFAILEDCAUSE"/>      <!--				过账失败原因 未用-->	
+<result property="ccompanycode"		 column="CCOMPANYCODE"/>      <!--				记账单位编码-->	
+<result property="ccompanyname"		 column="CCOMPANYNAME"/>      <!--				记账单位名称-->	
+<result property="cvoucherclass"		 column="CVOUCHERCLASS"/>      <!--				凭证大类名称-->	
+<result property="cvouchertypecode"		 column="CVOUCHERTYPECODE"/>      <!--				凭证类别编码 -->	
+<result property="cvouchertypename"		 column="CVOUCHERTYPENAME"/>      <!--				凭证类别名称 未用-->	
+<result property="cvouchertitle"		 column="CVOUCHERTITLE"/>      <!--				凭证头文本-->	
+<result property="icount"		 column="ICOUNT"/>      <!--				附单据数  未用-->	
+<result property="ccurrencycode"		 column="CCURRENCYCODE"/>      <!--				币种编码-->	
+<result property="ccurrencyname"		 column="CCURRENCYNAME"/>      <!--				币种名称 未用-->	
+<result property="iexchangerate"		 column="IEXCHANGERATE"/>      <!--				汇率   未用-->	
+<result property="cmemo"		 column="CMEMO"/>      <!--				备注  未用-->	
+<result property="cstatus"		 column="CSTATUS"/>      <!--				数据状态 未用-->	
+<result property="cusercode"		 column="CUSERCODE"/>      <!--				制单人编码 未用-->	
+<result property="cusername"		 column="CUSERNAME"/>      <!--				制单人名称 未用-->	
+<result property="dcreatedate"		 column="DCREATEDATE"/>      <!--				制单日期 未用-->	
+<result property="clastusercode"		 column="CLASTUSERCODE"/>      <!--				最后维护人 编码 未用-->	
+<result property="clastusername"		 column="CLASTUSERNAME"/>      <!--				最后维护人名称 未用-->	
+<result property="dlastdate"		 column="DLASTDATE"/>      <!--				最后维护日期  未用-->	
+<result property="chand"		 column="CHAND"/>      <!--				是自动 还是手动预提 未用-->	
+<result property="cbrnch"		 column="CBRNCH"/>      <!--				分支号（X：颗粒化，Z：利润中心借贷不平允许过账~~20170329 史登礼 新增 手工凭证使用）-->	
+
+	</resultMap>
+
+	<insert id="save" parameterType="voucherpost">
+		insert into T_TYBX_VOUCHERPOST
+		(
+		CDOCUMENTS,
+		CADVDOCUMENTS,
+		CVOUDOCUMENTS,
+		CASVOUDOCUMENTS,
+		CTYPE,
+		CDOCUMENTSGROUP,
+		CDOCUMENTSNO,
+		IYEAR,
+		IMONTH,
+		CVOUCHERSYSNO,
+		DVOUCHERDATE,
+		CPASSDOCUMENTS,
+		CPASSUSERCODE,
+		CPASSUSERNAME,
+		CPASSSTATUS,
+		DPASSDATE,
+		CPASSFAILEDCAUSE,
+		CCOMPANYCODE,
+		CCOMPANYNAME,
+		CVOUCHERCLASS,
+		CVOUCHERTYPECODE,
+		CVOUCHERTYPENAME,
+		CVOUCHERTITLE,
+		ICOUNT,
+		CCURRENCYCODE,
+		CCURRENCYNAME,
+		IEXCHANGERATE,
+		CMEMO,
+		CSTATUS,
+		CUSERCODE,
+		CUSERNAME,
+		DCREATEDATE,
+		CLASTUSERCODE,
+		CLASTUSERNAME,
+		DLASTDATE,
+		CHAND,
+		CBRNCH
+				
+		)
+		values
+		(
+		#{cdocuments },
+		#{cadvdocuments },
+		#{cvoudocuments },
+		#{casvoudocuments },
+		#{ctype },
+		#{cdocumentsgroup },
+		#{cdocumentsno },
+		#{iyear },
+		#{imonth },
+		#{cvouchersysno },
+		#{dvoucherdate },
+		#{cpassdocuments },
+		#{cpassusercode },
+		#{cpassusername },
+		#{cpassstatus },
+		#{dpassdate },
+		#{cpassfailedcause },
+		#{ccompanycode },
+		#{ccompanyname },
+		#{cvoucherclass },
+		#{cvouchertypecode },
+		#{cvouchertypename },
+		#{cvouchertitle },
+		#{icount },
+		#{ccurrencycode },
+		#{ccurrencyname },
+		#{iexchangerate },
+		#{cmemo },
+		#{cstatus },
+		#{cusercode },
+		#{cusername },
+		#{dcreatedate },
+		#{clastusercode },
+		#{clastusername },
+		#{dlastdate },
+		#{chand },
+		#{cbrnch }
+
+		)
+
+	</insert>
+</mapper>
+

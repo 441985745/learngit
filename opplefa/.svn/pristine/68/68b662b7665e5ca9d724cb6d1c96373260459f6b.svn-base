@@ -1,0 +1,746 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.opple.fa.allocation.dao.AssetAllocationDAO">
+    <!-- oracle 分页头 -->
+    <sql id="pagination_Head" >
+        <![CDATA[select * from ( select row_.*, rownum rownum_ from ( ]]>
+    </sql>
+    <!-- oracle 分页尾 -->
+    <sql id="pagination_Tail">
+        <![CDATA[) row_ where rownum <= #{pager.pageSize}* #{pager.offset} ) where rownum_ >= #{pager.firstResult} + 1]]>
+    </sql>
+    <!-- count * from -->
+	<sql id="count_Start_Head">
+		<![CDATA[select count(*) from ( ]]>
+	</sql>
+	<sql id="count_Start_Tail">
+		<![CDATA[) countObj ]]>
+	</sql>
+	<resultMap id="assetAllocationResultMap" type="assetAllocation">
+        <result property="id" column="ID"/>
+        <result property="createBy" column="CREATE_BY"/>
+        <result property="createDate" column="CREATE_DATE"/>
+        <result property="updateBy" column="UPDATE_BY" />
+		<result property="updateDate" column="UPDATE_DATE" />
+        <result property="applicationDate" column="APPLICATION_DATE"/>
+        <result property="originalCompany" column="ORIGINAL_COMPANY"/>
+        <result property="originalPeople" column="ORIGINAL_PEOPLE"/>
+        <result property="postAllocationPeople" column="POST_ALLOCATION_PEOPLE"/>
+        <result property="postAllocationDepartment" column="POST_ALLOCATION_DEPARTMENT"/>
+        <result property="postAllocationCostCenter" column="POST_ALLOCATION_COSTCENTER"/>
+        <result property="postAllocationCompany" column="POST_ALLOCATION_COMPANY"/>
+        <result property="postAllocationStoragePlace" column="POST_ALLOCATION_STORAGE_PLACE"/>
+        <result property="isExpenseAssets" column="IS_EXPENSE_ASSETS"/>
+        <result property="assetType" column="ASSET_TYPE"/>
+        <result property="workshopType" column="WORKSHOP_TYPE" />
+		<result property="allocationMethod" column="ALLOCATION_METHOD" />
+		<result property="officeLocation" column="OFFICE_LOCATION" />
+		<result property="location" column="LOCATION"/>
+		<result property="platform" column="PLATFORM" />
+		<result property="allocationAssetsValueSum" column="ALLOCATION_ASSETS_VALUE_SUM" />
+		<result property="allocationReason" column="ALLOCATION_REASON" />
+		<result property="document" column="CDOCUMENT" />
+		<result property="userCode" column="USER_CODE" />
+		<result property="userName" column="USER_NAME" />
+		<result property="companyCode" column="COMPANY_CODE" />
+		<result property="companyName" column="COMPANY_NAME" />
+		<result property="departmentCode" column="DEPARTMENT_CODE" />
+		<result property="departmentName" column="DEPARTMENT_NAME" />
+		<result property="approvalEnd" column="CAPPROVALEND" />
+		<result property="approvalState" column="CAPPROVALSTATE" />
+		<result property="caUserCode" column="CAUSERCODE" />
+		<result property="caUserName" column="CAUSERNAME" />
+		<result property="userDepCode" column="USER_DEP_CODE" />
+		<result property="nextHandlerCode" column="CNEXTHANDLERCODE" />
+		<result property="nextHandlerName" column="CNEXTHANDLERNAME" />
+		<result property="lastADate" column="DLASTADATE" />
+		<result property="commitType" column="COMMIT_TYPE" />
+		<result property="isMail" column="IS_MAIL" />
+		<result property="isPhoneMessage" column="IS_PHONE_MESSAGE" />
+		<result property="idea" column="IDEA" />
+		<result property="status" column="STATUS"/>
+		<result property="originalValueSum" column="ORIGINAL_VALUE_SUM"/>
+
+		<result property="postCompanyCode" column="POST_COMPANY_CODE"/>
+		<result property="postCostcenterCode" column="POST_COSTCENTER_CODE"/>
+		<result property="postDepartmentCode" column="POST_DEPARTMENT_CODE"/>
+		<result property="postPeopleCode" column="POST_PEOPLE_CODE"/>
+		<result property="confirmStatus" column="CONFIRM_STATUS"/>
+		<result property="putManageCode" column="PUT_MANAGE_CODE"/>
+		<result property="putManagePersonCode" column="PUT_MANAGE_PERSON_CODE"/>
+		<result property="confirmPerson" column="CONFIRM_PERSON"/>
+		<result property="isUpdateSap" column="IS_UPDATE_SAP"/>
+		<result property="isGetSapCode" column="IS_GET_SAP_CODE"/>
+		<result property="isStamp" column="IS_STAMP"/>
+		<result property="backOpinion" column="BACK_OPINION"/>
+	</resultMap>
+
+	<sql id="search_assetAllocations_fragment" >
+        <![CDATA[
+	              SELECT
+	                   ID,
+	                   USER_NAME,
+	                   CREATE_BY,
+	                   CREATE_DATE,
+	                   UPDATE_BY,
+	                   UPDATE_DATE,
+	                   COMPANY_NAME,
+	                   STATUS,
+	                   DEPARTMENT_NAME,
+	                   DEPARTMENT_CODE,
+	                   CDOCUMENT,
+	                   APPLICATION_DATE,
+	                   ORIGINAL_COMPANY,
+	                   ORIGINAL_PEOPLE,
+	                   POST_ALLOCATION_PEOPLE,
+	                   POST_ALLOCATION_DEPARTMENT,
+	                   POST_ALLOCATION_COSTCENTER,
+	                   POST_ALLOCATION_COMPANY,
+	                   POST_ALLOCATION_STORAGE_PLACE,
+	                   IS_EXPENSE_ASSETS,
+	                   ASSET_TYPE,
+	                   WORKSHOP_TYPE,
+	                   ALLOCATION_METHOD,
+	                   OFFICE_LOCATION,
+	                   PLATFORM,
+	                   ALLOCATION_ASSETS_VALUE_SUM,
+	                   ALLOCATION_REASON,
+	                   COMMIT_TYPE,
+	                   CAPPROVALSTATE,
+	                   USER_CODE,
+	                   ORIGINAL_VALUE_SUM,
+	                   POST_COMPANY_CODE,
+	                   POST_COSTCENTER_CODE,
+	                   POST_DEPARTMENT_CODE,
+	                   POST_PEOPLE_CODE,
+	                   CONFIRM_STATUS,
+	                   CNEXTHANDLERCODE,
+	                   CNEXTHANDLERNAME,
+	                   PUT_MANAGE_CODE,
+	                   CONFIRM_PERSON,
+	                   IS_UPDATE_SAP,
+	                   IS_GET_SAP_CODE,
+	                   BACK_OPINION,
+	                   IDEA,
+       				   IS_MAIL,
+          			   IS_PHONE_MESSAGE
+	
+	                FROM
+	                   TB_FA_ASSET_ALLOCATION 
+        ]]>
+    </sql>
+    
+    <update id="deleteAssetAllocation" parameterType="assetAllocation">
+    	update TB_FA_ASSET_ALLOCATION SET STATUS='1' where ID=#{id}  
+    
+    </update>
+    
+    <insert id="saveApply" keyProperty="id" useGeneratedKeys="true"  parameterType="assetAllocation">
+    	<selectKey keyProperty="id"  order="BEFORE" resultType="long">
+			select seq_asset_allocation.nextval as id from dual
+		</selectKey>
+	
+    	INSERT INTO TB_FA_ASSET_ALLOCATION
+		  (	ID,
+		  USER_NAME,
+		  CREATE_BY,
+		  APPLICATION_DATE,
+		  ORIGINAL_COMPANY,
+		  STATUS,
+		  CDOCUMENT,
+		  DEPARTMENT_NAME,
+          COMPANY_NAME,
+		  POST_ALLOCATION_PEOPLE,
+		  POST_ALLOCATION_DEPARTMENT,
+		  IS_EXPENSE_ASSETS,
+		  POST_ALLOCATION_COSTCENTER,
+		  ASSET_TYPE,
+		  WORKSHOP_TYPE,
+		  POST_ALLOCATION_COMPANY,
+		  ALLOCATION_METHOD,
+		  OFFICE_LOCATION,
+		  PLATFORM,
+		  POST_ALLOCATION_STORAGE_PLACE,
+		  DEPARTMENT_CODE,
+		  USER_CODE,
+		  COMMIT_TYPE,
+		  ALLOCATION_REASON,
+		  ALLOCATION_ASSETS_VALUE_SUM,
+		  ORIGINAL_VALUE_SUM,
+		  POST_COMPANY_CODE,
+		  POST_COSTCENTER_CODE,
+		  POST_DEPARTMENT_CODE,
+          POST_PEOPLE_CODE,
+          CONFIRM_STATUS,
+          CNEXTHANDLERCODE,
+          CNEXTHANDLERNAME,
+          PUT_MANAGE_CODE,
+          PUT_MANAGE_PERSON_CODE,
+          CONFIRM_PERSON,
+          IS_UPDATE_SAP,
+          IDEA,
+          IS_MAIL,
+          IS_PHONE_MESSAGE
+
+       
+			)   
+	     VALUES
+	      ( #{id},  
+	        #{userName}, 
+	        #{createBy},
+	        #{applicationDate}, 
+	        #{originalCompany}, 
+	        #{status},
+	        #{document},
+	        #{departmentName},
+	        #{companyName},
+	        #{postAllocationPeople}, 
+	        #{postAllocationDepartment}, 
+	        #{isExpenseAssets}, 
+	        #{postAllocationCostCenter}, 
+	        #{assetType}, 
+	        #{workshopType}, 
+	        #{postAllocationCompany}, 
+	        #{allocationMethod}, 
+	        #{officeLocation}, 
+	        #{platform}, 
+	        #{postAllocationStoragePlace},
+	        #{departmentCode},
+	        #{userCode},
+	        #{commitType},
+	        #{allocationReason},
+	        #{allocationAssetsValueSum},
+	        #{originalValueSum},
+	        #{postCompanyCode},
+	        #{postCostcenterCode},
+	        #{postDepartmentCode},
+	 		#{postPeopleCode},
+	 		#{confirmStatus},
+	 		#{nextHandlerCode},
+	 		#{nextHandlerName},
+	 		#{putManageCode},
+			#{putManagePersonCode},
+			#{confirmPerson},
+			0,
+			#{idea},
+			#{isMail},
+			#{isPhoneMessage}
+
+	        )
+<!-- 	        SELECT @@IDENTITY AS ID  -->
+    </insert>
+    <update id="updateAssetAllocation" parameterType="com.opple.fa.allocation.entity.AssetAllocation">
+    	update  TB_FA_ASSET_ALLOCATION set
+    	  CREATE_BY=#{createBy}, 
+		  APPLICATION_DATE=#{applicationDate},
+		  ORIGINAL_COMPANY=#{originalCompany}, 
+		  POST_ALLOCATION_PEOPLE=#{postAllocationPeople},
+		  POST_ALLOCATION_DEPARTMENT=#{postAllocationDepartment}, 
+		  IS_EXPENSE_ASSETS=#{isExpenseAssets},
+		  POST_ALLOCATION_COSTCENTER=#{postAllocationCostCenter}, 
+		  ASSET_TYPE=#{assetType}, 
+		  WORKSHOP_TYPE=#{workshopType},
+		  POST_ALLOCATION_COMPANY=#{postAllocationCompany},
+		  ALLOCATION_METHOD=#{allocationMethod},
+		  OFFICE_LOCATION=#{officeLocation},
+		  PLATFORM=#{platform}, 
+		  POST_ALLOCATION_STORAGE_PLACE=#{postAllocationStoragePlace},
+		  POST_COMPANY_CODE=#{postCompanyCode},
+		  POST_COSTCENTER_CODE=#{postCostcenterCode},
+		  ALLOCATION_REASON= #{allocationReason},
+		  ALLOCATION_ASSETS_VALUE_SUM=#{allocationAssetsValueSum},
+		  ORIGINAL_VALUE_SUM=#{originalValueSum},
+	      POST_DEPARTMENT_CODE=#{postDepartmentCode},
+          POST_PEOPLE_CODE =#{postPeopleCode},
+          CONFIRM_STATUS=#{confirmStatus},
+          CNEXTHANDLERCODE=#{nextHandlerCode},
+          CNEXTHANDLERNAME=#{nextHandlerName},
+          CAPPROVALSTATE=#{approvalState},
+  		  PUT_MANAGE_CODE=#{putManageCode},
+  		  PUT_MANAGE_PERSON_CODE=#{putManagePersonCode},
+  		  CONFIRM_PERSON=#{confirmPerson},
+  		  COMMIT_TYPE=#{commitType},
+     	  IS_MAIL=#{isMail},
+          IS_PHONE_MESSAGE=#{isPhoneMessage}
+		  where ID=#{id}
+    </update>
+    <select id="searchAssetAllocation" resultMap="assetAllocationResultMap">
+    	
+    	<include refid="search_assetAllocations_fragment" />
+    	WHERE ID = #{allocationDetailId} AND STATUS=0
+    	
+    </select>
+    
+    <select id="searchAssetAllocationById" resultMap="assetAllocationResultMap" >
+    	<include refid="search_assetAllocations_fragment" />
+    	WHERE ID = #{assetAllocationId} AND STATUS=0
+    </select>
+    
+    <select id="searchAssetAllocationListCount" resultType="long">
+    	<include refid="count_Start_Head" />		
+        <include refid="search_assetAllocations_fragment" />
+        where STATUS = '0' 
+    	<include refid="count_Start_Tail" />
+    </select>
+    
+    <select id="searchAssetAllocationList" resultMap="assetAllocationResultMap">
+    	<include refid="pagination_Head" />
+        <include refid="search_assetAllocations_fragment" />
+        where STATUS = '0' order by ID desc
+        <include refid="pagination_Tail" /> 
+    </select>
+    
+    <select id="searchAssetAllocationCount" resultType="long">
+
+		<include refid="count_Start_Head" />	
+			SELECT DISTINCT T.*
+		FROM TB_FA_ASSET_ALLOCATION T
+		LEFT JOIN T_WF_BILL_STEP TS
+    		ON T.CDOCUMENT = TS.CBILLCODE
+		LEFT JOIN T_SAP_COSTCENTER TC
+			ON T.POST_COSTCENTER_CODE = TC.CCOSTCENTERCODE
+			
+		LEFT JOIN TB_FA_ALLOCATION_APPROVE TP
+			ON	T.CDOCUMENT=TP.ALLOCATION_DOCUMENT
+		LEFT JOIN TB_FA_ASSET_ALLOCATION_DETAIL TD
+		ON T.ID = TD.ASSET_ALLOCATION_ID
+         WHERE 1=1	
+     <!--    <include refid="search_assetAllocations_fragment" /> -->
+		AND T.STATUS = '0'
+		AND TD.DELETED_FLAG = '0'
+		<if test="assetAllocation.assetCode != null and assetAllocation.assetCode != ''">
+			AND TD.ASSET_CODE LIKE '%' || #{assetAllocation.assetCode} || '%'
+		</if>
+		<if test="assetAllocation.assetName != null and assetAllocation.assetName != ''">
+			AND TD.ASSET_NAME LIKE '%' || #{assetAllocation.assetName} || '%'
+		</if>
+		<if test="assetAllocation.beforeAllocationCompany != null and assetAllocation.beforeAllocationCompany != ''">
+			AND (TD.COMPANY_CODE LIKE '%' || #{assetAllocation.beforeAllocationCompany} || '%'
+			OR TD.COMPANY_NAME LIKE '%' || #{assetAllocation.beforeAllocationCompany} || '%')
+		</if>
+		<if test="assetAllocation.beforeAllocationCostCenter != null and assetAllocation.beforeAllocationCostCenter != ''">
+			AND TD.COST_CENTER_CODE LIKE '%' || #{assetAllocation.beforeAllocationCostCenter} || '%'
+		</if>
+		<if test="assetAllocation.approvalState != null and assetAllocation.approvalState != ''">
+			AND T.CAPPROVALSTATE = #{assetAllocation.approvalState}
+		</if>
+		<if test="assetAllocation.allocationMethod != null and assetAllocation.allocationMethod != ''">
+			AND T.ALLOCATION_METHOD = #{assetAllocation.allocationMethod}
+		</if>
+
+		<if
+			test="assetAllocation.document != null and assetAllocation.document != ''">
+			AND T.CDOCUMENT LIKE '%' || #{assetAllocation.document} || '%' 
+		</if>
+		<if
+			test="assetAllocation.createBy != null and assetAllocation.createBy != ''">
+			AND T.CREATE_BY LIKE '%' || #{assetAllocation.createBy} || '%' 
+		</if>
+		<!-- <if
+			test="assetAllocation.applicationDate != null and assetAllocation.applicationDate != ''">
+			AND APPLICATION_DATE LIKE '%' || #{assetAllocation.applicationDate} || '%' 
+		</if> -->
+		
+		<if test="assetAllocation.start != null and assetAllocation.start != ''">
+			<![CDATA[ AND T.APPLICATION_DATE >= #{assetAllocation.start} ]]>
+		</if>
+		<if test="assetAllocation.end != null and assetAllocation.end != ''">
+			<![CDATA[ AND T.APPLICATION_DATE <= #{assetAllocation.end} ]]>
+	    </if>
+		
+		<if
+			test="assetAllocation.originalCompany != null and assetAllocation.originalCompany != ''">
+			AND T.ORIGINAL_COMPANY LIKE '%' || #{assetAllocation.originalCompany} || '%' 
+		</if>
+		<if
+			test="assetAllocation.postAllocationPeople != null and assetAllocation.postAllocationPeople != ''">
+			AND T.POST_ALLOCATION_PEOPLE LIKE '%' || #{assetAllocation.postAllocationPeople} || '%' 
+		</if>
+		<if
+			test="assetAllocation.isExpenseAssets != null and assetAllocation.isExpenseAssets != ''">
+			AND T.IS_EXPENSE_ASSETS LIKE '%' || #{assetAllocation.isExpenseAssets} || '%' 
+		</if>
+		<if
+			test="assetAllocation.postAllocationDepartment != null and assetAllocation.postAllocationDepartment != ''">
+			AND T.POST_ALLOCATION_DEPARTMENT LIKE '%' || #{assetAllocation.postAllocationDepartment} || '%' 
+		</if>
+		<if
+			test="assetAllocation.assetType != null and assetAllocation.assetType != ''">
+			AND T.ASSET_TYPE LIKE '%' || #{assetAllocation.assetType} || '%' 
+		</if>
+		<if
+			test="assetAllocation.postAllocationCostCenter != null and assetAllocation.postAllocationCostCenter != ''">
+			AND T.POST_ALLOCATION_COSTCENTER LIKE '%' || #{assetAllocation.postAllocationCostCenter} || '%' 
+		</if>
+		<if
+			test="assetAllocation.workshopType != null and assetAllocation.workshopType != ''">
+			AND T.WORKSHOP_TYPE LIKE '%' || #{assetAllocation.workshopType} || '%' 
+		</if>
+		<if
+			test="assetAllocation.postAllocationCompany != null and assetAllocation.postAllocationCompany != ''">
+			AND T.POST_ALLOCATION_COMPANY LIKE '%' || #{assetAllocation.postAllocationCompany} || '%' 
+		</if>
+		<if
+			test="assetAllocation.officeLocation != null and assetAllocation.officeLocation != ''">
+			AND T.OFFICE_LOCATION LIKE '%' || #{assetAllocation.officeLocation} || '%' 
+		</if>
+		<if
+			test="assetAllocation.postAllocationStoragePlace != null and assetAllocation.postAllocationStoragePlace != ''">
+			AND T.POST_ALLOCATION_STORAGE_PLACE LIKE '%' || #{assetAllocation.postAllocationStoragePlace} || '%' 
+		</if>
+		<if
+			test="assetAllocation.commitType != null and assetAllocation.commitType != ''">
+			AND T.COMMIT_TYPE = #{assetAllocation.commitType} 
+		</if>
+			 AND ( 
+				T.USER_CODE = #{assetAllocation.loginUseCode}  
+				OR T.CNEXTHANDLERCODE = #{assetAllocation.loginUseCode} 
+				OR TS.CUSERCODE = #{assetAllocation.loginUseCode} 
+				OR TC.CHEAD = #{assetAllocation.loginUseCode} 
+				OR TP.MANAGER_CODE=#{assetAllocation.loginUseCode}
+				OR T.CNEXTHANDLERCODE IN (SELECT CAUTHORIZERCODE FROM T_APPROVALEMPOWER WHERE CUSERCODE = #{assetAllocation.loginUseCode} AND SYSDATE BETWEEN CBEGINTIME AND CENDTIME 
+										AND CSTATUS='Y' AND CAPPROVALEND='Y')
+				OR TS.CUSERCODE IN (SELECT CAUTHORIZERCODE FROM T_APPROVALEMPOWER WHERE CUSERCODE = #{assetAllocation.loginUseCode} AND SYSDATE BETWEEN CBEGINTIME AND CENDTIME 
+										AND CSTATUS='Y' AND CAPPROVALEND='Y')
+				OR TC.CHEAD IN (SELECT CAUTHORIZERCODE FROM T_APPROVALEMPOWER WHERE CUSERCODE = #{assetAllocation.loginUseCode})
+				OR TP.MANAGER_CODE IN (SELECT CAUTHORIZERCODE FROM T_APPROVALEMPOWER WHERE CUSERCODE = #{assetAllocation.loginUseCode} AND SYSDATE BETWEEN CBEGINTIME AND CENDTIME 
+										AND CSTATUS='Y' AND CAPPROVALEND='Y')
+				or 	(EXISTS(SELECT 1 FROM t_Sys_Userrole TR WHERE TR.CROLECODE=#{assetAllocation.assetAdminId} 
+				AND TR.CUSERCODE=#{assetAllocation.loginUseCode}  AND tr.cstatus='Y'))
+			) 
+	
+        <include refid="count_Start_Tail" />
+
+    </select>
+    
+    <select id="export" resultMap="assetAllocationResultMap"> 
+				SELECT DISTINCT T.*
+		FROM TB_FA_ASSET_ALLOCATION T
+		LEFT JOIN T_WF_BILL_STEP TS
+    		ON T.CDOCUMENT = TS.CBILLCODE
+		LEFT JOIN T_SAP_COSTCENTER TC
+			ON T.POST_COSTCENTER_CODE = TC.CCOSTCENTERCODE
+			
+		LEFT JOIN TB_FA_ALLOCATION_APPROVE TP
+			ON	T.CDOCUMENT=TP.ALLOCATION_DOCUMENT
+         WHERE 1=1	
+     <!--    <include refid="search_assetAllocations_fragment" /> -->
+       AND T.STATUS = '0'
+       <if
+			test="assetAllocation.document != null and assetAllocation.document != ''">
+			AND T.CDOCUMENT LIKE '%' || #{assetAllocation.document} || '%' 
+		</if>
+		<if
+			test="assetAllocation.createBy != null and assetAllocation.createBy != ''">
+			AND T.CREATE_BY LIKE '%' || #{assetAllocation.createBy} || '%' 
+		</if>
+		<!-- <if
+			test="assetAllocation.applicationDate != null and assetAllocation.applicationDate != ''">
+			AND APPLICATION_DATE LIKE '%' || #{assetAllocation.applicationDate} || '%' 
+		</if> -->
+		
+		<if test="assetAllocation.start != null and assetAllocation.start != ''">
+			<![CDATA[ AND T.APPLICATION_DATE >= #{assetAllocation.start} ]]>
+		</if>
+		<if test="assetAllocation.end != null and assetAllocation.end != ''">
+			<![CDATA[ AND T.APPLICATION_DATE <= #{assetAllocation.end} ]]>
+	    </if>
+		
+		<if
+			test="assetAllocation.originalCompany != null and assetAllocation.originalCompany != ''">
+			AND T.ORIGINAL_COMPANY LIKE '%' || #{assetAllocation.originalCompany} || '%' 
+		</if>
+		<if
+			test="assetAllocation.postAllocationPeople != null and assetAllocation.postAllocationPeople != ''">
+			AND T.POST_ALLOCATION_PEOPLE LIKE '%' || #{assetAllocation.postAllocationPeople} || '%' 
+		</if>
+		<if
+			test="assetAllocation.isExpenseAssets != null and assetAllocation.isExpenseAssets != ''">
+			AND T.IS_EXPENSE_ASSETS LIKE '%' || #{assetAllocation.isExpenseAssets} || '%' 
+		</if>
+		<if
+			test="assetAllocation.postAllocationDepartment != null and assetAllocation.postAllocationDepartment != ''">
+			AND T.POST_ALLOCATION_DEPARTMENT LIKE '%' || #{assetAllocation.postAllocationDepartment} || '%' 
+		</if>
+		<if
+			test="assetAllocation.assetType != null and assetAllocation.assetType != ''">
+			AND T.ASSET_TYPE LIKE '%' || #{assetAllocation.assetType} || '%' 
+		</if>
+		<if
+			test="assetAllocation.postAllocationCostCenter != null and assetAllocation.postAllocationCostCenter != ''">
+			AND T.POST_ALLOCATION_COSTCENTER LIKE '%' || #{assetAllocation.postAllocationCostCenter} || '%' 
+		</if>
+		<if
+			test="assetAllocation.workshopType != null and assetAllocation.workshopType != ''">
+			AND T.WORKSHOP_TYPE LIKE '%' || #{assetAllocation.workshopType} || '%' 
+		</if>
+		<if
+			test="assetAllocation.postAllocationCompany != null and assetAllocation.postAllocationCompany != ''">
+			AND T.POST_ALLOCATION_COMPANY LIKE '%' || #{assetAllocation.postAllocationCompany} || '%' 
+		</if>
+		<if
+			test="assetAllocation.officeLocation != null and assetAllocation.officeLocation != ''">
+			AND T.OFFICE_LOCATION LIKE '%' || #{assetAllocation.officeLocation} || '%' 
+		</if>
+		<if
+			test="assetAllocation.postAllocationStoragePlace != null and assetAllocation.postAllocationStoragePlace != ''">
+			AND T.POST_ALLOCATION_STORAGE_PLACE LIKE '%' || #{assetAllocation.postAllocationStoragePlace} || '%' 
+		</if>
+		<if
+			test="assetAllocation.commitType != null and assetAllocation.commitType != ''">
+			AND T.COMMIT_TYPE = #{assetAllocation.commitType} 
+		</if>
+			 AND ( 
+				T.USER_CODE = #{assetAllocation.loginUseCode}  
+				OR T.CNEXTHANDLERCODE = #{assetAllocation.loginUseCode} 
+				OR TS.CUSERCODE = #{assetAllocation.loginUseCode} 
+				OR TC.CHEAD = #{assetAllocation.loginUseCode} 
+				OR TP.MANAGER_CODE=#{assetAllocation.loginUseCode}
+				OR T.CNEXTHANDLERCODE IN (SELECT CAUTHORIZERCODE FROM T_APPROVALEMPOWER WHERE CUSERCODE = #{assetAllocation.loginUseCode} AND SYSDATE BETWEEN CBEGINTIME AND CENDTIME 
+										AND CSTATUS='Y' AND CAPPROVALEND='Y')
+				OR TS.CUSERCODE IN (SELECT CAUTHORIZERCODE FROM T_APPROVALEMPOWER WHERE CUSERCODE = #{assetAllocation.loginUseCode} AND SYSDATE BETWEEN CBEGINTIME AND CENDTIME 
+										AND CSTATUS='Y' AND CAPPROVALEND='Y')
+				OR TC.CHEAD IN (SELECT CAUTHORIZERCODE FROM T_APPROVALEMPOWER WHERE CUSERCODE = #{assetAllocation.loginUseCode})
+				OR TP.MANAGER_CODE IN (SELECT CAUTHORIZERCODE FROM T_APPROVALEMPOWER WHERE CUSERCODE = #{assetAllocation.loginUseCode} AND SYSDATE BETWEEN CBEGINTIME AND CENDTIME 
+										AND CSTATUS='Y' AND CAPPROVALEND='Y')
+				or 	(EXISTS(SELECT 1 FROM t_Sys_Userrole TR WHERE TR.CROLECODE=#{assetAllocation.assetAdminId} 
+				AND TR.CUSERCODE=#{assetAllocation.loginUseCode}  AND tr.cstatus='Y'))
+			) 
+    </select>
+    
+    <select id="searchAssetAllocations" resultMap="assetAllocationResultMap">
+		
+		<include refid="pagination_Head" />
+       	SELECT DISTINCT T.*
+		FROM TB_FA_ASSET_ALLOCATION T
+		LEFT JOIN T_WF_BILL_STEP TS
+    		ON T.CDOCUMENT = TS.CBILLCODE
+		LEFT JOIN T_SAP_COSTCENTER TC
+			ON T.POST_COSTCENTER_CODE = TC.CCOSTCENTERCODE
+			
+		LEFT JOIN TB_FA_ALLOCATION_APPROVE TP
+			ON	T.CDOCUMENT=TP.ALLOCATION_DOCUMENT
+		LEFT JOIN TB_FA_ASSET_ALLOCATION_DETAIL TD
+		ON T.ID = TD.ASSET_ALLOCATION_ID
+         WHERE 1=1
+          AND T.STATUS = '0'
+		AND TD.DELETED_FLAG = '0'
+		<if test="assetAllocation.assetCode != null and assetAllocation.assetCode != ''">
+			AND TD.ASSET_CODE LIKE '%' || #{assetAllocation.assetCode} || '%'
+		</if>
+		<if test="assetAllocation.assetName != null and assetAllocation.assetName != ''">
+			AND TD.ASSET_NAME LIKE '%' || #{assetAllocation.assetName} || '%'
+		</if>
+		<if test="assetAllocation.beforeAllocationCompany != null and assetAllocation.beforeAllocationCompany != ''">
+			AND (TD.COMPANY_CODE LIKE '%' || #{assetAllocation.beforeAllocationCompany} || '%'
+			OR TD.COMPANY_NAME LIKE '%' || #{assetAllocation.beforeAllocationCompany} || '%')
+		</if>
+		<if test="assetAllocation.beforeAllocationCostCenter != null and assetAllocation.beforeAllocationCostCenter != ''">
+			AND TD.COST_CENTER_CODE LIKE '%' || #{assetAllocation.beforeAllocationCostCenter} || '%'
+		</if>
+		<if test="assetAllocation.approvalState != null and assetAllocation.approvalState != ''">
+			AND T.CAPPROVALSTATE = #{assetAllocation.approvalState}
+		</if>
+		<if test="assetAllocation.allocationMethod != null and assetAllocation.allocationMethod != ''">
+			AND T.ALLOCATION_METHOD = #{assetAllocation.allocationMethod}
+		</if>
+
+
+		<if
+			test="assetAllocation.document != null and assetAllocation.document != ''">
+			AND T.CDOCUMENT LIKE '%' || #{assetAllocation.document} || '%' 
+		</if>
+		<if
+			test="assetAllocation.createBy != null and assetAllocation.createBy != ''">
+			AND T.CREATE_BY LIKE '%' || #{assetAllocation.createBy} || '%' 
+		</if>
+		<!-- <if
+			test="assetAllocation.applicationDate != null and assetAllocation.applicationDate != ''">
+			AND ApplicationDate=#{assetAllocation.applicationDate}
+		</if> -->
+		
+		<if test="assetAllocation.start != null and assetAllocation.start != ''">
+			<![CDATA[ AND T.APPLICATION_DATE >= #{assetAllocation.start} ]]>
+		</if>
+		<if test="assetAllocation.end != null and assetAllocation.end != ''">
+			<![CDATA[ AND T.APPLICATION_DATE <= #{assetAllocation.end} ]]>
+	    </if>
+		
+		<if
+			test="assetAllocation.originalCompany != null and assetAllocation.originalCompany != ''">
+			AND T.ORIGINAL_COMPANY LIKE'%' || #{assetAllocation.originalCompany} || '%' 
+		</if>
+		<if
+			test="assetAllocation.postAllocationPeople != null and assetAllocation.postAllocationPeople != ''">
+			AND T.POST_ALLOCATION_PEOPLE LIKE '%' || #{assetAllocation.postAllocationPeople} || '%' 
+		</if>
+		<if
+			test="assetAllocation.isExpenseAssets != null and assetAllocation.isExpenseAssets != ''">
+			AND T.IS_EXPENSE_ASSETS LIKE '%' || #{assetAllocation.isExpenseAssets} || '%' 
+		</if>
+		<if
+			test="assetAllocation.postAllocationDepartment != null and assetAllocation.postAllocationDepartment != ''">
+			AND T.POST_ALLOCATION_DEPARTMENT LIKE '%' || #{assetAllocation.postAllocationDepartment} || '%' 
+		</if>
+		<if
+			test="assetAllocation.assetType != null and assetAllocation.assetType != ''">
+			AND T.ASSET_TYPE LIKE '%' || #{assetAllocation.assetType} || '%' 
+		</if>
+		<if
+			test="assetAllocation.postAllocationCostCenter != null and assetAllocation.postAllocationCostCenter != ''">
+			AND T.POST_ALLOCATION_COSTCENTER LIKE '%' || #{assetAllocation.postAllocationCostCenter} || '%' 
+		</if>
+		<if
+			test="assetAllocation.workshopType != null and assetAllocation.workshopType != ''">
+			AND T.WORKSHOP_TYPE LIKE '%' || #{assetAllocation.workshopType} || '%' 
+		</if>
+		<if
+			test="assetAllocation.postAllocationCompany != null and assetAllocation.postAllocationCompany != ''">
+			AND T.POST_ALLOCATION_COMPANY LIKE '%' || #{assetAllocation.postAllocationCompany} || '%' 
+		</if>
+		<if
+			test="assetAllocation.officeLocation != null and assetAllocation.officeLocation != ''">
+			AND T.OFFICE_LOCATION LIKE '%' || #{assetAllocation.officeLocation} || '%' 
+		</if>
+		<if
+			test="assetAllocation.postAllocationStoragePlace != null and assetAllocation.postAllocationStoragePlace != ''">
+			AND T.POST_ALLOCATION_STORAGE_PLACE LIKE '%' || #{assetAllocation.postAllocationStoragePlace} || '%' 
+		</if>
+		<if
+			test="assetAllocation.platform != null and assetAllocation.platform != ''">
+			AND T.PLATFORM LIKE '%' || #{assetAllocation.platform} || '%' 
+		</if>
+		<if
+			test="assetAllocation.commitType != null and assetAllocation.commitType != ''">
+			AND T.COMMIT_TYPE = #{assetAllocation.commitType} 
+		</if>
+	
+		 AND ( 
+				T.USER_CODE = #{assetAllocation.loginUseCode}  
+				OR T.CNEXTHANDLERCODE  LIKE '%' || #{assetAllocation.loginUseCode} || '%' 
+				OR TS.CUSERCODE = #{assetAllocation.loginUseCode} 
+				OR TC.CHEAD = #{assetAllocation.loginUseCode} 
+				OR TP.MANAGER_CODE=#{assetAllocation.loginUseCode}
+			    OR EXISTS (SELECT 1
+	         	 FROM T_APPROVALEMPOWER 
+	        	 WHERE CUSERCODE = #{assetAllocation.loginUseCode}
+		           AND INSTR(T.CNEXTHANDLERCODE, CAUTHORIZERCODE) > 0
+		           AND SYSDATE BETWEEN CBEGINTIME AND CENDTIME
+		           AND CSTATUS = 'Y'
+		           AND CAPPROVALEND = 'Y')
+				OR TS.CUSERCODE IN (SELECT CAUTHORIZERCODE FROM T_APPROVALEMPOWER WHERE CUSERCODE = #{assetAllocation.loginUseCode} AND SYSDATE BETWEEN CBEGINTIME AND CENDTIME 
+										AND CSTATUS='Y' AND CAPPROVALEND='Y')
+				OR TC.CHEAD IN (SELECT CAUTHORIZERCODE FROM T_APPROVALEMPOWER WHERE CUSERCODE = #{assetAllocation.loginUseCode} AND SYSDATE BETWEEN CBEGINTIME AND CENDTIME 
+										AND CSTATUS='Y' AND CAPPROVALEND='Y')
+				OR TP.MANAGER_CODE IN (SELECT CAUTHORIZERCODE FROM T_APPROVALEMPOWER WHERE CUSERCODE = #{assetAllocation.loginUseCode} AND SYSDATE BETWEEN CBEGINTIME AND CENDTIME 
+										AND CSTATUS='Y' AND CAPPROVALEND='Y')
+				or 	(EXISTS(SELECT 1 FROM t_Sys_Userrole TR WHERE TR.CROLECODE=#{assetAllocation.assetAdminId} 
+				AND TR.CUSERCODE=#{assetAllocation.loginUseCode}  AND tr.cstatus='Y'))
+			) 
+	
+		 ORDER BY T.ID DESC
+        <include refid="pagination_Tail" />        
+
+    </select>
+    
+    <delete id="deleteAssetAllocationByDocument">
+		DELETE FROM TB_FA_ASSET_ALLOCATION WHERE CDOCUMENT = #{document}
+	</delete>
+	
+    
+    <select id="getAssetAllocationByDocument" parameterType="com.opple.fa.allocation.entity.AssetAllocation" resultMap="assetAllocationResultMap">
+		select * from TB_FA_ASSET_ALLOCATION where CDOCUMENT=#{document} and  STATUS='0'
+	</select>
+	
+	<select id="getOneAssetAllocation" resultMap="assetAllocationResultMap">
+		 SELECT
+	                   ID,
+	                   USER_NAME,
+	                   CREATE_BY,
+	                   CREATE_DATE,
+	                   UPDATE_BY,
+	                   UPDATE_DATE,
+	                   COMPANY_NAME,
+	                   STATUS,
+	                   DEPARTMENT_NAME,
+	                   DEPARTMENT_CODE,
+	                   CDOCUMENT,
+	                   APPLICATION_DATE,
+	                   ORIGINAL_COMPANY,
+	                   ORIGINAL_PEOPLE,
+	                   POST_ALLOCATION_PEOPLE,
+	                   POST_ALLOCATION_DEPARTMENT,
+	                   POST_ALLOCATION_COSTCENTER,
+	                   POST_ALLOCATION_COMPANY,
+	                   POST_ALLOCATION_STORAGE_PLACE,
+	                   IS_EXPENSE_ASSETS,
+	                   ASSET_TYPE,
+	                   WORKSHOP_TYPE,
+	                   ALLOCATION_METHOD,
+	                   OFFICE_LOCATION,
+	                   PLATFORM,
+	                   ORIGINAL_VALUE_SUM,
+	                   ALLOCATION_ASSETS_VALUE_SUM,
+	                   ALLOCATION_REASON,
+	                   COMMIT_TYPE,
+	                   CAPPROVALSTATE,
+	                   USER_CODE,
+	                   POST_COMPANY_CODE,
+	                   POST_COSTCENTER_CODE ,
+                       POST_DEPARTMENT_CODE,
+         			   POST_PEOPLE_CODE,
+         			   CONFIRM_STATUS,
+        			   CNEXTHANDLERCODE, 
+        			   CNEXTHANDLERNAME,
+        			   PUT_MANAGE_CODE,
+        			   CONFIRM_PERSON,
+        			   IS_UPDATE_SAP,
+        			   IS_GET_SAP_CODE,
+        			   BACK_OPINION,
+        			   IDEA,
+       				   IS_MAIL,
+          			   IS_PHONE_MESSAGE     	 		            	
+		FROM TB_FA_ASSET_ALLOCATION
+		WHERE (ID=#{id} or CDOCUMENT=#{document}) AND STATUS='0'
+ 	</select>
+	<update id="updateComfirPeopleAndStatus" parameterType="com.opple.fa.allocation.entity.AssetAllocation">
+			update TB_FA_ASSET_ALLOCATION set
+			CNEXTHANDLERCODE=#{nextHandlerCode},
+			CNEXTHANDLERNAME=#{nextHandlerName},
+			CONFIRM_STATUS=#{confirmStatus},
+			CAPPROVALSTATE=#{approvalState}
+			where CDOCUMENT=#{document}
+	</update>
+	<update id="updateComfirStatus" parameterType="com.opple.fa.allocation.entity.AssetAllocation">
+			update TB_FA_ASSET_ALLOCATION set
+			CAPPROVALSTATE=#{approvalState},
+			CONFIRM_STATUS=#{confirmStatus}
+			<if test="null != backOpinion and '' != backOpinion">
+			,BACK_OPINION=#{backOpinion}
+			</if>
+			where CDOCUMENT=#{document}
+	</update>
+	<update id="updateNextUser" parameterType="com.opple.fa.allocation.entity.AssetAllocation">
+			update TB_FA_ASSET_ALLOCATION set
+			CNEXTHANDLERCODE=#{nextHandlerCode},
+			CNEXTHANDLERNAME=#{nextHandlerName}
+			where CDOCUMENT=#{document}
+	</update>
+	<update id="updateSapStatus" parameterType="com.opple.fa.allocation.entity.AssetAllocation">
+			update TB_FA_ASSET_ALLOCATION SET IS_UPDATE_SAP=#{isUpdateSap} WHERE ID=#{id}
+	</update> 
+	<update id="updateGetSapStatus" parameterType="com.opple.fa.allocation.entity.AssetAllocation">
+		update TB_FA_ASSET_ALLOCATION set IS_GET_SAP_CODE=#{isGetSapCode} WHERE ID=#{id}
+	</update>
+	<update id="updateIsStamp" parameterType="com.opple.fa.allocation.entity.AssetAllocation">
+		update TB_FA_ASSET_ALLOCATION set IS_STAMP=#{isStamp} where ID=#{id}
+ 	</update>
+ 	<select id="getCountByDocument" parameterType="com.opple.fa.allocation.entity.AssetAllocation" resultType="long">
+ 		select count(*) from TB_FA_ASSET_ALLOCATION where CDOCUMENT=#{document} and STATUS='0'
+ 	</select>
+</mapper>
+

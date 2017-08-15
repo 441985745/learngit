@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.opple.fa.purchase.dao.ReceiveGoodsDAO">
+       <!-- oracle 分页头 -->
+    <sql id="pagination_Head" >
+        <![CDATA[select * from ( select row_.*, rownum rownum_ from ( ]]>
+    </sql>
+    <!-- oracle 分页尾 -->
+    <sql id="pagination_Tail">
+        <![CDATA[) row_ where rownum <= #{pager.pageSize}* #{pager.offset} ) where rownum_ >= #{pager.firstResult} + 1]]>
+    </sql>
+    <!-- count * from -->
+	<sql id="count_Start_Head">
+		<![CDATA[select count(*) from ( ]]>
+	</sql>
+	<sql id="count_Start_Tail">
+		<![CDATA[) countObj ]]>
+	</sql>
+
+	<resultMap id="receiveGoodsResultMap" type="com.opple.fa.purchase.entity.ReceiveGoods">
+		<result property="id" column="ID"/>
+		<result property="cdocument" column="CDOCUMENT"/>
+		<result property="receiveGoodsId" column="RECEIVE_GOODS_ID"/>
+		<result property="buyerCode" column="BUYER_CODE" />
+		<result property="buyerName" column="BUYER_NAME" />
+		<result property="supplierCode" column="SUPPLIER_CODE" />
+		<result property="supplierName" column="SUPPLIER_NAME" />
+		<result property="companyCode" column="COMPANY_CODE" />
+		<result property="companyName" column="COMPANY_NAME" />
+		<result property="costCenter" column="COST_CENTER" />
+		<result property="costCenterCode" column="COST_CENTER_CODE" />
+		<result property="assetsType" column="ASSETS_TYPE" />
+		<result property="platform" column="PLAT_FORM" />
+		<result property="buyerRemark" column="BUYER_REMARK" />
+		<result property="purchaseId" column="PURCHASE_ID"/><!-- 订单头ID -->
+		<result property="headerTextDescription" column="HEADER_TEXT_DESCRIPTION" />
+		<result property="contractNo" column="CONTRACT_NO" /><!-- 合同号 -->
+		<result property="receiveDate" column="RECEIVE_DATE" /><!-- -->		
+		<result property="applyDepartment" column="APPLY_DEPARTMENT" /><!-- 申请部门(采购申请的部门)-->
+		<result property="applyDepartmentCode" column="APPLY_DEPARTMENT_CODE" /><!-- 申请部门code(采购申请的部门)-->
+		<result property="budgetDepartmentName" column="BUDGET_DEPARTMENT_NAME" /><!-- 需求部门code(采购申请的预算所属部门)-->
+		<result property="budgetDepartmentCode" column="BUDGET_DEPARTMENT_CODE" /><!-- 需求部门(采购申请的预算所属部门)-->
+		<result property="officeLocation" column="OFFICE_LOCATION" /><!-- 办公地点(采购申请的办公地点)-->
+		
+		<result property="capprovalstate" column="CAPPROVALSTATE" /><!--审批状态 收货单 -->
+		<result property="orderStatus" column="ORDER_STATUS" /><!-- 单据状态 -->
+		<result property="draft" column="DRAFT" />
+		
+		<result property="idea" column="IDEA" />
+		<result property="isEmail" column="ISEMAIL" />
+		<result property="cuserCode" column="CUSERCODE" />
+		<result property="cuserName" column="CUSERNAME" />
+		<result property="isPhoneMessage" column="ISPHONEMESSAGE" />
+		<result property="cnexthandlercode" column="CNEXTHANDLERCODE" />
+		<result property="cnexthandlername" column="CNEXTHANDLERNAME" />
+
+		<!-- 创建人 创建时间 更新人 更新时间 -->
+		<result property="createBy" column="CREATE_BY" />
+		<result property="createDate" column="CREATE_DATE" />
+		<result property="updateBy" column="UPDATE_BY" />
+		<result property="updateDate" column="UPDATE_DATE" />
+
+		<result property="attachDepartAdminName" column="ATTACH_DEPART_ADMIN_NAME" />
+		<result property="attachDepartAdminCode" column="ATTACH_DEPART_ADMIN_CODE" />
+
+	
+	</resultMap>
+	<!-- 生成收货编码用 -->
+	<select id="searchNextSequence" resultType="long">
+		SELECT SEQ_FA_RECEIVE_GOODS_ID.NEXTVAL FROM DUAL
+	</select>
+	<!-- 查询同一需求部门下的人员 -->
+	<sql id="get_user_list_pager_frag">
+		SELECT
+		e.CEMPLOYEECODE AS CUSERCODE,
+		e.CEMPLOYEENAME AS CUSERNAME
+
+		FROM
+		T_EMPLOYEE e
+		WHERE
+		e.CSTATUS = 'Y'
+		and e.CDEPCODE = #{budgetDepartmentCode}
+	</sql>
+	<select id="getUserListPager" resultMap="receiveGoodsResultMap">
+		<include refid="get_user_list_pager_frag" />
+		<if test="searchCode != null and searchCode != ''">
+			AND e.CEMPLOYEECODE = #{searchCode}
+		</if>
+		<if test="searchName != null and searchName != ''">
+			AND e.CEMPLOYEENAME LIKE '%' || #{searchName} || '%'
+		</if>
+	</select>
+	<select id="searchReceiveGoodsByPurchaseId" parameterType="string" resultMap="receiveGoodsResultMap" >
+		select DRAFT from TB_FA_RECEIVE_GOODS where PURCHASE_ID=#{purchaseId}
+	</select>
+	<!-- 保存收货单头 -->
+	<insert id="saveReceiveGoods">
+		INSERT INTO TB_FA_RECEIVE_GOODS RG
+		   (
+			RG.CDOCUMENT,
+			RG.PURCHASE_ID,
+			RG.RECEIVE_DATE,			
+			RG.BUYER_CODE,
+			RG.BUYER_NAME,
+			RG.SUPPLIER_CODE,
+			RG.SUPPLIER_NAME,
+			RG.COMPANY_CODE,
+			RG.COMPANY_NAME,
+			RG.COST_CENTER,
+			RG.COST_CENTER_CODE,
+			RG.ASSETS_TYPE,
+			RG.PLATFORM,
+			RG.BUYER_REMARK,
+			RG.HEADER_TEXT_DESCRIPTION,
+			RG.CONTRACT_NO,
+			RG.APPLY_DEPARTMENT,
+			RG.APPLY_DEPARTMENT_CODE,
+			RG.BUDGET_DEPARTMENT_NAME,
+			RG.BUDGET_DEPARTMENT_CODE,
+			RG.OFFICE_LOCATION,
+			RG.CUSERCODE,
+			RG.CUSERNAME,
+			RG.ORDER_STATUS,
+			RG.DRAFT,
+			RG.ATTACH_DEPART_ADMIN_CODE,
+			RG.ATTACH_DEPART_ADMIN_NAME
+		   )
+			VALUES
+			(
+			#{receiveGoodsId },
+			#{purchaseId },
+			TRUNC(SYSDATE,'DD'),
+			#{buyerCode },
+			#{buyerName },
+			#{supplierCode },
+			#{supplierName },
+			#{companyCode },
+			#{companyName },
+			#{costCenter },
+			#{costCenterCode },
+			#{assetsType },
+			#{platform },
+			#{buyerRemark },
+			#{headerTextDescription },
+			#{contractNo},
+			#{applyDepartment },
+			#{applyDepartmentCode },
+			#{budgetDepartmentName},
+			#{budgetDepartmentCode },
+			#{officeLocation },
+			#{cuserCode },
+			#{cuserName },
+			#{orderStatus } ,
+			#{draft },
+			#{attachDepartAdminCode},
+			#{attachDepartAdminName}
+			)
+	</insert>
+
+	<insert id="saveDelete">
+		INSERT INTO TB_FA_RECEIVE_GOODS_BK RG
+		   (
+			RG.CDOCUMENT,
+			RG.PURCHASE_ID,
+			RG.RECEIVE_DATE,
+			RG.BUYER_CODE,
+			RG.BUYER_NAME,
+			RG.SUPPLIER_CODE,
+			RG.SUPPLIER_NAME,
+			RG.COMPANY_CODE,
+			RG.COMPANY_NAME,
+			RG.COST_CENTER,
+			RG.COST_CENTER_CODE,
+			RG.ASSETS_TYPE,
+			RG.PLATFORM,
+			RG.BUYER_REMARK,
+			RG.HEADER_TEXT_DESCRIPTION,
+			RG.CONTRACT_NO,
+			RG.APPLY_DEPARTMENT,
+			RG.APPLY_DEPARTMENT_CODE,
+			RG.BUDGET_DEPARTMENT_NAME,
+			RG.BUDGET_DEPARTMENT_CODE,
+			RG.OFFICE_LOCATION,
+			RG.CUSERCODE,
+			RG.CUSERNAME,
+			RG.ORDER_STATUS,
+			RG.DRAFT,
+			RG.ATTACH_DEPART_ADMIN_CODE,
+			RG.ATTACH_DEPART_ADMIN_NAME
+		   )
+			VALUES
+			(
+			#{receiveGoodsId },
+			#{purchaseId },
+			TRUNC(SYSDATE,'DD'),
+			#{buyerCode },
+			#{buyerName },
+			#{supplierCode },
+			#{supplierName },
+			#{companyCode },
+			#{companyName },
+			#{costCenter },
+			#{costCenterCode },
+			#{assetsType },
+			#{platform },
+			#{buyerRemark },
+			#{headerTextDescription },
+			#{contractNo},
+			#{applyDepartment },
+			#{applyDepartmentCode },
+			#{budgetDepartmentName},
+			#{budgetDepartmentCode },
+			#{officeLocation },
+			#{cuserCode },
+			#{cuserName },
+			#{orderStatus } ,
+			#{draft },
+			#{attachDepartAdminCode},
+			#{attachDepartAdminName}
+			)
+	</insert>
+
+<!-- 			#{capprovalstate } , -->
+<!-- 修改收货单的头 -->
+	<update id="updateReceiveGoods">
+		 UPDATE TB_FA_RECEIVE_GOODS RG
+		    SET RG.BUYER_CODE              = #{buyerCode },
+		        RG.BUYER_NAME              = #{buyerName },
+		        RG.SUPPLIER_CODE           = #{supplierCode },
+		        RG.SUPPLIER_NAME           = #{supplierName },
+		        RG.COMPANY_CODE            = #{companyCode },
+		        RG.COMPANY_NAME            = #{companyName },
+		        RG.COST_CENTER             = #{costCenter },
+		        RG.COST_CENTER_CODE        = #{costCenterCode },
+		        RG.ASSETS_TYPE             = #{assetsType },
+		        RG.PLATFORM                = #{platform },
+		        RG.BUYER_REMARK            = #{buyerRemark },
+		        RG.HEADER_TEXT_DESCRIPTION = #{headerTextDescription },
+		        RG.CONTRACT_NO             = #{contractNo},
+		        RG.APPLY_DEPARTMENT        = #{applyDepartment },
+		        RG.APPLY_DEPARTMENT_CODE   = #{applyDepartmentCode },
+		        RG.BUDGET_DEPARTMENT_NAME  = #{budgetDepartmentName},
+		        RG.BUDGET_DEPARTMENT_CODE  = #{budgetDepartmentCode },
+		        RG.OFFICE_LOCATION         = #{officeLocation },
+		        RG.CUSERCODE               = #{cuserCode },
+		        RG.CUSERNAME               = #{cuserName },
+		        RG.ORDER_STATUS            = #{orderStatus },
+		        RG.DRAFT                   = #{draft }
+		  WHERE 1 = 1
+		    and RG.CDOCUMENT = #{cdocument}
+		    and RG.PURCHASE_ID = #{purchaseId }
+	</update>
+
+	<!-- 查询收货单的头 -->
+	<select id="searchReceiveGoodsByReceiveGoodsId" resultMap="receiveGoodsResultMap">
+		SELECT 
+			RG.CDOCUMENT,
+			RG.PURCHASE_ID,
+			RG.BUYER_CODE,
+			RG.BUYER_NAME,
+			RG.SUPPLIER_CODE,
+			RG.SUPPLIER_NAME,
+			RG.COMPANY_CODE,
+			RG.COMPANY_NAME,
+			RG.COST_CENTER,
+			RG.COST_CENTER_CODE,
+			RG.ASSETS_TYPE,
+			RG.PLATFORM,
+			RG.BUYER_REMARK,
+			RG.HEADER_TEXT_DESCRIPTION,
+			RG.CONTRACT_NO,
+			RG.APPLY_DEPARTMENT,
+			RG.APPLY_DEPARTMENT_CODE,
+			RG.BUDGET_DEPARTMENT_NAME,
+			RG.BUDGET_DEPARTMENT_CODE,
+			RG.OFFICE_LOCATION,
+			RG.CUSERCODE,
+			RG.CUSERNAME,
+			RG.CAPPROVALSTATE,
+			RG.ORDER_STATUS,
+			rg.create_date,
+			RG.DRAFT
+	  	 FROM TB_FA_RECEIVE_GOODS RG
+	 	 WHERE 1 = 1
+	     AND RG.CDocument = #{receiveGoodsId }
+	</select>
+	
+	<!-- 绑定审批流 失败 后删除收货单的表头 -->
+	<delete id="delReceiveGoodsByReceiveGoodsId">
+	 DELETE FROM TB_FA_RECEIVE_GOODS RG 
+	 WHERE 1=1
+	 AND RG.CDOCUMENT = #{receiveGoodsId } 
+	</delete>
+		
+	<select id="getReceiveGoodsByDocument"  resultMap="receiveGoodsResultMap">
+		select * from tb_fa_receive_goods where CDOCUMENT=#{receiveGoodsId} and  STATUS='0'
+	</select>
+	<update id="updateReceiveGoods1">
+        update tb_fa_receive_goods t SET
+        t.DRAFT='N',
+		t.BUYER_REMARK = #{buyerRemark},
+		t.HEADER_TEXT_DESCRIPTION = #{headerTextDescription},
+		t.CONTRACT_NO =#{contractNo}
+        where t.CDOCUMENT=#{cdocument}
+    </update>
+	<update id="updateCloseReceiveGoods" parameterType="java.util.List">
+		<foreach collection="list" item="item" index="index" open="begin" close=";end;" separator=";">
+			update tb_fa_receive_goods t
+			set
+			t.ORDER_STATUS='1'
+			where t.CDOCUMENT = #{item}
+		</foreach>
+	</update>
+	<select id="searchPurchaseOrderStatus" resultType="string">
+
+	select t.order_status from tb_fa_purchase_order t
+	where t.cdocument=#{id}
+	</select>
+ </mapper>
+

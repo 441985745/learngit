@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.opple.fa.config.dao.CostCenterPlatformDAO">
+	<resultMap id="costCenterPlatResultMap" type="com.opple.fa.config.entity.CostCenterPlatform">
+        <result property="id" column="ID"/>
+        <result property="companyCode" column="COMPANY_CODE"/>
+        <result property="costCenterCode" column="COST_CENTER_CODE"/>
+        <result property="platform" column="PLATFORM"/>
+	</resultMap>
+
+    <select id="searchPlatformByCostCenterCode" resultMap="costCenterPlatResultMap">
+     SELECT *
+	  FROM TB_FA_COSTCENTER_PLATFORM T
+	 WHERE T.COST_CENTER_CODE = #{costCenterCode}
+    </select>
+
+</mapper>
+

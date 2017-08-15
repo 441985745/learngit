@@ -1,0 +1,55 @@
+# db
+jdbc.url=jdbc:oracle:thin:@10.10.1.51:1521/MRM
+jdbc.username=bcc
+jdbc.password=bcc.51
+
+### system url
+server.static=/assets
+server.dynamic=
+server.name=opplefa
+server.openapiDynamic=/openapi
+
+## log configuration
+loggingRoot=.
+loggingLevel=INFO
+
+#checkcode
+checkCodeEnabled=true
+
+#appurl
+app.url=http://10.10.1.27:8070
+app.loginUrl=http://10.10.1.27:8070/loginInit
+
+#domain name
+domain.name=
+
+#appname
+app.name=opplefa
+
+env.type=TEST
+
+#file upload
+server.file.path=/home/opplefa/download/
+file.upload.path=/home/opplefa/upload/
+
+#user role
+role.purchasingManager.id='R000000753'
+role.attachManager.id='R000000788','R000000789'
+role.platformFinanceManager.id='R000000749'
+role.assetAccounting.id='R000000805'
+role.regionalDirector.id='R000000798'
+
+demand.info.table=TB_FA_DEMAND_ORDER
+demand.info.type.id=77001
+
+apply.info.table=TB_FA_APPLY_ORDER
+apply.info.type.id=77011
+
+purchase.info.table=TB_FA_PURCHASE_ORDER
+purchase.info.type.id=77021
+
+payment.info.table=TB_FA_PAYMENT_ORDER
+payment.info.type.id=77071
+
+# menu config
+project.menu.mark=G

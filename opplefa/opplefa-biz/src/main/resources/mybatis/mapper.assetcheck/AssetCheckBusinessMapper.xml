@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.opple.fa.assetcheck.dao.AssetCheckBusinessDAO">
+    <!-- oracle 分页头 -->
+    <sql id="pagination_Head" >
+        <![CDATA[select * from ( select row_.*, rownum rownum_ from ( ]]>
+    </sql>
+    <!-- oracle 分页尾 -->
+    <sql id="pagination_Tail">
+        <![CDATA[) row_ where rownum <= #{pager.pageSize}* #{pager.offset} ) where rownum_ >= #{pager.firstResult} + 1]]>
+    </sql>
+    <!-- count * from -->
+	<sql id="count_Start_Head">
+		<![CDATA[select count(*) from ( ]]>
+	</sql>
+	<sql id="count_Start_Tail">
+		<![CDATA[) countObj ]]>
+	</sql>
+	<resultMap id="assetCheckBusinessResultMap" type="assetCheckBusiness">
+        <result property="id" column="ID"/>
+        <result property="createBy" column="CREATE_BY"/>
+        <result property="createDate" column="CREATE_DATE"/>
+        <result property="updateBy" column="UPDATE_BY"/>
+        <result property="updateDate" column="UPDATE_DATE"/>
+        <result property="deletedFlag" column="DELETED_FLAG"/>
+        <result property="documentNumber" column="DOCUMENT_NUMBER"/>
+        <result property="inventoryYear" column="INVENTORY_YEAR"/>
+        <result property="inventoryMonth" column="INVENTORY_MONTH"/>
+        <result property="inventoryPeople" column="INVENTORY_PEOPLE"/>
+        <result property="inventoryDate" column="INVENTORY_DATE"/>
+        <result property="applyPeople" column="APPLY_PEOPLE"/>
+        <result property="assetType" column="ASSET_TYPE"/>
+        <result property="inventoryDepartment" column="INVENTORY_DEPARTMENT"/>
+        <result property="platform" column="PLATFORM"/>
+        <result property="costCenter" column="COST_CENTER"/>
+        <result property="inventoryApplyDate" column="INVENTORY_APPLY_DATE" />
+		<result property="inventoryStatus" column="INVENTORY_STATUS" />
+		<result property="inventoryEndDate" column="INVENTORY_END_DATE" />
+		<result property="applyReason" column="APPLY_REASON" />
+		<result property="isDraft" column="IS_DRAFT" />
+		<result property="approveState" column="APPROVE_STATE" />
+		<result property="inventoryLevels" column="INVENTORY_LEVELS" />
+		<result property="inventoryCompany" column="INVENTORY_COMPANY" />
+	</resultMap>
+	
+	<sql id="search_assetsInventory_fragment" >
+        <![CDATA[
+              SELECT
+                   ID,
+                   CREATE_BY,
+                   CREATE_DATE,
+                   UPDATE_BY,
+                   UPDATE_DATE,
+                   DELETED_FLAG,
+                   DOCUMENT_NUMBER,
+                   INVENTORY_YEAR,
+                   INVENTORY_MONTH,
+                   INVENTORY_PEOPLE,
+                   INVENTORY_DATE,
+                   APPLY_PEOPLE,
+                   ASSET_TYPE,
+                   INVENTORY_DEPARTMENT,
+                   PLATFORM,
+                   COST_CENTER,
+                   INVENTORY_APPLY_DATE,
+                   INVENTORY_STATUS,
+                   INVENTORY_END_DATE,
+                   APPLY_REASON,
+                   IS_DRAFT,
+                   APPROVE_STATE,
+                   INVENTORY_LEVELS,
+                   INVENTORY_COMPANY
+                FROM
+                   TB_FA_ASSETS_INVENTORY
+        ]]>
+    </sql>
+	
+	<insert id="saveAssetCheckBusiness" parameterType="com.opple.fa.assetcheck.entity.AssetCheckBusiness">
+        <selectKey keyProperty="id"  order="BEFORE" resultType="Long">
+			select seq_assets_inventory.nextval as id from dual
+		</selectKey>
+	   <![CDATA[INSERT INTO TB_FA_ASSETS_INVENTORY
+	            (ID,
+	             APPLY_PEOPLE,
+	             ASSET_TYPE,
+	             PLATFORM,
+	             COST_CENTER,
+	             INVENTORY_PEOPLE,
+	             INVENTORY_DEPARTMENT,
+	             DELETED_FLAG,
+	             IS_DRAFT,
+	             INVENTORY_DATE,
+	             INVENTORY_APPLY_DATE,
+	             INVENTORY_YEAR,
+	             INVENTORY_MONTH,
+	             INVENTORY_STATUS,
+	             APPROVE_STATE,
+	             INVENTORY_LEVELS,
+	             INVENTORY_COMPANY
+	             )
+	             values
+	             (
+	             #{id},
+	             #{applyPeople},
+	             #{assetType},
+	             #{platform},
+	             #{costCenter},
+	             #{inventoryPeople},
+	             #{inventoryDepartment},
+	             '0',
+	             #{isDraft},
+	             #{inventoryDate},
+	             #{inventoryApplyDate},
+	             #{inventoryYear},
+	             #{inventoryMonth},
+	             #{inventoryStatus},
+	             #{approveState},
+	             #{inventoryLevels},
+	             #{inventoryCompany}
+	              )]]>
+	</insert>
+	
+	<update id="deleteAssetCheckBusinessById" parameterType="com.opple.fa.assetcheck.entity.AssetCheckBusiness">
+	    <![CDATA[DELETE FROM TB_FA_ASSETS_INVENTORY WHERE ID=#{id}]]>
+	</update>
+	
+	<update id="updateAssetCheckBusinessById" parameterType="com.opple.fa.assetcheck.entity.AssetCheckBusiness">
+	    <![CDATA[UPDATE TB_FA_ASSETS_INVENTORY SET 
+		CREATE_BY=#{createBy},
+		CREATE_DATE=#{createDate},
+		UPDATE_BY=#{updateBy},
+		UPDATE_DATE=#{updateDate},
+		DELETED_FLAG=#{deletedFlag},
+		DOCUMENT_NUMBER=#{documentNumber},
+		INVENTORY_YEAR=#{inventoryYear},
+		INVENTORY_MONTH=#{inventoryMonth},
+		INVENTORY_PEOPLE=#{inventoryPeople},
+		INVENTORY_DATE=#{inventoryDate},
+		APPLY_PEOPLE=#{applyPeople},
+		ASSET_TYPE=#{assetType},
+		INVENTORY_DEPARTMENT=#{inventoryDepartment},
+		PLATFORM=#{platform},
+		COST_CENTER=#{costCenter},
+		INVENTORY_APPLY_DATE=#{inventoryApplyDate},
+		INVENTORY_STATUS=#{inventoryStatus},
+		INVENTORY_END_DATE=#{inventoryEndDate},
+		APPLY_REASON=#{applyReason},
+		APPROVE_STATE=#{approveState},
+		INVENTORY_LEVELS=#{inventoryLevels},
+		INVENTORY_COMPANY=#{inventoryCompany}
+		WHERE
+		TB_FA_ASSETS_INVENTORY.ID = #{Id}]]>
+	</update>
+	
+	<select id="searchAssetCheckBusinessCount" resultType="long" parameterType="com.opple.fa.assetcheck.entity.AssetCheckBusiness">
+		<include refid="count_Start_Head" />		
+        <include refid="search_assetsInventory_fragment" />	 
+                WHERE DELETED_FLAG = '0'
+        <if
+			test="assetCheckBusiness.documentNumber != null and assetCheckBusiness.documentNumber != ''">
+			AND DOCUMENT_NUMBER LIKE '%' || #{assetCheckBusiness.documentNumber} || '%' 
+		</if>
+		<if
+			test="assetCheckBusiness.inventoryPeople != null and assetCheckBusiness.inventoryPeople != ''">
+			AND INVENTORY_PEOPLE LIKE '%' || #{assetCheckBusiness.inventoryPeople} || '%' 
+		</if>
+		<if
+			test="assetCheckBusiness.inventoryDepartment != null and assetCheckBusiness.inventoryDepartment != ''">
+			AND INVENTORY_DEPARTMENT LIKE '%' || #{assetCheckBusiness.inventoryDepartment} || '%' 
+		</if>
+		<if
+			test="assetCheckBusiness.inventoryStatus != null and assetCheckBusiness.inventoryStatus != ''">
+			AND INVENTORY_STATUS LIKE '%' || #{assetCheckBusiness.inventoryStatus} || '%' 
+		</if>
+		<if
+			test="assetCheckBusiness.inventoryYear != null and assetCheckBusiness.inventoryYear != ''">
+			AND INVENTORY_YEAR LIKE '%' || #{assetCheckBusiness.inventoryYear} || '%' 
+		</if>
+		<if
+			test="assetCheckBusiness.inventoryMonth != null and assetCheckBusiness.inventoryMonth != ''">
+			AND INVENTORY_MONTH LIKE '%' || #{assetCheckBusiness.inventoryMonth} || '%' 
+		</if> 
+		<include refid="count_Start_Tail" />
+	</select>
+	
+	<!-- 查询数据 -->
+	<select id="searchAssetCheckBusiness" resultMap="assetCheckBusinessResultMap" parameterType="com.opple.fa.assetcheck.entity.AssetCheckBusiness">
+	<!-- 查询数据分页 -->
+	    <include refid="pagination_Head" />		
+        <include refid="search_assetsInventory_fragment" />	   
+        WHERE DELETED_FLAG = '0'
+        <if
+			test="assetCheckBusiness.documentNumber != null and assetCheckBusiness.documentNumber != ''">
+			AND DOCUMENT_NUMBER LIKE '%' || #{assetCheckBusiness.documentNumber} || '%' 
+		</if>
+		<if
+			test="assetCheckBusiness.inventoryPeople != null and assetCheckBusiness.inventoryPeople != ''">
+			AND INVENTORY_PEOPLE LIKE '%' || #{assetCheckBusiness.inventoryPeople} || '%' 
+		</if>
+		<if
+			test="assetCheckBusiness.inventoryDepartment != null and assetCheckBusiness.inventoryDepartment != ''">
+			AND INVENTORY_DEPARTMENT LIKE '%' || #{assetCheckBusiness.inventoryDepartment} || '%' 
+		</if>
+		<if
+			test="assetCheckBusiness.inventoryStatus != null and assetCheckBusiness.inventoryStatus != ''">
+			AND INVENTORY_STATUS LIKE '%' || #{assetCheckBusiness.inventoryStatus} || '%' 
+		</if>
+		<if
+			test="assetCheckBusiness.inventoryYear != null and assetCheckBusiness.inventoryYear != ''">
+			AND INVENTORY_YEAR LIKE '%' || #{assetCheckBusiness.inventoryYear} || '%' 
+		</if>
+		<if
+			test="assetCheckBusiness.inventoryMonth != null and assetCheckBusiness.inventoryMonth != ''">
+			AND INVENTORY_MONTH LIKE '%' || #{assetCheckBusiness.inventoryMonth} || '%' 
+		</if> 
+		<include refid="pagination_Tail" />
+	</select>
+    <update id="deleteAssetCheck">
+		update TB_FA_ASSETS_INVENTORY set DELETED_FLAG='1' where ID=#{id}
+	</update>
+	
+	<select id="serchAssetCheckData" resultMap="assetCheckBusinessResultMap">
+		<include refid="search_assetsInventory_fragment" />
+	</select>
+	<select id="getAssetCheckBusiness" resultMap="assetCheckBusinessResultMap" parameterType="com.opple.fa.assetcheck.entity.AssetCheckBusiness">
+    	<include refid="search_assetsInventory_fragment" />
+    	WHERE ID = #{id}
+	</select>
+</mapper>

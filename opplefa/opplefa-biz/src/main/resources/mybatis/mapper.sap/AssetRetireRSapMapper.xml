@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.opple.fa.sap.dao.AssetRetireRSapDAO">
+	<resultMap id="retirementdataMap" type="retirementdata">
+		<result property="complRet"	column="COMPL_RET"/>		<!--  标志: 记帐全部报废                                  --> 		
+		<result property="quantity"	column="QUANTITY"/>		<!--  数量                          --> 		
+		<result property="percRate"	column="PERC_RATE"/>		<!-- 资产报废：百分比率                             --> 		
+		<result property="amount"	column="AMOUNT"/>		<!--  过帐金额                      --> 		
+		<result property="revOnRet"	column="REV_ON_RET"/>		<!--  资产销售中的收益                          --> 		
+		<result property="retCosts"	column="RET_COSTS"/>		<!--  资产报废成本                  --> 		
+		<result property="currency"	column="CURRENCY"/>			<!--   货币代码 -->     	
+		<result property="areaNbv"	column="AREA_NBV"/>		<!--  确定帐面净值的基本折旧范围                         --> 		
+		<result property="fId"	column="FID"/>		<!--  外键id                               --> 	
+
+	</resultMap>
+
+	<insert id="save" parameterType="retirementdata">
+		insert into TB_FA_SAP_ASSETRETIRE_R
+		(
+		COMPL_RET,
+		QUANTITY,
+		PERC_RATE,
+		AMOUNT,
+		REV_ON_RET,
+		RET_COSTS,
+		CURRENCY,
+		AREA_NBV,
+		FID
+		
+		)
+		values
+		(
+		#{retirementdata.complRet },
+		#{retirementdata.quantity },
+		#{retirementdata.percRate },
+		#{retirementdata.amount },
+		#{retirementdata.revOnRet },
+		#{retirementdata.retCosts },
+		#{retirementdata.currency },
+		#{retirementdata.areaNbv },
+		#{retirementdata.fId }
+
+		)
+
+	</insert>
+</mapper>
+

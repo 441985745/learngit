@@ -1,0 +1,464 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.opple.fa.purchase.dao.PaymentOrderDAO">
+	<!-- oracle 分页头 -->
+	<sql id="pagination_Head">
+		<![CDATA[select * from ( select row_.*, rownum rownum_ from ( ]]>
+	</sql>
+	<!-- oracle 分页尾 -->
+	<sql id="pagination_Tail">
+		<![CDATA[) row_ where rownum <= #{pager.pageSize}* #{pager.offset} ) where rownum_ >= #{pager.firstResult} + 1]]>
+	</sql>
+	<!-- count * from -->
+	<sql id="count_Start_Head">
+		<![CDATA[select count(*) from ( ]]>
+	</sql>
+	<sql id="count_Start_Tail">
+		<![CDATA[) countObj ]]>
+	</sql>
+	<resultMap id="paymentOrderMap" type="com.opple.fa.purchase.model.PaymentOrderModel">
+		<result property="cdocument" column="CDOCUMENT" />
+          <result property="orderMoney" column="ORDER_MONEY" />
+          <result property="applyUser" column="APPLY_USER" />
+          <result property="applyUserCode" column="APPLY_USER_CODE" />
+          <result property="applyDate" column="APPLY_DATE" />
+          <result property="capprovalstate" column="CAPPROVALSTATE" />
+          <result property="orderStatus" column="ORDER_STATUS" />
+          <result property="draft" column="DRAFT" />
+          <result property="createBy" column="CREATE_BY" />
+          <result property="createByCode" column="CREATE_BY_CODE" />
+          <result property="updateBy" column="UPDATE_BY" />
+          <result property="updateByCode" column="UPDATE_BY_CODE" />
+          <result property="capprovalend" column="CAPPROVALEND" />
+          <result property="causercode" column="CAUSERCODE" />
+          <result property="causername" column="CAUSERNAME" />
+          <result property="dlastadate" column="DLASTADATE" />
+          <result property="cnexthandlercode" column="CNEXTHANDLERCODE" />
+          <result property="cnexthandlername" column="CNEXTHANDLERNAME" />
+          <result property="iamoney" column="IAMONEY" />
+          <result property="createDate" column="CREATE_DATE" />
+          <result property="updateDate" column="UPDATE_DATE" />
+          <result property="print" column="PRINT" />
+          <result property="purchaseOrderId" column="PURCHASE_ORDER_ID" />
+          <result property="scanLocation" column="SCAN_LOCATION" />
+          <result property="taxRate" column="TAX_RATE" />
+          <result property="taxRateCode" column="TAX_RATE_CODE" />
+          <result property="currencyCode" column="CURRENCY_CODE" />
+          <result property="exchangeRate" column="EXCHANGE_RATE" />
+          <result property="supplierName" column="SUPPLIER_NAME" />
+          <result property="supplierCode" column="SUPPLIER_CODE" />
+          <result property="companySpecificName" column="COMPANY_SPECIFIC_NAME" />
+          <result property="bankNumber" column="BANK_NUMBER" />
+          <result property="contactNumber" column="CONTACT_NUMBER" />
+          <result property="bankCode" column="BANK_CODE" />
+          <result property="bankName" column="BANK_NAME" />
+          <result property="nper" column="NPER" />
+          <result property="paymentType" column="PAYMENT_TYPE" />
+          <result property="paymentRatio" column="PAYMENT_RATIO" />
+          <result property="invoice" column="INVOICE" />
+          <result property="invoiceNumber" column="INVOICE_NUMBER" />
+          <result property="applyFor" column="APPLY_FOR" />
+          <result property="status" column="STATUS" />
+          <result property="portraitStatus" column="PORTRAIT_STATUS" />
+          <result property="voucherId" column="VOUCHER_ID" />
+          <result property="companyName" column="COMPANY_NAME"  />  <!--公司名称-->
+		  <result property="companyCode" column="COMPANY_CODE"  />  <!--公司编码-->
+		  <result property="officeLocation" column="OFFICE_LOCATION"  />  <!--办公地点-->
+		  <result property="applyDepartment" column="APPLY_DEPARTMENT" />
+		  <result property="applyDepartmentCode" column="APPLY_DEPARTMENT_CODE" />
+		  <result property="costCenter" column="COST_CENTER" />
+		  <result property="costCenterCode" column="COST_CENTER_CODE" />
+		  <result property="profitCenter" column="PROFIT_CENTER" />
+		  <result property="sapPurchaseOrderNumber" column="SAP_PURCHASE_ORDER_NUMBER" />
+		  <result property="isManualPrepaymentDocument" column="IS_MANUAL_PREPAYMENT_DOCUMENT" />
+		  <result property="isManualReceiptVoucher" column="IS_MANUAL_RECEIPT_VOUCHER" />
+		  <result property="prepaymentDocumentNumber" column="PREPAYMENT_DOCUMENT_NUMBER" />
+		  <result property="paymentVoucherNumber" column="PAYMENT_VOUCHER_NUMBER" />
+		  <result property="receiptVoucherNumber" column="RECEIPT_VOUCHER_NUMBER" />
+		  <result property="isComingSAP" column="IS_COMING_SAP" />
+		  <result property="cbarStatus" column="CBARSTATUS" />
+		  <result property="purchaseManagerCode" column="PURCHASE_MANAGER_CODE" />
+		  <result property="purchaseManagerName" column="PURCHASE_MANAGER_NAME" />
+		  <result property="cvoucheId" column="CVOUCHERID" />
+		  <result property="isLastTerm" column="ISLASTTERM" />
+		  <result property="isLastTime" column="ISLASTTIME" />
+		  <result property="invoiceNo" column="INVOICE_NO" />
+		  <result property="cvstatus" column="CVSTATUS" />
+		
+          <result property="purchasecdocument" column="PURCHASECDOCUMENT" />
+          <result property="buyerName" column="BUYER_NAME" />
+          <result property="buyerCode" column="BUYER_CODE" />
+          <result property="companyName" column="COMPANY_NAME" />
+          <result property="purchaseApplyDate" column="PURCHASE_APPLY_DATE" />
+          <result property="allocNumber" column="ALLOC_NMBR" />
+	</resultMap>
+
+
+	<sql id="search_payment_order">
+		SELECT *
+		  FROM (
+		  <if
+			test='paymentOrderModel.pending != "Y"'>
+		  		SELECT *
+		          FROM (SELECT DISTINCT T.CDOCUMENT,
+		                       TP.CDOCUMENT AS PURCHASECDOCUMENT,
+		                       TP.BUYER_NAME,
+		                       TP.BUYER_CODE,
+		                       TP.COMPANY_NAME,
+		                       TP.SUPPLIER_NAME,
+		                       TP.SUPPLIER_CODE,
+		                       T.PAYMENT_TYPE,
+		                       T.ORDER_MONEY,
+		                       T.IAMONEY,
+		                       T.APPLY_USER,
+		                       T.APPLY_DATE,
+		                       T.APPLY_USER_CODE,
+		                       T.CAPPROVALSTATE,
+		                       T.ORDER_STATUS,
+		                       T.CBARSTATUS,
+		                       T.CNEXTHANDLERNAME,
+		                       T.DRAFT,
+		                       T.PRINT,
+		                       Tp.Apply_Date AS PURCHASE_APPLY_DATE,
+		                       Tp.PURCHASE_ORDER_SAP_ID AS SAP_PURCHASE_ORDER_NUMBER
+		                  FROM TB_FA_PAYMENT_ORDER T
+		                  LEFT JOIN TB_FA_PURCHASE_ORDER TP
+		                    ON T.PURCHASE_ORDER_ID = TP.CDOCUMENT
+	                    LEFT JOIN T_WF_BILL_STEP TS
+		    				ON T.CDOCUMENT = TS.CBILLCODE
+		         WHERE 1=1 
+		         <!-- 付款单号 和时间的条件 -->
+		        <if
+					test="paymentOrderModel.cdocument != null and paymentOrderModel.cdocument != ''">
+					AND T.CDOCUMENT LIKE '%' ||
+					#{paymentOrderModel.cdocument} || '%'   
+				</if>
+		
+				<if
+					test="paymentOrderModel.applyDateStart != null and paymentOrderModel.applyDateStart != ''">
+					 AND T.APPLY_DATE <![CDATA[>]]>= #{paymentOrderModel.applyDateStart}  
+				</if>
+				<if
+					test="paymentOrderModel.applyDateEnd != null and paymentOrderModel.applyDateEnd != ''">
+					AND T.APPLY_DATE <![CDATA[<=]]> #{paymentOrderModel.applyDateEnd} 
+				</if>
+				<!-- 采购订单号 和时间的条件 -->
+				<if
+					test="paymentOrderModel.purchaseOrderId != null and paymentOrderModel.purchaseOrderId != ''">
+					AND TP.CDOCUMENT LIKE '%' ||
+					#{paymentOrderModel.purchaseOrderId} || '%'   
+				</if>
+				<if
+					test="paymentOrderModel.purchaseApplyDateStart != null and paymentOrderModel.purchaseApplyDateStart != ''">
+					 AND TP.APPLY_DATE <![CDATA[>=]]> #{paymentOrderModel.purchaseApplyDateStart}  
+				</if>
+				<if
+					test="paymentOrderModel.purchaseApplyDateEnd != null and paymentOrderModel.purchaseApplyDateEnd != ''">
+					AND TP.APPLY_DATE <![CDATA[<=]]> #{paymentOrderModel.purchaseApplyDateEnd} 
+				</if>
+				
+				<if
+					test="paymentOrderModel.buyerName != null and paymentOrderModel.buyerName != ''">
+					AND TP.BUYER_NAME LIKE '%' ||
+					#{paymentOrderModel.buyerName} || '%'
+				</if>
+				<if
+					test="paymentOrderModel.draft != null and paymentOrderModel.draft != ''">
+					AND T.DRAFT = #{paymentOrderModel.draft}  
+				</if>
+				<if
+					test="paymentOrderModel.capprovalstate != null and paymentOrderModel.capprovalstate != ''">
+					AND T.CAPPROVALSTATE = #{paymentOrderModel.capprovalstate}  
+				</if>
+				<if
+					test="paymentOrderModel.orderStatus != null and paymentOrderModel.orderStatus != ''">
+					AND T.ORDER_STATUS = #{paymentOrderModel.orderStatus} 
+				</if>
+				<if
+					test="paymentOrderModel.cbarStatus != null and paymentOrderModel.cbarStatus != ''">
+					AND T.CBARSTATUS = #{paymentOrderModel.cbarStatus} 
+				</if>
+					AND T.STATUS = 'Y'
+					AND ( 
+						T.APPLY_USER_CODE = #{paymentOrderModel.loginUserCode}  
+						OR T.CNEXTHANDLERCODE = #{paymentOrderModel.loginUserCode} 
+						OR TS.CUSERCODE = #{paymentOrderModel.loginUserCode} 
+						OR TS.CUSERCODE IN (SELECT CAUTHORIZERCODE FROM T_APPROVALEMPOWER WHERE CUSERCODE = #{paymentOrderModel.loginUserCode} 
+						 AND SYSDATE BETWEEN CBEGINTIME AND CENDTIME AND CSTATUS='Y' AND CAPPROVALEND='Y')
+						 OR T.CNEXTHANDLERCODE IN (SELECT CAUTHORIZERCODE FROM T_APPROVALEMPOWER WHERE CUSERCODE = #{paymentOrderModel.loginUserCode} 
+						 AND SYSDATE BETWEEN CBEGINTIME AND CENDTIME AND CSTATUS='Y' AND CAPPROVALEND='Y')
+						 OR T.APPLY_USER_CODE IN (SELECT CAUTHORIZERCODE FROM T_APPROVALEMPOWER WHERE CUSERCODE = #{paymentOrderModel.loginUserCode} 
+						 AND SYSDATE BETWEEN CBEGINTIME AND CENDTIME AND CSTATUS='Y' AND CAPPROVALEND='Y')
+						 OR 
+						EXISTS(SELECT 1 FROM t_Sys_Userrole TR WHERE TR.CROLECODE=#{paymentOrderModel.adminCode} 
+						AND TR.CUSERCODE=#{paymentOrderModel.loginUserCode}  AND tr.cstatus='Y')
+						) 
+				) TEMP 
+				
+		</if>
+		<if
+			test='paymentOrderModel.pending == ""'>
+			UNION ALL
+		</if>
+		<if
+			test='paymentOrderModel.pending != "N"'>
+		        SELECT '' AS CDOCUMENT,
+		               VP.CDOCUMENT AS PURCHASECDOCUMENT,
+		               VP.BUYER_NAME AS BUYER_NAME,
+		               VP.BUYER_CODE AS BUYER_CODE,
+		               VP.COMPANY_NAME AS COMPANY_NAME,
+		               VP.SUPPLIER_NAME AS SUPPLIER_NAME,
+		               VP.SUPPLIER_CODE AS SUPPLIER_CODE,
+		               '' AS PAYMENT_TYPE,
+		               NULL AS ORDER_MONEY,
+		               NULL AS IAMONEY,
+		               '' AS APPLY_USER,
+		               NULL AS APPLY_DATE,
+		               '' AS APPLY_USER_CODE,
+		               '' AS CAPPROVALSTATE,
+		               '' AS ORDER_STATUS,
+		               '' AS CBARSTATUS,
+		               '' AS CNEXTHANDLERNAME,
+		               '' AS DRAFT,
+		               '' AS PRINT,
+		               NULL AS PURCHASE_APPLY_DATE,
+                       VP.PURCHASE_ORDER_SAP_ID AS SAP_PURCHASE_ORDER_NUMBER
+		          FROM V_FA_PAYMENT_COUNT VP
+		         WHERE VP.APPLY_COUNT <![CDATA[<>]]> NVL(VP.PAY_COUNT, 0)
+		        <!-- 采购订单号 和时间的条件 -->
+				<if
+					test="paymentOrderModel.purchaseOrderId != null and paymentOrderModel.purchaseOrderId != ''">
+					AND VP.CDOCUMENT LIKE '%' ||
+					#{paymentOrderModel.purchaseOrderId} || '%'   
+				</if>
+				<if
+					test="paymentOrderModel.buyerName != null and paymentOrderModel.buyerName != ''">
+					AND VP.BUYER_NAME LIKE '%' ||
+					#{paymentOrderModel.buyerName} || '%'
+				</if>
+				<if
+					test="paymentOrderModel.purchaseApplyDateStart != null and paymentOrderModel.purchaseApplyDateStart != ''">
+					 AND VP.APPLY_DATE <![CDATA[>=]]> #{paymentOrderModel.purchaseApplyDateStart}  
+				</if>
+				<if
+					test="paymentOrderModel.purchaseApplyDateEnd != null and paymentOrderModel.purchaseApplyDateEnd != ''">
+					AND VP.APPLY_DATE <![CDATA[<=]]> #{paymentOrderModel.purchaseApplyDateEnd} 
+				</if>
+				<![CDATA[	AND  (
+				VP.BUYER_CODE = #{paymentOrderModel.loginUserCode} 
+				OR VP.BUYER_CODE IN (SELECT CAUTHORIZERCODE FROM T_APPROVALEMPOWER WHERE CUSERCODE = #{paymentOrderModel.loginUserCode} 
+						 AND SYSDATE BETWEEN CBEGINTIME AND CENDTIME AND CSTATUS='Y' AND CAPPROVALEND='Y')
+						 OR 
+						EXISTS(SELECT 1 FROM t_Sys_Userrole TR WHERE TR.CROLECODE=#{paymentOrderModel.adminCode} 
+						AND TR.CUSERCODE=#{paymentOrderModel.loginUserCode}  AND tr.cstatus='Y') )]]>
+		</if>
+		 		) ORDER BY PURCHASECDOCUMENT DESC, CDOCUMENT DESC
+		 
+	</sql>
+
+	<select id="searchPaymentOrder" resultMap="paymentOrderMap">
+		<include refid="pagination_Head" />
+		<include refid="search_payment_order" />
+		<include refid="pagination_Tail" />
+	</select>
+	
+	<select id="exportPaymentOrders" resultMap="paymentOrderMap">
+		<include refid="search_payment_order" />
+	</select>
+
+	<select id="searchPaymentOrderCount" resultType="long">
+		<include refid="count_Start_Head" />
+		<include refid="search_payment_order" />
+		<include refid="count_Start_Tail" />
+	</select>
+
+	<select id="save">
+		INSERT INTO TB_FA_PAYMENT_ORDER
+		 (	CDOCUMENT,
+			ORDER_MONEY,
+			APPLY_USER,
+			APPLY_USER_CODE,
+			APPLY_DATE,
+			CAPPROVALSTATE,
+			ORDER_STATUS,
+			DRAFT,
+			CREATE_BY,
+			CREATE_BY_CODE,
+			UPDATE_BY,
+			UPDATE_BY_CODE,
+			CAPPROVALEND,
+			CAUSERCODE,
+			CAUSERNAME,
+			DLASTADATE,
+			CNEXTHANDLERCODE,
+			CNEXTHANDLERNAME,
+			IAMONEY,
+			CREATE_DATE,
+			UPDATE_DATE,
+			PRINT,
+			PURCHASE_ORDER_ID,
+			SCAN_LOCATION,
+			TAX_RATE,
+			TAX_RATE_CODE,
+			CURRENCY_CODE,
+			EXCHANGE_RATE,
+			SUPPLIER_NAME,
+			SUPPLIER_CODE,
+			COMPANY_SPECIFIC_NAME,
+			BANK_NUMBER,
+			CONTACT_NUMBER,
+			BANK_CODE,
+			BANK_NAME,
+			NPER,
+			PAYMENT_TYPE,
+			PAYMENT_RATIO,
+			INVOICE,
+			INVOICE_NUMBER,
+			APPLY_FOR,
+			PORTRAIT_STATUS,
+			VOUCHER_ID,
+			COMPANY_NAME,
+			COMPANY_CODE,
+			OFFICE_LOCATION,
+			APPLY_DEPARTMENT,
+			APPLY_DEPARTMENT_CODE,
+			COST_CENTER,
+			COST_CENTER_CODE,
+			PROFIT_CENTER,
+			SAP_PURCHASE_ORDER_NUMBER,
+			IS_MANUAL_PREPAYMENT_DOCUMENT,
+			IS_MANUAL_RECEIPT_VOUCHER,
+			PREPAYMENT_DOCUMENT_NUMBER,
+			PAYMENT_VOUCHER_NUMBER,
+			RECEIPT_VOUCHER_NUMBER,
+			IS_COMING_SAP,
+			PURCHASE_MANAGER_CODE,
+			PURCHASE_MANAGER_NAME,
+			ISLASTTERM,
+			ISLASTTIME,
+			INVOICE_NO
+		 )
+		VALUES
+			(
+			#{cdocument},
+			#{orderMoney},
+			#{applyUser},
+			#{applyUserCode},
+			#{applyDate},
+			#{capprovalstate},
+			#{orderStatus},
+			#{draft},
+			#{createBy},
+			#{createByCode},
+			#{updateBy},
+			#{updateByCode},
+			#{capprovalend},
+			#{causercode},
+			#{causername},
+			#{dlastadate},
+			#{cnexthandlercode},
+			#{cnexthandlername},
+			#{iamoney},
+			#{createDate},
+			#{updateDate},
+			#{print},
+			#{purchaseOrderId},
+			#{scanLocation},
+			#{taxRate},
+			#{taxRateCode},
+			#{currencyCode},
+			#{exchangeRate},
+			#{supplierName},
+			#{supplierCode},
+			#{companySpecificName},
+			#{bankNumber},
+			#{contactNumber},
+			#{bankCode},
+			#{bankName},
+			#{nper},
+			#{paymentType},
+			#{paymentRatio},
+			#{invoice},
+			#{invoiceNumber},
+			#{applyFor},
+			#{portraitStatus},
+			#{voucherId},
+			#{companyName},
+			#{companyCode},
+			#{officeLocation},
+			#{applyDepartment},
+			#{applyDepartmentCode},
+			#{costCenter},
+			#{costCenterCode},
+			#{profitCenter},
+			#{sapPurchaseOrderNumber},
+			#{isManualPrepaymentDocument},
+			#{isManualReceiptVoucher},
+			#{prepaymentDocumentNumber},
+			#{paymentVoucherNumber},
+			#{receiptVoucherNumber},
+			'N',
+			#{purchaseManagerCode},
+			#{purchaseManagerName},
+			#{isLastTerm},
+			#{isLastTime},
+			#{invoiceNo}
+			)
+	</select>
+	
+	<!-- 查询下个序列 -->
+	<select id="searchNextSequence" resultType="int">
+		SELECT SEQ_PAYMENT_ORDER.NEXTVAL FROM DUAL
+	</select>
+	
+	<select id="searchPaymentOrderByOrderId" resultMap="paymentOrderMap">
+		SELECT ORD.*,SUPPLIER.Csuppliercode ALLOC_NMBR
+    		FROM BCC.TB_FA_PAYMENT_ORDER ORD LEFT JOIN T_SUPPLIER SUPPLIER 
+    		ON SUPPLIER.CEMPLOYEECODE=ORD.Apply_User_Code
+		WHERE 1=1
+		<if
+			test="cdocument != null and cdocument != ''">
+			AND CDOCUMENT LIKE '%' || #{cdocument} || '%' 
+		</if>
+		AND STATUS = 'Y'
+	</select>
+	
+	<update id="delPaymentOrderByCdocument">
+		delete from TB_FA_PAYMENT_ORDER  WHERE CDOCUMENT = #{cdocument}	
+	</update>
+	
+	<!-- 根据成本中心编码 获得利润中心编码 -->
+	<select id="searchProfitCenter" resultType="String">
+		SELECT T.CPROFITCENTER FROM T_SAP_COSTCENTER T WHERE T.CCOSTCENTERCODE = #{costCenterCode}
+	</select>
+	<update id="updatePaymentOrderByDocument">
+	   UPDATE TB_FA_PAYMENT_ORDER t SET 
+	   SCAN_LOCATION = #{scanLocation},
+	   INVOICE = #{invoice},
+	   INVOICE_NUMBER = #{invoiceNumber},
+	   APPLY_FOR = #{applyFor},
+	   EXCHANGE_RATE = #{exchangeRate},
+	   ISLASTTIME = #{isLastTime},
+	   DRAFT = 'N',
+	   IS_MANUAL_PREPAYMENT_DOCUMENT =#{isManualPrepaymentDocument},
+	   IS_MANUAL_RECEIPT_VOUCHER =#{isManualReceiptVoucher},
+	   PREPAYMENT_DOCUMENT_NUMBER =#{prepaymentDocumentNumber},
+	   PAYMENT_VOUCHER_NUMBER =#{paymentVoucherNumber},
+	   RECEIPT_VOUCHER_NUMBER =#{receiptVoucherNumber},
+	   IS_COMING_SAP =#{isComingSAP},
+	   INVOICE_NO=#{invoiceNo}
+	   WHERE t.CDOCUMENT = #{cdocument}
+	</update>
+	<select id="searchPaymentOrdersByPurchaseId" resultMap="paymentOrderMap">
+	   select * from tb_fa_payment_order q where q.purchase_order_id =#{paymentOrderModel.purchaseOrderId} and q.capprovalstate='已完成' 
+	</select>
+	<update id="updatePaymentOrderByCdocument">
+	   UPDATE TB_FA_PAYMENT_ORDER t SET 
+	   t.CBARSTATUS ='W'
+	   WHERE t.CDOCUMENT = #{cdocument}
+	</update>
+</mapper>

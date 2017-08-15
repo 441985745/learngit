@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.opple.fa.purchase.dao.PaymentPaymentMappingDAO">
+	<!-- oracle 分页头 -->
+	<sql id="pagination_Head">
+		<![CDATA[select * from ( select row_.*, rownum rownum_ from ( ]]>
+	</sql>
+	<!-- oracle 分页尾 -->
+	<sql id="pagination_Tail">
+		<![CDATA[) row_ where rownum <= #{pager.pageSize}* #{pager.offset} ) where rownum_ >= #{pager.firstResult} + 1]]>
+	</sql>
+	<!-- count * from -->
+	<sql id="count_Start_Head">
+		<![CDATA[select count(*) from ( ]]>
+	</sql>
+	<sql id="count_Start_Tail">
+		<![CDATA[) countObj ]]>
+	</sql>
+	<resultMap id="paymentPaymentMappingMap" type="com.opple.fa.purchase.model.PaymentPaymentMappingModel">
+		  <result property="id" column="ID" />
+          <result property="paymentOrderId" column="PAYMENT_ORDER_ID" />
+          <result property="createBy" column="CREATE_BY" />
+          <result property="createByCode" column="CREATE_BY_CODE" />
+          <result property="updateBy" column="UPDATE_BY" />
+          <result property="updateByCode" column="UPDATE_BY_CODE" />
+          <result property="createDate" column="CREATE_DATE" />
+          <result property="updateDate" column="UPDATE_DATE" />
+          <result property="payPrice" column="PAY_PRICE" />
+          <result property="cpassDocuments" column="CPASSDOCUMENTS" />
+          <result property="pstngDate" column="PSTNG_DATE" />
+          <result property="iyear" column="IYEAR" />
+          <result property="compCode" column="COMP_CODE" />
+          <result property="imonth" column="IMONTH" />
+          <result property="caccountCode" column="CACCOUNTCODE" />
+          <result property="csubjectCode" column="CSUBJECTCODE" />
+          <result property="csubjectName" column="CSUBJECTNAME" />
+          <result property="cspCode" column="CSPCODE" />
+          
+          <result property="iamount" column="IAMOUNT" />
+          <result property="cdepCode" column="CDEPCODE" />
+          <result property="isChecked" column="ISCHECKED" />
+          <result property="cdocumentsNo" column="CDOCUMENTSNO" />
+	</resultMap>
+
+	<!-- 查询下个序列 -->
+	<select id="searchNextSequence" resultType="int">
+		SELECT SEQ_PAYMENT_PAYMENT_MAPPING.NEXTVAL FROM DUAL
+	</select>
+	
+	<!-- 付款新增页面  预付冲销明细 -->
+	<select id="searchPaymentPaymentMappingByOrderId" resultMap="paymentPaymentMappingMap" parameterType="com.opple.fa.purchase.model.PaymentOrderModel">
+		   select t.*,z.imonth  from t_tybx_voucherpost_child t
+			left join t_tybx_voucherpost z on z.cdocuments = t.cdocuments
+			where   t.bqingzhang ='1'
+			AND t.cdocuments in (${list})
+
+	</select>
+	<!-- 付款新增页面  预付冲销明细 -->
+	<select id="searchPaymentPaymentMappingByCode" resultMap="paymentPaymentMappingMap" >
+		   select t.*,z.imonth  from t_tybx_voucherpost_child t
+			left join t_tybx_voucherpost z on z.cdocuments = t.cdocuments
+			where   t.bqingzhang ='1'
+			AND t.csuppliercode=#{supplierCode}  and t.CCURRENCYCODE = #{currencyCode} and t.cpassdocuments is not null
+
+	</select>
+	<select id="save">
+        insert into TB_FA_PAYMENT_PAYMENT_MAPPING 
+          ( ID,
+        	PAYMENT_ORDER_ID,
+        	CREATE_BY,
+        	CREATE_BY_CODE,
+        	UPDATE_BY,
+        	UPDATE_BY_CODE,
+        	CREATE_DATE,
+        	UPDATE_DATE,
+        	CPASSDOCUMENTS,
+        	PSTNG_DATE,
+        	IYEAR,
+        	COMP_CODE,
+        	IMONTH,
+        	PAY_PRICE,
+        	CACCOUNTCODE,
+        	CSUBJECTCODE,
+        	CSUBJECTNAME,
+        	CSPCODE,
+        	IAMOUNT,
+        	CDEPCODE,
+        	ISCHECKED,
+        	CDOCUMENTSNO
+        	)   
+         values
+          ( seq_payment_payment_mapping.nextval,  
+            #{paymentOrderId},   
+            #{createBy},   
+            #{createDate},   
+            #{updateBy},     
+            #{updateByCode},
+            #{createDate},   
+            #{updateDate}, 
+            #{cpassDocuments},
+            #{pstngDate},
+            #{iyear},
+            #{compCode},
+            #{imonth},
+            #{payPrice},
+            #{caccountCode},   
+            #{csubjectCode},   
+            #{csubjectName},   
+            #{cspCode},   
+            #{iamount}, 
+            #{cdepCode},
+            #{isChecked},
+            #{cdocumentsNo}
+            )
+    </select>
+	<!-- 付款查看页面  预付冲销明细 -->
+    <select id="searchPaymentPaymentMappingById" resultMap="paymentPaymentMappingMap" parameterType="com.opple.fa.purchase.entity.PaymentOrder">
+		SELECT *
+		  FROM TB_FA_PAYMENT_PAYMENT_MAPPING T
+		 WHERE T.PAYMENT_ORDER_ID = #{cdocument}
+	</select>
+	<select id="searchPaymentPaymentMappingForNotPo" resultMap="paymentPaymentMappingMap" parameterType="com.opple.fa.purchase.entity.PaymentOrder">
+		SELECT *
+		  FROM TB_FA_PAYMENT_PAYMENT_MAPPING T
+		 WHERE T.PAYMENT_ORDER_ID = #{cdocument}
+	</select>
+	<delete id="delete" parameterType="com.opple.fa.purchase.entity.PaymentOrder">
+	    DELETE FROM TB_FA_PAYMENT_PAYMENT_MAPPING T WHERE T.PAYMENT_ORDER_ID = #{cdocument}
+	</delete>
+	 <select id="getCount" resultType="long" >
+		SELECT COUNT(*) from TB_FA_PAYMENT_PAYMENT_MAPPING F WHERE F.CPASSDOCUMENTS=#{cpassDocuments} AND F.IYEAR=#{iyear} AND F.COMP_CODE=#{compCode}
+	</select>
+	<select id="getPaymentPaymentMapping" resultMap="paymentPaymentMappingMap">
+		SELECT * from TB_FA_PAYMENT_PAYMENT_MAPPING F WHERE F.CPASSDOCUMENTS=#{cpassDocuments} AND F.IYEAR=#{iyear} AND F.COMP_CODE=#{compCode}
+	</select>
+</mapper>

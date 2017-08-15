@@ -1,0 +1,60 @@
+body
+{
+	font-size:9pt; font-family:Arial; margin:0px; padding:0px;
+}
+td
+{
+	font-size:9pt; font-family:Arial;
+}
+	.onlineList  
+	{
+	 border-left:1px solid #336699;width:100%;border-top:1px solid #336699;z-index:2000;
+	}
+	.onlineList td
+	{
+	 border-right:1px solid #336699;padding:2px;border-bottom:1px solid #336699
+	}
+	.ULBOX
+	{
+	 margin:0px;width:100%;border-bottom:1px solid white;  height:22px;
+	}
+	.ULBOX li
+	{
+	  float:left; margin-left:0px;padding:3px;border-bottom:1px solid #c0c0c0; border-right:1px solid #c0c0c0;width:80px;overflow:hidden;cursor:pointer;
+	}
+	.ULBOX li div
+	{
+	 background:url(../Images/tab-close.gif) no-repeat;width:11px;height:11px;cursor:pointer;float:right;
+	}
+	.ULBOX li span
+	{
+	  float:left;
+	}
+	.ULONFOCUS
+	{
+	  color:black;font-weight:bold;background:white; background:url(../images/im_active_tab.png) repeat-x;
+	}
+	.unINACTION
+	{
+	  background:url(../Images/im_inactive_tab.png) repeat-x;
+	}
+	.bottomBAR
+	{
+	 height:24px; width:100%;z-index:1000
+	}
+	.bottomBAR ul
+	{
+	  text-align:center;list-style-type: none; list-style-image: none; height:22px;
+	}
+	.bottomBAR li
+	{
+	 float:right;list-style-type: none; 
+	}
+	#onlineListDIV
+	{
+		z-index:2000;
+	}
+	#messageBoxDIV
+	{
+		z-index:2001;
+	}

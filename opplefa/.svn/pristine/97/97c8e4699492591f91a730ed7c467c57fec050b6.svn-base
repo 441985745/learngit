@@ -1,0 +1,133 @@
+﻿body
+{
+    font: normal 12px arial, helvetica;
+    background-image: url(../Images/Login/bg_02.jpg);
+}
+
+*
+{
+    font-size: 12px;
+}
+
+a
+{
+    text-decoration: none;
+    color: #90b4d4;
+}
+
+#main
+{
+    margin-top: 30px;
+    width: 974px;
+}
+
+#kong
+{
+    height: 30px;
+}
+
+#top01
+{
+    background-image: url(../Images/Login/login_03.gif);
+    width: 974px;
+    height: 41px;
+    padding-top: 20px;
+    text-align: left;
+}
+
+#top02
+{
+    background-image: url(../Images/Login/login_05.jpg);
+    width: 974px;
+    height: 160px;
+}
+
+#loginbg
+{
+    background-image: url(../Images/Login/login_06.jpg);
+    width: 974px;
+    height: 202px;
+}
+
+#top04
+{
+    background-image: url('../Images/Login/login_07.jpg');
+    width: 974px;
+    height: 168px;
+    text-align: left;
+    vertical-align:bottom;
+}
+
+#top05
+{
+    background-image: url(../Images/Login/login_08.gif);
+    width: 974px;
+    height: 20px;
+    padding-top: 5px;
+}
+
+#deepleft
+{
+    text-align: left;
+    float: left;
+    padding-left: 5px;
+    color: #1c344c;
+}
+
+#deepright
+{
+    text-align: right;
+    padding-right: 10px;
+    color: #2f3c44;
+}
+
+#uid
+{
+    padding-top: 30px;
+}
+
+#pwd
+{
+    padding-top: 15px;
+}
+
+#enter
+{
+    padding-top: 15px;
+}
+
+#loginbg .Ninput
+{
+    border:0;
+    padding-left: 25px;
+    padding-top:5px;
+    font-size: 12px;
+    width: 156px;
+    color: #6e6e6e;
+    height: 22px;
+    background: url(../Images/Login/btn_06.gif) no-repeat;
+}
+
+#loginbg .Pinput
+{
+    border:0;
+    padding-left: 25px;
+    padding-top:5px;
+    font-size: 12px;
+    width: 156px;
+    color: #6e6e6e;
+    height: 22px;
+    background: url(../Images/Login/btn_15.gif) no-repeat;
+}
+
+#loginbg .Vinput
+{
+    padding-left: 5px;
+    padding-top:5px;
+    border:0;
+    font-size: 12px;
+    width: 82px;
+    color: #6e6e6e;
+    height: 22px;
+    background: url(../Images/Login/btn_16.gif) no-repeat;
+}

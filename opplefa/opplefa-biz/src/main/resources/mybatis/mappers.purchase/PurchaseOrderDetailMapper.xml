@@ -1,0 +1,327 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.opple.fa.purchase.dao.PurchaseOrderDetailDAO">
+	<!-- oracle 分页头 -->
+	<sql id="pagination_Head">
+		<![CDATA[select * from ( select row_.*, rownum rownum_ from ( ]]>
+	</sql>
+	<!-- oracle 分页尾 -->
+	<sql id="pagination_Tail">
+		<![CDATA[) row_ where rownum <= #{pager.pageSize}* #{pager.offset} ) where rownum_ >= #{pager.firstResult} + 1]]>
+	</sql>
+	<!-- count * from -->
+	<sql id="count_Start_Head">
+		<![CDATA[select count(*) from ( ]]>
+	</sql>
+	<sql id="count_Start_Tail">
+		<![CDATA[) countObj ]]>
+	</sql>
+	<resultMap id="purchaseOrderDetailMapperMap" type="com.opple.fa.purchase.model.PurchaseOrderDetailModel">
+		<result property="id" column="ID" />
+		<result property="purchaseOrderId" column="PURCHASE_ORDER_ID" />
+		<result property="assetsName" column="ASSETS_NAME" />
+		<result property="applyCount" column="APPLY_COUNT" />
+		<result property="createBy" column="CREATE_BY" />
+		<result property="createDate" column="CREATE_DATE" />
+		<result property="updateBy" column="UPDATE_BY" />
+		<result property="updateDate" column="UPDATE_DATE" />
+		<result property="mergeNumber" column="MERGE_NUMBER" />
+		<result property="applyUser" column="APPLY_USER" />
+		<result property="applyUserCode" column="APPLY_USER_CODE" />
+        <result property="createByCode" column="CREATE_BY_CODE" />
+		<result property="updateByCode" column="UPDATE_BY_CODE" />
+		<result property="applyDetailId" column="APPLY_DETAIL_ID" />
+		<result property="inquiryUnitPrice" column="INQUIRY_UNIT_PRICE" />
+		<result property="purchaseUnitPrice" column="PURCHASE_UNIT_PRICE" />
+		<result property="purchasePrice" column="PURCHASE_PRICE" />
+		<result property="warrantyPeriod" column="WARRANTY_PERIOD" /><!-- 质保周期 -->
+		<result property="currencyCode" column="CURRENCY_CODE" />
+		<result property="exchangeRate" column="EXCHANGE_RATE" />
+		<result property="purchasePriceLocal" column="PURCHASE_PRICE_LOCAL" />
+		<result property="brand" column="BRAND" />
+		<result property="requirementsDate" column="REQUIREMENTS_DATE" />
+		<result property="tax" column="TAX" />
+		<result property="applyOrderId" column="APPLY_ORDER_ID" />
+		<result property="netPrice" column="NET_PRICE" />
+		<result property="paidMoney" column="PAID_MONEY" />
+        <result property="ledgerAccount" column="LEDGER_ACCOUNT" />
+		
+		<result property="specificationParameter" column="SPECIFICATION_PARAMETER" />
+		<result property="functions" column="FUNCTIONS" />
+		<result property="acceptanceCriteria" column="ACCEPTANCE_CRITERIA" />
+		<result property="optionalAccessories" column="OPTIONAL_ACCESSORIES" />
+		<result property="mainAssetCode" column="MAIN_ASSET_CODE" />
+		<result property="secondary" column="SECONDARY" />
+		<result property="supplierName" column="SUPPLIER_NAME" />
+		<result property="supplierCode" column="SUPPLIER_CODE" />
+        <result property="costCenter" column="COST_CENTER" />
+        <result property="costCenterCode" column="COST_CENTER_CODE" />
+        <result property="goodsCount" column="GOODS_COUNT" />
+        <result property="checkCount" column="CHECK_COUNT" />
+        <result property="applyUserForApplyOrder" column="APPLY_USER_FOR_APPLY_ORDER" />
+	
+	</resultMap>
+
+	<resultMap id="purchaseOrderDetailMap" type="com.opple.fa.purchase.entity.PurchaseOrderDetail">
+		<result property="id" column="ID" />
+		<result property="purchaseOrderId" column="PURCHASE_ORDER_ID" />
+		<result property="assetsName" column="ASSETS_NAME" />
+		<result property="applyCount" column="APPLY_COUNT" />
+		<result property="createBy" column="CREATE_BY" />
+		<result property="createDate" column="CREATE_DATE" />
+		<result property="updateBy" column="UPDATE_BY" />
+		<result property="updateDate" column="UPDATE_DATE" />
+		<result property="mergeNumber" column="MERGE_NUMBER" />
+		<result property="goodsCount" column="GOODS_COUNT" />
+		<result property="checkCount" column="CHECK_COUNT" />
+		<result property="applyUser" column="APPLY_USER" />
+		<result property="applyUserCode" column="APPLY_USER_CODE" />
+		<result property="createByCode" column="CREATE_BY_CODE" />
+		<result property="updateByCode" column="UPDATE_BY_CODE" />
+		<result property="applyDetailId" column="APPLY_DETAIL_ID" />
+		<result property="inquiryUnitPrice" column="INQUIRY_UNIT_PRICE" />
+		<result property="purchaseUnitPrice" column="PURCHASE_UNIT_PRICE" />
+		<result property="purchasePrice" column="PURCHASE_PRICE" />
+		<result property="warrantyPeriod" column="WARRANTY_PERIOD" />
+		<result property="currencyCode" column="CURRENCY_CODE" />
+		<result property="exchangeRate" column="EXCHANGE_RATE" />
+		<result property="purchasePriceLocal" column="PURCHASE_PRICE_LOCAL" />
+		<result property="brand" column="BRAND" />
+		<result property="requirementsDate" column="REQUIREMENTS_DATE" />
+		<result property="tax" column="TAX" />
+		<result property="applyOrderId" column="APPLY_ORDER_ID" />
+		<result property="netPrice" column="NET_PRICE" />
+		<result property="paidAdvance" column="PAID_ADVANCE" />
+		<result property="paidCheck" column="PAID_CHECK" />
+		<result property="paidFinal" column="PAID_FINAL" />
+		<result property="paidMoney" column="PAID_MONEY" />
+		<result property="mainAssetCode" column="MAIN_ASSET_CODE" />
+		<result property="secondary" column="SECONDARY" />
+		<result property="ledgerAccount" column="LEDGER_ACCOUNT" />
+		<result property="units" column="UNITS" />
+	</resultMap>
+
+
+	<!-- <select id="searchPurchaseOrderDetailList" resultMap="purchaseOrderDetailMap">
+		<include refid="search_purchase_order_detail" />
+		<if
+			test="purchaseOrderId != null and purchaseOrderId != ''">
+			AND orderDetail_.PURCHASE_ORDER_ID =#{purchaseOrderId} 
+		</if>
+		ORDER BY APPLY_DATE DESC
+	</select>
+
+	
+	<select id="get" resultMap="purchaseOrderDetailMap" parameterType="long">
+		<include refid="search_purchase_order_detail" />
+		<if
+			test="id != null and id != ''">
+			AND orderDetail_.ID =#{id} 
+		</if>
+	</select> -->
+	
+	<insert id="save">
+     INSERT INTO TB_FA_PURCHASE_ORDER_DETAIL 
+       ( ID,
+		PURCHASE_ORDER_ID,
+		ASSETS_NAME,
+		APPLY_COUNT,
+		CREATE_BY,
+		CREATE_DATE,
+		UPDATE_BY,
+		MERGE_NUMBER,
+		GOODS_COUNT,
+		CHECK_COUNT,
+		APPLY_USER,
+		APPLY_USER_CODE,
+		CREATE_BY_CODE,
+		UPDATE_BY_CODE,
+		APPLY_DETAIL_ID,
+		INQUIRY_UNIT_PRICE,
+		PURCHASE_UNIT_PRICE,
+		PURCHASE_PRICE,
+		WARRANTY_PERIOD,
+		CURRENCY_CODE,
+		EXCHANGE_RATE,
+		PURCHASE_PRICE_LOCAL,
+		BRAND,
+		REQUIREMENTS_DATE,
+		TAX,
+		APPLY_ORDER_ID,
+		NET_PRICE,
+        LEDGER_ACCOUNT,
+        MAIN_ASSET_CODE
+        )   
+        VALUES
+      ( seq_purchase_order_detail.nextval,  
+		#{purchaseOrderId},
+		#{assetsName},
+		#{applyCount},
+		#{createBy},
+		#{createDate},
+		#{updateBy},
+		#{mergeNumber},
+		#{goodsCount},
+		#{checkCount},
+		#{applyUser},
+		#{applyUserCode},
+		#{createByCode},
+		#{updateByCode},
+		#{applyDetailId},
+		#{inquiryUnitPrice},
+		#{purchaseUnitPrice},
+		#{purchasePrice},
+		#{warrantyPeriod},
+		#{currencyCode},
+		#{exchangeRate},
+		#{purchasePriceLocal},
+		#{brand},
+		#{requirementsDate},
+		#{tax},
+		#{applyOrderId},
+		#{netPrice}, 
+		#{ledgerAccount}, 
+        #{mainAssetCode})
+    </insert>
+
+	<insert id="saveDeleteBranch" >
+		INSERT INTO TB_FA_PURCHASE_DETAIL_BK
+       ( ID,
+		PURCHASE_ORDER_ID,
+		ASSETS_NAME,
+		APPLY_COUNT,
+		CREATE_BY,
+		CREATE_DATE,
+		UPDATE_BY,
+		MERGE_NUMBER,
+		GOODS_COUNT,
+		CHECK_COUNT,
+		APPLY_USER,
+		APPLY_USER_CODE,
+		CREATE_BY_CODE,
+		UPDATE_BY_CODE,
+		APPLY_DETAIL_ID,
+		INQUIRY_UNIT_PRICE,
+		PURCHASE_UNIT_PRICE,
+		PURCHASE_PRICE,
+		WARRANTY_PERIOD,
+		CURRENCY_CODE,
+		EXCHANGE_RATE,
+		PURCHASE_PRICE_LOCAL,
+		BRAND,
+		REQUIREMENTS_DATE,
+		TAX,
+		APPLY_ORDER_ID,
+		NET_PRICE,
+        LEDGER_ACCOUNT,
+        MAIN_ASSET_CODE,
+		UPDATE_DATE
+        )
+        VALUES
+			( #{id},
+			#{purchaseOrderId},
+			#{assetsName},
+			#{applyCount},
+			#{createBy},
+			#{createDate},
+			#{updateBy},
+			#{mergeNumber},
+			#{goodsCount},
+			#{checkCount},
+			#{applyUser},
+			#{applyUserCode},
+			#{createByCode},
+			#{updateByCode},
+			#{applyDetailId},
+			#{inquiryUnitPrice},
+			#{purchaseUnitPrice},
+			#{purchasePrice},
+			#{warrantyPeriod},
+			#{currencyCode},
+			#{exchangeRate},
+			#{purchasePriceLocal},
+			#{brand},
+			#{requirementsDate},
+			#{tax},
+			#{applyOrderId},
+			#{netPrice},
+			#{ledgerAccount},
+			#{mainAssetCode},
+			sysdate)
+	</insert>
+
+
+
+    <select id="searchPurchaseOrderDetailByOrderId" resultMap="purchaseOrderDetailMapperMap">
+		SELECT
+		TP.ID,TP.PURCHASE_ORDER_ID, TP.APPLY_ORDER_ID,
+		TP.APPLY_DETAIL_ID, TP.MERGE_NUMBER, TP.ASSETS_NAME,
+		TP.APPLY_COUNT, TP.GOODS_COUNT, TP.CHECK_COUNT,
+		TP.INQUIRY_UNIT_PRICE, TP.PURCHASE_UNIT_PRICE, TP.PURCHASE_PRICE,
+		TP.PURCHASE_PRICE_LOCAL, TP.TAX, TP.NET_PRICE,
+		TP.PAID_ADVANCE, TP.PAID_CHECK, TP.PAID_FINAL,
+		TP.PAID_MONEY, TP.BRAND, TP.WARRANTY_PERIOD,
+		TP.REQUIREMENTS_DATE,
+		TP.LEDGER_ACCOUNT, TP.APPLY_USER, TP.APPLY_USER_CODE,
+		TP.CREATE_BY_CODE, TP.CREATE_BY, TP.CREATE_DATE,
+		TP.UPDATE_BY_CODE, TP.UPDATE_BY, TP.UPDATE_DATE,
+		TP.CURRENCY_CODE, TP.EXCHANGE_RATE,
+		TA.UNITS, T.APPLY_USER APPLY_USER_FOR_APPLY_ORDER,
+			TA.SPECIFICATION_PARAMETER, 
+			TA.FUNCTIONS, 
+			TA.ACCEPTANCE_CRITERIA, 
+			TA.OPTIONAL_ACCESSORIES,
+		TP.MAIN_ASSET_CODE,
+		TP.SECONDARY,
+			TA.COST_CENTER,
+			TA.COST_CENTER_CODE
+		FROM BCC.TB_FA_PURCHASE_ORDER_DETAIL TP, BCC.TB_FA_APPLY_ORDER_DETAIL TA,BCC.TB_FA_APPLY_ORDER T
+		WHERE TP.APPLY_DETAIL_ID = TA.ID
+		AND TA.APPLY_ORDER_ID = T.CDOCUMENT
+		<if
+			test="cdocument != null and cdocument != ''">
+			AND TP.PURCHASE_ORDER_ID LIKE '%' || #{cdocument} || '%' 
+		</if>
+	</select>
+
+	<delete id="deletePurchaseOrderDetailByPurchaseId">
+		DELETE FROM TB_FA_PURCHASE_ORDER_DETAIL WHERE PURCHASE_ORDER_ID = #{cdocument}  	
+	</delete>
+	<select id="searchPurchaseOrderDetailById" parameterType="string" resultMap="purchaseOrderDetailMap">
+		SELECT TP.*
+		FROM TB_FA_PURCHASE_ORDER_DETAIL TP
+		WHERE TP.ID=#{id}
+	</select>
+
+	<select id="searchPurchaseOrderDetailByDocument" resultMap="purchaseOrderDetailMap">
+		SELECT TP.*, TA.UNITS
+		FROM TB_FA_PURCHASE_ORDER_DETAIL TP, TB_FA_APPLY_ORDER_DETAIL TA
+		WHERE 1 = 1
+		<if
+				test="purchaseOrder.cdocument != null and purchaseOrder.cdocument != ''">
+			AND TP.PURCHASE_ORDER_ID LIKE '%' || #{purchaseOrder.cdocument} || '%'
+		</if>
+		AND TP.APPLY_DETAIL_ID = TA.ID
+	</select>
+	<select id="searchPurchaseOrderDetailByPid" resultMap="purchaseOrderDetailMap">
+		SELECT TP.*
+		FROM TB_FA_PURCHASE_ORDER_DETAIL TP
+		WHERE  TP.PURCHASE_ORDER_ID = #{purchaseOrder.cdocument}
+	</select>
+	<update id="updateCode">
+		UPDATE TB_FA_PURCHASE_ORDER_DETAIL
+		SET
+			MAIN_ASSET_CODE = #{purchaseOrderDetail.mainAssetCode},
+			SECONDARY = #{purchaseOrderDetail.secondary}
+		where 1 = 1
+        AND ID = #{purchaseOrderDetail.id}
+        AND PURCHASE_ORDER_ID = #{purchaseOrderDetail.purchaseOrderId}
+	</update>
+
+
+
+</mapper>

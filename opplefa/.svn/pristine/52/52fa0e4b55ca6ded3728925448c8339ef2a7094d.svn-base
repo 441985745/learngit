@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.opple.fa.sap.dao.AssetChangeSapDAO">
+	<resultMap id="zrfcAmAssetChangeMap" type="zrfcAmAssetChange">
+		<result property="ipAsset" column="IP_ASSET"/>
+		<result property="subnumber" column="SUBNUMBER"/>
+		<result property="etLog" column="ET_LOG"/>
+		<result property="operateUser" column="OPERATE_USER"/>
+		<result property="operateDate" column="OPERATE_DATE"/>
+	</resultMap>
+
+	<insert id="save" parameterType="zrfcAmAssetChange">
+		insert into TB_FA_SAP_ASSET_CHANGE
+		(
+		IP_ASSET,
+		SUBNUMBER,
+		ET_LOG,
+		OPERATE_USER,
+		OPERATE_DATE
+		)
+		values
+		(
+		#{zrfcAmAssetChange.ipAsset },
+		#{zrfcAmAssetChange.subnumber },
+		#{zrfcAmAssetChange.etLog },
+		#{zrfcAmAssetChange.operateUser },
+		#{zrfcAmAssetChange.operateDate }
+		)
+
+	</insert>
+</mapper>
+

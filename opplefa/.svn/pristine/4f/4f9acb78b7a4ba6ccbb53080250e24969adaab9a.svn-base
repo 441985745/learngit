@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.opple.fa.config.dao.DeptCostCenterDAO">
+    <!-- oracle 分页头 -->
+    <sql id="pagination_Head" >
+        <![CDATA[select * from ( select row_.*, rownum rownum_ from ( ]]>
+    </sql>
+    <!-- oracle 分页尾 -->
+    <sql id="pagination_Tail">
+        <![CDATA[) row_ where rownum <= #{pager.pageSize}* #{pager.offset} ) where rownum_ >= #{pager.firstResult} + 1]]>
+    </sql>
+    <!-- count * from -->
+    <sql id="count_Start_Head">
+        <![CDATA[select count(*) from ( ]]>
+    </sql>
+    <sql id="count_Start_Tail">
+        <![CDATA[) countObj ]]>
+    </sql>
+    <resultMap id="deptCostCenterResultMap" type="com.opple.fa.config.entity.DeptCostCenter">
+        <result property="deptCode" column="CDEPCODE"/>
+        <result property="deptName" column="CDEPNAME"/>
+        <result property="costCenterCode" column="CCOSTCENTERCODE"/>
+        <result property="costCenterName" column="CCOSTCENTERNAME"/>
+        <result property="status" column="CSTATUS"/>
+        <result property="createByCode" column="CUSERCODE"/>
+        <result property="createBy" column="CUSERNAME"/>
+        <result property="createDate" column="DCREATEDATE"/>
+        <result property="updateByCode" column="CLASTUSERCODE"/>
+        <result property="updateBy" column="CLASTUSERNAME"/>
+        <result property="lastDate" column="DLASTDATE"/>
+        <result property="memo" column="CMEMO"/>
+        <result property="companyCode" column="CCOMPANYCODE"/>
+        <result property="companyName" column="CCOMPANYNAME"/>
+    </resultMap>
+
+    <select id="checkCostCenter" resultType="integer" parameterType="string">
+        SELECT count(*) FROM TB_FA_DEPCOSTCENTER WHERE  CCOSTCENTERCODE =  #{costCenterCode}
+    </select>
+    <select id="checkCompanyCode" resultType="integer" parameterType="string">
+        SELECT count(*) FROM TB_FA_DEPCOSTCENTER WHERE  CCOMPANYCODE =  #{companyCode}
+    </select>
+
+    <sql id="search_fragment">
+         SELECT
+            ID,
+            CCOMPANYCODE,
+            CCOMPANYNAME,
+			CDEPCODE,
+			CDEPNAME,
+			CCOSTCENTERCODE,
+			CCOSTCENTERNAME,
+			CUSERNAME,
+			DCREATEDATE,
+			CLASTUSERNAME,
+			DLASTDATE,
+			CUSERCODE,
+			CLASTUSERCODE,
+			CMEMO,
+			CSTATUS
+
+		FROM TB_FA_DEPCOSTCENTER
+		WHERE 1 = 1
+    </sql>
+
+    <sql id="search_fragment_cond">
+        <if test="deptCostCenter.deptCode != null and deptCostCenter.deptCode != ''">
+            AND CDEPCODE LIKE '%' || TRIM(#{deptCostCenter.deptCode })
+            || '%'
+        </if>
+         <if test="deptCostCenter.companyCode != null and deptCostCenter.companyCode != ''">
+            AND CCOMPANYCODE LIKE '%' || TRIM(#{deptCostCenter.companyCode })
+            || '%'
+        </if>
+        <if test="deptCostCenter.companyName != null and deptCostCenter.companyName != ''">
+            AND CCOMPANYNAME LIKE '%' || TRIM(#{deptCostCenter.companyName })
+            || '%'
+        </if>
+        <if test="deptCostCenter.deptName != null and deptCostCenter.deptName != ''">
+            AND CDEPNAME LIKE '%' || TRIM(#{deptCostCenter.deptName }) || '%'
+        </if>
+        <if test="deptCostCenter.costCenterName != null and deptCostCenter.costCenterName != ''">
+            AND CCOSTCENTERNAME LIKE '%' || TRIM(#{deptCostCenter.costCenterName}) ||
+            '%'
+        </if>
+        <if test="deptCostCenter.status != null and deptCostCenter.status != ''">
+            AND CSTATUS = #{deptCostCenter.status}
+        </if>
+        <if test="deptCostCenter.updateBy != null and deptCostCenter.updateBy != ''">
+            AND CLASTUSERNAME LIKE '%' || TRIM(#{deptCostCenter.updateBy}) ||'%'
+        </if>
+        <if
+                test="deptCostCenter.updateDateBegin != null and deptCostCenter.updateDateBegin != ''">
+            AND DLASTDATE <![CDATA[>=]]> to_date(#{deptCostCenter.updateDateBegin},'yyyy/mm/dd')
+        </if>
+        <if
+                test="deptCostCenter.updateDateEnd != null and deptCostCenter.updateDateEnd != ''">
+            AND DLASTDATE <![CDATA[<=]]> to_date(#{deptCostCenter.updateDateEnd},'yyyy/mm/dd')
+        </if>
+        <if
+                test="deptCostCenter.costCenterCode != null and deptCostCenter.costCenterCode != ''">
+            AND (CCOSTCENTERCODE LIKE '%' || TRIM(#{deptCostCenter.costCenterCode}) ||'%' or CCOSTCENTERNAME LIKE '%' || TRIM(#{deptCostCenter.costCenterCode}) ||'%')
+        </if>
+        <if
+                test="deptCostCenter.companyCode != null and deptCostCenter.companyCode != ''">
+            AND CCOMPANYCODE LIKE '%' || TRIM(#{deptCostCenter.companyCode}) ||'%'
+        </if>
+        order by DCREATEDATE desc,CDEPCODE
+    </sql>
+
+    <!-- 查询 -->
+    <select id="get" resultMap="deptCostCenterResultMap">
+        <include refid="search_fragment" />
+        AND CDEPCODE = #{deptCostCenter.deptCode } AND CCOMPANYCODE = #{deptCostCenter.companyCode }
+    </select>
+
+    <!-- 模糊查询、分页 -->
+    <select id="searchList" resultMap="deptCostCenterResultMap">
+        <include refid="pagination_Head" />
+        <include refid="search_fragment" />
+        <include refid="search_fragment_cond" />
+        <include refid="pagination_Tail" />
+    </select>
+    <select id="searchListCount" resultType="long">
+        <include refid="count_Start_Head" />
+        <include refid="search_fragment" />
+        <include refid="search_fragment_cond" />
+        <include refid="count_Start_Tail" />
+    </select>
+
+
+    <select id="getList" resultMap="deptCostCenterResultMap">
+        <include refid="search_fragment" />
+        <include refid="search_fragment_cond" />
+    </select>
+
+
+
+    <insert id="save">
+        INSERT INTO TB_FA_DEPCOSTCENTER
+        (
+        ID,
+        CCOMPANYCODE,
+        CCOMPANYNAME,
+        CDEPCODE,
+        CDEPNAME,
+        CCOSTCENTERCODE,
+        CCOSTCENTERNAME,
+        CMEMO,
+        CSTATUS,
+        CUSERCODE,
+        CUSERNAME,
+        DCREATEDATE,
+        CLASTUSERCODE,
+        CLASTUSERNAME,
+        DLASTDATE
+        )
+        VALUES
+        (
+        SEQ_DEPTCOSTCENTER.NEXTVAL,
+        #{deptCostCenter.companyCode },
+        #{deptCostCenter.companyName },
+        #{deptCostCenter.deptCode },
+        #{deptCostCenter.deptName },
+        #{deptCostCenter.costCenterCode },
+        #{deptCostCenter.costCenterName },
+        #{deptCostCenter.memo },
+        #{deptCostCenter.status },
+        #{deptCostCenter.createByCode },
+        #{deptCostCenter.createBy },
+        sysdate,
+        #{deptCostCenter.updateByCode },
+        #{deptCostCenter.updateBy },
+        SYSDATE
+        )
+    </insert>
+
+    <!-- 批量插入 -->
+    <insert id="saveBatch" >
+        INSERT INTO TB_FA_DEPCOSTCENTER
+        (
+        ID,
+        CCOMPANYCODE,
+        CCOMPANYNAME,
+        CDEPCODE,
+        CDEPNAME,
+        CCOSTCENTERCODE,
+        CCOSTCENTERNAME,
+        CUSERNAME,
+        DCREATEDATE,
+        CLASTUSERNAME,
+        DLASTDATE,
+        CUSERCODE,
+        CLASTUSERCODE,
+        CMEMO,
+        CSTATUS
+        )
+        VALUES
+        <foreach collection="list" item="item" index="index"
+                 separator=",">
+            (
+            SEQ_DEPTCOSTCENTER.NEXTVAL,
+            #{item.companyCode },
+            #{item.companyName },
+            #{item.deptCode },
+            #{item.deptName },
+            #{item.costCenterCode },
+            #{item.costCenterName },
+            #{item.createBy },
+            #{item.createDate },
+            #{item.updateBy },
+            SYSDATE,
+            #{item.createBy },
+            #{item.updateByCode },
+            #{item.memo },
+            #{item.status }
+            )
+        </foreach>
+    </insert>
+
+
+    <!-- 删除-修改状态 -->
+    <update id="delete">
+        UPDATE TB_FA_DEPCOSTCENTER
+        SET
+        CSTATUS = #{deptCostCenter.status },
+        CLASTUSERNAME = #{deptCostCenter.updateBy },
+        CLASTUSERCODE = #{deptCostCenter.updateByCode },
+        DLASTDATE = SYSDATE
+
+        WHERE CDEPCODE = #{deptCostCenter.deptCode } AND CCOMPANYCODE = #{deptCostCenter.companyCode }
+    </update>
+
+    <!-- 修改 -->
+    <update id="update">
+        UPDATE TB_FA_DEPCOSTCENTER
+        SET
+        CCOMPANYCODE = #{deptCostCenter.companyCode},
+        CCOMPANYNAME = #{deptCostCenter.companyName },
+        CDEPCODE = #{deptCostCenter.deptCode },
+        CDEPNAME = #{deptCostCenter.deptName },
+        CCOSTCENTERCODE = #{deptCostCenter.costCenterCode },
+        CCOSTCENTERNAME = #{deptCostCenter.costCenterName },
+        CLASTUSERNAME = #{deptCostCenter.updateBy },
+        DLASTDATE = SYSDATE,
+        CLASTUSERCODE = #{deptCostCenter.updateByCode },
+        CMEMO = #{deptCostCenter.memo },
+        CSTATUS = #{deptCostCenter.status }
+
+        WHERE ID = #{deptCostCenter.id}
+    </update>
+
+    <select id="selectExistCodes" parameterType="java.util.List" resultType="string">
+        SELECT CDEPCODE FROM TB_FA_DEPCOSTCENTER
+        WHERE CDEPCODE IN
+        <foreach collection="deptCodes" item="deptCode" separator="," open="(" close=")">
+            #{deptCode }
+        </foreach>
+    </select>
+
+    <select id="checkDeptCostCenterByEntity" resultType="integer">
+        SELECT count(*) FROM TB_FA_DEPCOSTCENTER
+        WHERE 1 = 1
+        <if test="deptCostCenter.companyCode != null and deptCostCenter.companyCode != ''">
+            AND CCOMPANYCODE = #{deptCostCenter.companyCode}
+        </if>
+        <if test="deptCostCenter.deptCode != null and deptCostCenter.deptCode != ''">
+            AND CDEPCODE = #{deptCostCenter.deptCode}
+        </if>
+    </select>
+
+    <select id="checkExisted" resultType="integer">
+        SELECT COUNT(*) FROM TB_FA_DEPCOSTCENTER
+        WHERE 1 = 1
+        <if test="deptCostCenter.companyCode != null and deptCostCenter.companyCode != ''">
+            AND CCOMPANYCODE = #{deptCostCenter.companyCode}
+        </if>
+        <if test="deptCostCenter.deptCode != null and deptCostCenter.deptCode != ''">
+            AND CDEPCODE = #{deptCostCenter.deptCode}
+        </if>
+        <if test="deptCostCenter.id != null and deptCostCenter.id != ''">
+            AND ID != #{deptCostCenter.id}
+        </if>
+    </select>
+
+</mapper>
+

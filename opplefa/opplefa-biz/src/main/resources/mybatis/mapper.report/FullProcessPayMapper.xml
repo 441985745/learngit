@@ -1,0 +1,450 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.opple.fa.report.dao.FullProcessPayDao" >
+  <!-- oracle 分页头 -->
+  <sql id="pagination_Head">
+    <![CDATA[
+        select * from ( select row_.*, rownum rownum_ from (
+        ]]>
+  </sql>
+  <!-- oracle 分页尾 -->
+  <sql id="pagination_Tail">
+    <![CDATA[
+        ) row_ where rownum <= #{pager.pageSize}* #{pager.offset} ) where rownum_ >= #{pager.firstResult} + 1
+        ]]>
+  </sql>
+  <!-- count * from -->
+  <sql id="count_Start_Head">
+    <![CDATA[
+        select count(*) from (
+        ]]>
+  </sql>
+  <sql id="count_Start_Tail">
+    <![CDATA[
+        ) countObj
+        ]]>
+  </sql>
+  <resultMap id="BaseResultMap" type="com.opple.fa.report.entity.FullProcessPay" >
+    <result column="AOID" property="aoid" jdbcType="VARCHAR" />
+    <result column="COMPANY_NAME" property="companyName" jdbcType="VARCHAR" />
+    <result column="AOAPPLYUSER" property="aoapplyuser" jdbcType="VARCHAR" />
+    <result column="AOAPPLYDATE" property="aoapplydate" jdbcType="TIMESTAMP" />
+    <result column="AO_APPLY_COUNT" property="aoApplyCount" jdbcType="DECIMAL" />
+    <result column="AO_IAMONEY" property="aoIamoney" jdbcType="DECIMAL" />
+    <result column="AO_CAPPROVALSTATE" property="aoCapprovalstate" jdbcType="VARCHAR" />
+    <result column="PURCHASE_ORDER_ID" property="purchaseOrderId" jdbcType="VARCHAR" />
+    <result column="PURCHASE_ORDER_SAP_ID" property="purchaseOrderSapId" jdbcType="VARCHAR" />
+    <result column="SUPPLIER_NAME" property="supplierName" jdbcType="VARCHAR" />
+    <result column="CURRENCY_NAME" property="currencyName" jdbcType="VARCHAR" />
+    <result column="TAX_RATE" property="taxRate" jdbcType="DECIMAL" />
+    <result column="PO_APPLY_USER" property="poApplyUser" jdbcType="VARCHAR" />
+    <result column="PO_APPLY_DATE" property="poApplyDate" jdbcType="TIMESTAMP" />
+    <result column="PO_IAMONEY" property="poIamoney" jdbcType="DECIMAL" />
+    <result column="PO_CAPPROVALSTATE" property="poCapprovalstate" jdbcType="VARCHAR" />
+    <result column="PO_APPLY_COUNT" property="poApplyCount" jdbcType="DECIMAL" />
+    <result column="PAY_ID" property="payId" jdbcType="VARCHAR" />
+    <result column="ADVANCE_PAYMENT" property="advancePayment" jdbcType="CHAR" />
+    <result column="ADVANCE_PAY_COUNT" property="advancePayCount" jdbcType="DECIMAL" />
+    <result column="ADVANCE_PAY_PRICE" property="advancePayPrice" jdbcType="DECIMAL" />
+    <result column="ADVANCE_APPLY_DATE" property="advanceApplyDate" jdbcType="TIMESTAMP" />
+    <result column="ADVANCE_PO_CAPPROVALSTATE" property="advancePoCapprovalstate" jdbcType="VARCHAR" />
+    <result column="ADVANCE_PREPAYMENT" property="advancePrepayment" jdbcType="VARCHAR" />
+    <result column="VIP_PAY_ID" property="vipPayId" jdbcType="VARCHAR" />
+    <result column="INSPECTION_PAYMENT" property="inspectionPayment" jdbcType="CHAR" />
+    <result column="INSPECTION_PAY_COUNT" property="inspectionPayCount" jdbcType="DECIMAL" />
+    <result column="INSPECTION_PAY_PRICE" property="inspectionPayPrice" jdbcType="DECIMAL" />
+    <result column="INSPECTION_APPLY_DATE" property="inspectionApplyDate" jdbcType="TIMESTAMP" />
+    <result column="INSPECTION_PO_CAPPROVALSTATE" property="inspectionPoCapprovalstate" jdbcType="VARCHAR" />
+    <result column="INSPECTION_PREPAYMENT" property="inspectionPrepayment" jdbcType="VARCHAR" />
+    <result column="VFP_PAY_ID" property="vfpPayId" jdbcType="VARCHAR" />
+    <result column="FINAL_PAYMENT" property="finalPayment" jdbcType="CHAR" />
+    <result column="FINAL_PAY_COUNT" property="finalPayCount" jdbcType="DECIMAL" />
+    <result column="FINAL_PAY_PRICE" property="finalPayPrice" jdbcType="DECIMAL" />
+    <result column="FINAL_APPLY_DATE" property="finalApplyDate" jdbcType="TIMESTAMP" />
+    <result column="FINAL_PO_CAPPROVALSTATE" property="finalPoCapprovalstate" jdbcType="VARCHAR" />
+    <result column="FINAL_PREPAYMENT" property="finalPrepayment" jdbcType="VARCHAR" />
+  </resultMap>
+  <insert id="insert" parameterType="com.opple.fa.report.entity.FullProcessPay" >
+    insert into V_FA_ALL_PAY (AOID, AOAPPLYUSER, AOAPPLYDATE, 
+      AO_APPLY_COUNT, AO_IAMONEY, AO_CAPPROVALSTATE, 
+      PURCHASE_ORDER_ID, PURCHASE_ORDER_SAP_ID, SUPPLIER_NAME, 
+      CURRENCY_NAME, TAX_RATE, PO_APPLY_USER, 
+      PO_APPLY_DATE, PO_IAMONEY, PO_CAPPROVALSTATE, 
+      PO_APPLY_COUNT, PAY_ID, ADVANCE_PAYMENT, 
+      ADVANCE_PAY_COUNT, ADVANCE_PAY_PRICE, ADVANCE_APPLY_DATE, 
+      ADVANCE_PO_CAPPROVALSTATE, ADVANCE_PREPAYMENT, 
+      VIP_PAY_ID, INSPECTION_PAYMENT, INSPECTION_PAY_COUNT, 
+      INSPECTION_PAY_PRICE, INSPECTION_APPLY_DATE, 
+      INSPECTION_PO_CAPPROVALSTATE, INSPECTION_PREPAYMENT, 
+      VFP_PAY_ID, FINAL_PAYMENT, FINAL_PAY_COUNT, 
+      FINAL_PAY_PRICE, FINAL_APPLY_DATE, FINAL_PO_CAPPROVALSTATE, 
+      FINAL_PREPAYMENT)
+    values (#{aoid,jdbcType=VARCHAR}, #{aoapplyuser,jdbcType=VARCHAR}, #{aoapplydate,jdbcType=TIMESTAMP}, 
+      #{aoApplyCount,jdbcType=DECIMAL}, #{aoIamoney,jdbcType=DECIMAL}, #{aoCapprovalstate,jdbcType=VARCHAR}, 
+      #{purchaseOrderId,jdbcType=VARCHAR}, #{purchaseOrderSapId,jdbcType=VARCHAR}, #{supplierName,jdbcType=VARCHAR}, 
+      #{currencyName,jdbcType=VARCHAR}, #{taxRate,jdbcType=DECIMAL}, #{poApplyUser,jdbcType=VARCHAR}, 
+      #{poApplyDate,jdbcType=TIMESTAMP}, #{poIamoney,jdbcType=DECIMAL}, #{poCapprovalstate,jdbcType=VARCHAR}, 
+      #{poApplyCount,jdbcType=DECIMAL}, #{payId,jdbcType=VARCHAR}, #{advancePayment,jdbcType=CHAR}, 
+      #{advancePayCount,jdbcType=DECIMAL}, #{advancePayPrice,jdbcType=DECIMAL}, #{advanceApplyDate,jdbcType=TIMESTAMP}, 
+      #{advancePoCapprovalstate,jdbcType=VARCHAR}, #{advancePrepayment,jdbcType=VARCHAR}, 
+      #{vipPayId,jdbcType=VARCHAR}, #{inspectionPayment,jdbcType=CHAR}, #{inspectionPayCount,jdbcType=DECIMAL}, 
+      #{inspectionPayPrice,jdbcType=DECIMAL}, #{inspectionApplyDate,jdbcType=TIMESTAMP}, 
+      #{inspectionPoCapprovalstate,jdbcType=VARCHAR}, #{inspectionPrepayment,jdbcType=VARCHAR}, 
+      #{vfpPayId,jdbcType=VARCHAR}, #{finalPayment,jdbcType=CHAR}, #{finalPayCount,jdbcType=DECIMAL}, 
+      #{finalPayPrice,jdbcType=DECIMAL}, #{finalApplyDate,jdbcType=TIMESTAMP}, #{finalPoCapprovalstate,jdbcType=VARCHAR}, 
+      #{finalPrepayment,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.opple.fa.report.entity.FullProcessPay" >
+    insert into V_FA_ALL_PAY
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="aoid != null" >
+        AOID,
+      </if>
+      <if test="aoapplyuser != null" >
+        AOAPPLYUSER,
+      </if>
+      <if test="aoapplydate != null" >
+        AOAPPLYDATE,
+      </if>
+      <if test="aoApplyCount != null" >
+        AO_APPLY_COUNT,
+      </if>
+      <if test="aoIamoney != null" >
+        AO_IAMONEY,
+      </if>
+      <if test="aoCapprovalstate != null" >
+        AO_CAPPROVALSTATE,
+      </if>
+      <if test="purchaseOrderId != null" >
+        PURCHASE_ORDER_ID,
+      </if>
+      <if test="purchaseOrderSapId != null" >
+        PURCHASE_ORDER_SAP_ID,
+      </if>
+      <if test="supplierName != null" >
+        SUPPLIER_NAME,
+      </if>
+      <if test="currencyName != null" >
+        CURRENCY_NAME,
+      </if>
+      <if test="taxRate != null" >
+        TAX_RATE,
+      </if>
+      <if test="poApplyUser != null" >
+        PO_APPLY_USER,
+      </if>
+      <if test="poApplyDate != null" >
+        PO_APPLY_DATE,
+      </if>
+      <if test="poIamoney != null" >
+        PO_IAMONEY,
+      </if>
+      <if test="poCapprovalstate != null" >
+        PO_CAPPROVALSTATE,
+      </if>
+      <if test="poApplyCount != null" >
+        PO_APPLY_COUNT,
+      </if>
+      <if test="payId != null" >
+        PAY_ID,
+      </if>
+      <if test="advancePayment != null" >
+        ADVANCE_PAYMENT,
+      </if>
+      <if test="advancePayCount != null" >
+        ADVANCE_PAY_COUNT,
+      </if>
+      <if test="advancePayPrice != null" >
+        ADVANCE_PAY_PRICE,
+      </if>
+      <if test="advanceApplyDate != null" >
+        ADVANCE_APPLY_DATE,
+      </if>
+      <if test="advancePoCapprovalstate != null" >
+        ADVANCE_PO_CAPPROVALSTATE,
+      </if>
+      <if test="advancePrepayment != null" >
+        ADVANCE_PREPAYMENT,
+      </if>
+      <if test="vipPayId != null" >
+        VIP_PAY_ID,
+      </if>
+      <if test="inspectionPayment != null" >
+        INSPECTION_PAYMENT,
+      </if>
+      <if test="inspectionPayCount != null" >
+        INSPECTION_PAY_COUNT,
+      </if>
+      <if test="inspectionPayPrice != null" >
+        INSPECTION_PAY_PRICE,
+      </if>
+      <if test="inspectionApplyDate != null" >
+        INSPECTION_APPLY_DATE,
+      </if>
+      <if test="inspectionPoCapprovalstate != null" >
+        INSPECTION_PO_CAPPROVALSTATE,
+      </if>
+      <if test="inspectionPrepayment != null" >
+        INSPECTION_PREPAYMENT,
+      </if>
+      <if test="vfpPayId != null" >
+        VFP_PAY_ID,
+      </if>
+      <if test="finalPayment != null" >
+        FINAL_PAYMENT,
+      </if>
+      <if test="finalPayCount != null" >
+        FINAL_PAY_COUNT,
+      </if>
+      <if test="finalPayPrice != null" >
+        FINAL_PAY_PRICE,
+      </if>
+      <if test="finalApplyDate != null" >
+        FINAL_APPLY_DATE,
+      </if>
+      <if test="finalPoCapprovalstate != null" >
+        FINAL_PO_CAPPROVALSTATE,
+      </if>
+      <if test="finalPrepayment != null" >
+        FINAL_PREPAYMENT,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="aoid != null" >
+        #{aoid,jdbcType=VARCHAR},
+      </if>
+      <if test="aoapplyuser != null" >
+        #{aoapplyuser,jdbcType=VARCHAR},
+      </if>
+      <if test="aoapplydate != null" >
+        #{aoapplydate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="aoApplyCount != null" >
+        #{aoApplyCount,jdbcType=DECIMAL},
+      </if>
+      <if test="aoIamoney != null" >
+        #{aoIamoney,jdbcType=DECIMAL},
+      </if>
+      <if test="aoCapprovalstate != null" >
+        #{aoCapprovalstate,jdbcType=VARCHAR},
+      </if>
+      <if test="purchaseOrderId != null" >
+        #{purchaseOrderId,jdbcType=VARCHAR},
+      </if>
+      <if test="purchaseOrderSapId != null" >
+        #{purchaseOrderSapId,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierName != null" >
+        #{supplierName,jdbcType=VARCHAR},
+      </if>
+      <if test="currencyName != null" >
+        #{currencyName,jdbcType=VARCHAR},
+      </if>
+      <if test="taxRate != null" >
+        #{taxRate,jdbcType=DECIMAL},
+      </if>
+      <if test="poApplyUser != null" >
+        #{poApplyUser,jdbcType=VARCHAR},
+      </if>
+      <if test="poApplyDate != null" >
+        #{poApplyDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="poIamoney != null" >
+        #{poIamoney,jdbcType=DECIMAL},
+      </if>
+      <if test="poCapprovalstate != null" >
+        #{poCapprovalstate,jdbcType=VARCHAR},
+      </if>
+      <if test="poApplyCount != null" >
+        #{poApplyCount,jdbcType=DECIMAL},
+      </if>
+      <if test="payId != null" >
+        #{payId,jdbcType=VARCHAR},
+      </if>
+      <if test="advancePayment != null" >
+        #{advancePayment,jdbcType=CHAR},
+      </if>
+      <if test="advancePayCount != null" >
+        #{advancePayCount,jdbcType=DECIMAL},
+      </if>
+      <if test="advancePayPrice != null" >
+        #{advancePayPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="advanceApplyDate != null" >
+        #{advanceApplyDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="advancePoCapprovalstate != null" >
+        #{advancePoCapprovalstate,jdbcType=VARCHAR},
+      </if>
+      <if test="advancePrepayment != null" >
+        #{advancePrepayment,jdbcType=VARCHAR},
+      </if>
+      <if test="vipPayId != null" >
+        #{vipPayId,jdbcType=VARCHAR},
+      </if>
+      <if test="inspectionPayment != null" >
+        #{inspectionPayment,jdbcType=CHAR},
+      </if>
+      <if test="inspectionPayCount != null" >
+        #{inspectionPayCount,jdbcType=DECIMAL},
+      </if>
+      <if test="inspectionPayPrice != null" >
+        #{inspectionPayPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="inspectionApplyDate != null" >
+        #{inspectionApplyDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="inspectionPoCapprovalstate != null" >
+        #{inspectionPoCapprovalstate,jdbcType=VARCHAR},
+      </if>
+      <if test="inspectionPrepayment != null" >
+        #{inspectionPrepayment,jdbcType=VARCHAR},
+      </if>
+      <if test="vfpPayId != null" >
+        #{vfpPayId,jdbcType=VARCHAR},
+      </if>
+      <if test="finalPayment != null" >
+        #{finalPayment,jdbcType=CHAR},
+      </if>
+      <if test="finalPayCount != null" >
+        #{finalPayCount,jdbcType=DECIMAL},
+      </if>
+      <if test="finalPayPrice != null" >
+        #{finalPayPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="finalApplyDate != null" >
+        #{finalApplyDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="finalPoCapprovalstate != null" >
+        #{finalPoCapprovalstate,jdbcType=VARCHAR},
+      </if>
+      <if test="finalPrepayment != null" >
+        #{finalPrepayment,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+
+  <sql id="search_all_payment" >
+    select * from v_fa_all_pay
+    where 1 = 1
+
+    <if test="fullProcess.aoid != null and fullProcess.aoid != ''">
+      and aoId LIKE '%' || #{fullProcess.aoid} || '%'
+    </if>
+    <if test="fullProcess.purchaseOrderId != null and fullProcess.purchaseOrderId != ''">
+      and PURCHASE_ORDER_ID LIKE '%' || #{fullProcess.purchaseOrderId} || '%'
+    </if>
+    <if test="fullProcess.purchaseOrderSapId != null and fullProcess.purchaseOrderSapId != ''">
+      and PURCHASE_ORDER_SAP_ID LIKE '%' || #{fullProcess.purchaseOrderSapId} || '%'
+    </if>
+    <if test="fullProcess.aoapplyuser != null and fullProcess.aoapplyuser != ''">
+      and AOAPPLYUSER LIKE '%' || #{fullProcess.aoapplyuser} || '%'
+    </if>
+    <if test="fullProcess.startDate != null and fullProcess.startDate != ''">
+      <![CDATA[      and aoapplydate >= to_date(#{fullProcess.startDate}, 'yyyy-mm-dd')  ]]>
+    </if>
+    <if test="fullProcess.endDate != null and fullProcess.endDate != ''">
+      <![CDATA[      and aoapplydate < to_date(#{fullProcess.endDate}, 'yyyy-mm-dd')   ]]>
+    </if>
+    <if test="fullProcess.companyName != null and fullProcess.companyName != ''">
+      and company_name LIKE '%' || #{fullProcess.companyName} || '%'
+    </if>
+    order by aoid desc,purchase_order_id desc,pay_Id desc
+  </sql>
+  <select id="searchAllPayment" resultMap="BaseResultMap">
+    <include refid="pagination_Head"/>
+    <include refid="search_all_payment"/>
+    <include refid="pagination_Tail"/>
+    order by aoid desc,purchase_order_id desc,pay_Id desc
+  </select>
+
+
+  <select id="searchAllPaymentCount" resultType="long">
+    <include refid="count_Start_Head"/>
+    <include refid="search_all_payment"/>
+    <include refid="count_Start_Tail"/>
+  </select>
+
+  <select id="exportAllPayment" resultMap="BaseResultMap">
+    <include refid="search_all_payment"/>
+  </select>
+
+
+
+  <resultMap id="ProcessPayDetailMap" type="com.opple.fa.report.entity.FullProcessPayDetail" >
+    <result column="APPLY_ORDER_ID" property="applyOrderId" jdbcType="VARCHAR" />
+    <result column="company_name" property="companyName" jdbcType="VARCHAR" />
+    <result column="ASSETS_NAME" property="assetsName" jdbcType="VARCHAR" />
+    <result column="APPLY_DETAIL_ID" property="applyDetailId" jdbcType="DECIMAL" />
+    <result column="AO_APPLY_USER" property="aoApplyUser" jdbcType="VARCHAR" />
+    <result column="AO_APPLY_DATE" property="aoApplyDate" jdbcType="TIMESTAMP" />
+    <result column="MAIN_ASSET_CODE" property="mainAssetCode" jdbcType="VARCHAR" />
+    <result column="SECONDARY" property="secondary" jdbcType="VARCHAR" />
+    <result column="APPLY_COUNT" property="applyCount" jdbcType="DECIMAL" />
+    <result column="INQUIRY_UNIT_PRICE" property="inquiryUnitPrice" jdbcType="DECIMAL" />
+    <result column="INQUIRY_PRICE" property="inquiryPrice" jdbcType="DECIMAL" />
+    <result column="APPLY_CAPPROVALSTATE" property="applyCapprovalstate" jdbcType="VARCHAR" />
+    <result column="PURCHASE_ID" property="purchaseId" jdbcType="VARCHAR" />
+    <result column="PURCHASE_ORDER_SAP_ID" property="purchaseOrderSapId" jdbcType="VARCHAR" />
+    <result column="BUYER_NAME" property="buyerName" jdbcType="VARCHAR" />
+    <result column="SUPPLIER_NAME" property="supplierName" jdbcType="VARCHAR" />
+    <result column="CURRENCY_CODE" property="currencyCode" jdbcType="VARCHAR" />
+    <result column="EXCHANGE_RATE" property="exchangeRate" jdbcType="DECIMAL" />
+    <result column="PURCHASE_UNIT_PRICE" property="purchaseUnitPrice" jdbcType="DECIMAL" />
+    <result column="PURCHASE_PRICE" property="purchasePrice" jdbcType="DECIMAL" />
+    <result column="REQUIREMENTS_DATE" property="requirementsDate" jdbcType="TIMESTAMP" />
+    <result column="WARRANTY_PERIOD" property="warrantyPeriod" jdbcType="DECIMAL" />
+    <result column="PURCHASE_COUNT" property="purchaseCount" jdbcType="DECIMAL" />
+    <result column="PURCHASE_CAPPROVALSTATE" property="purchaseCapprovalstate" jdbcType="VARCHAR" />
+    <result column="PAYMENT_ORDER_ID" property="paymentOrderId" jdbcType="VARCHAR" />
+    <result column="PAYMENT_TYPE" property="paymentType" jdbcType="VARCHAR" />
+    <result column="PAY_PRICE" property="payPrice" jdbcType="DECIMAL" />
+    <result column="PAY_CAPPROVALSTATE" property="payCapprovalstate" jdbcType="VARCHAR" />
+    <result column="NEXT_PAYMENT" property="nextPayment" jdbcType="TIMESTAMP" />
+  </resultMap>
+
+  <sql id="search_pay_detail">
+    SELECT t1.company_name,t.*
+    from v_fa_pay_all_detail t left join tb_fa_apply_order t1
+    on t.APPLY_ORDER_ID = t1.cdocument
+      where 1=1
+    <if test="fullProcess.companyName != null and fullProcess.companyName != ''">
+      and company_name LIKE '%' || #{fullProcess.companyName} || '%'
+    </if>
+    <if test="fullProcess.applyOrderId != null and fullProcess.applyOrderId != ''">
+      and APPLY_ORDER_ID LIKE '%' || #{fullProcess.applyOrderId} || '%'
+    </if>
+    <if test="fullProcess.purchaseId != null and fullProcess.purchaseId != ''">
+      and PURCHASE_ID LIKE '%' || #{fullProcess.purchaseId} || '%'
+    </if>
+    <if test="fullProcess.paymentOrderId != null and fullProcess.paymentOrderId != ''">
+      and PAYMENT_ORDER_ID LIKE '%' || #{fullProcess.paymentOrderId} || '%'
+    </if>
+    <if test="fullProcess.aoApplyUser != null and fullProcess.aoApplyUser != ''">
+      and AO_APPLY_USER LIKE '%' || #{fullProcess.aoApplyUser} || '%'
+    </if>
+    <if test="fullProcess.startDate != null and fullProcess.startDate != ''">
+      <![CDATA[      and AO_APPLY_DATE >= to_date(#{fullProcess.startDate}, 'yyyy-mm-dd')  ]]>
+    </if>
+    <if test="fullProcess.endDate != null and fullProcess.endDate != ''">
+      <![CDATA[      and AO_APPLY_DATE < to_date(#{fullProcess.endDate}, 'yyyy-mm-dd')   ]]>
+    </if>
+    order by APPLY_ORDER_ID desc,PURCHASE_ID desc,PAYMENT_ORDER_ID desc,ASSETS_NAME
+  </sql>
+
+  <select id="searchPayDetail" resultMap="ProcessPayDetailMap">
+    <include refid="pagination_Head"/>
+    <include refid="search_pay_detail"/>
+    <include refid="pagination_Tail"/>
+    order by APPLY_ORDER_ID desc,PURCHASE_ID desc,PAYMENT_ORDER_ID desc,ASSETS_NAME
+  </select>
+
+  <select id="searchPayDetailCount" resultType="long">
+    <include refid="count_Start_Head"/>
+    <include refid="search_pay_detail"/>
+    <include refid="count_Start_Tail"/>
+  </select>
+  <select id="exportPayDetail" resultMap="ProcessPayDetailMap">
+    <include refid="search_pay_detail"/>
+  </select>
+</mapper>

@@ -1,0 +1,801 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.opple.fa.purchase.dao.CheckAcceptMappingDAO">
+	<!-- oracle 分页头 -->
+	<sql id="pagination_Head">
+		<![CDATA[select * from ( select row_.*, rownum rownum_ from ( ]]>
+	</sql>
+	<!-- oracle 分页尾 -->
+	<sql id="pagination_Tail">
+		<![CDATA[) row_ where rownum <= #{pager.pageSize}* #{pager.offset} ) where rownum_ >= #{pager.firstResult} + 1]]>
+	</sql>
+	<!-- count * from -->
+	<sql id="count_Start_Head">
+		<![CDATA[select count(*) from ( ]]>
+	</sql>
+	<sql id="count_Start_Tail">
+		<![CDATA[) countObj ]]>
+	</sql>
+
+	<resultMap id="checkAcceptMappingMap" type="com.opple.fa.purchase.entity.CheckAcceptMapping">
+		<result property="id" column="ID" />
+
+		<result property="receiveGoodsId" column="RECEIVE_GOODS_ID" />
+		<result property="receiveGoodsDetailId" column="RECEIVE_GOODS_DETAIL_ID"/>
+		<result property="purchaseId" column="PURCHASE_ID" />
+		<result property="purchaseDetailId" column="PURCHASE_DETAIL_ID"/>
+		<result property="applyDetailId" column="APPLY_DETAIL_ID"/>
+		<result property="demandId" column="DEMAND_ID"/><!-- 需求明细ID -->
+		<result property="applyId" column="APPLY_ORDER_ID"/><!-- 采购申请ID -->
+		<result property="demandDetailId" column="DEMAND_DETAIL_ID"/><!-- 需求明细ID -->
+		<result property="checkAcceptId" column="CHECK_ACCEPT_ID" />
+		<result property="cdocument" column="CDOCUMENT" />
+
+		<result property="goodsCountAll" column="GOODS_COUNT_ALL"/><!-- 收货数量（订单行加和）  -->
+		<result property="checkCountAll" column="CHECK_COUNT_ALL"/><!-- 验收数量（订单行加和） -->
+		<result property="checkDate" column="CHECK_DATE" /><!-- 验收日期-->
+		<result property="checkDateStart" column="CHECK_DATE_START" /><!-- 验收日期-->
+		<result property="checkDateEnd" column="CHECK_DATE_END" /><!-- 验收日期-->
+		<result property="doProcess" column="DO_PROCESS" /><!-- 代办进程（默认为：代办，完成就不现实了）-->
+		<result property="capprovalstate" column="CAPPROVALSTATE" /><!-- 审批状态 -->
+		<result property="draft" column="DRAFT" />
+		<result property="orderStatus" column="ORDER_STATUS" />
+		<result property="buyerName" column="BUYER_NAME" /><!-- 采购员名称（订单行） -->
+		<result property="buyerCode" column="BUYER_CODE" /><!-- 采购员CODE（订单行） -->
+		<result property="supplierCode" column="SUPPLIER_CODE" />
+		<result property="supplierName" column="SUPPLIER_NAME" />
+		<result property="useInfo" column="USE_INFO" /><!-- 使用信息 (直接显示:在用（界面）)-->
+		<result property="useStatus" column="USE_STATUS" /><!-- 使用状态（正在使用，一个字段） -->
+		<result property="receiveDate" column="RECEIVE_DATE"/><!-- 到货日期（实际收货日期） -->
+		<result property="checkCycle" column="CHECK_CYCLE"/><!-- 检定周期 （手填）-->
+		<result property="contractNo" column="CONTRACT_NO" /><!-- 合同号（收货头） -->
+		<result property="depreciation" column="DEPRECIATION" /><!-- 使用年限（申请行里，折旧年限(月) -->
+		<result property="checkActiveDate" column="CHECK_ACTIVE_DATE" /><!-- 核定有效年月（手填） -->
+		<result property="brand" column="BRAND"/><!-- 规格型号(申请表带出) -->
+		<result property="functions" column="FUNCTIONS"/><!-- 规格型号(申请表带出) -->
+		<result property="units" column="UNITS"/><!-- 计量单位（收货的单位，收货是从申请的行） -->
+		<result property="ledgerAccount" column="LEDGER_ACCOUNT"/><!-- 总账科目 （收货行）-->
+		<result property="recWarrantyPeriod" column="REC_WARRANTY_PERIOD"/><!-- 保固期，收货行 -->
+		<result property="enableDate" column="ENABLE_DATE"/><!-- 启用日期(手填)-->
+		<result property="approvalCode" column="APPROVAL_CODE"/><!-- 批准文号(手填)-->
+		
+		<result property="applyDepartment" column="APPLY_DEPARTMENT" /><!-- 申请部门(采购申请的部门)-->
+		<result property="applyDepartmentCode" column="APPLY_DEPARTMENT_CODE" /><!-- 申请部门code(采购申请的部门)-->
+		<result property="budgetDepartmentName" column="BUDGET_DEPARTMENT_NAME" /><!-- 需求部门code(采购申请的预算所属部门)-->
+		<result property="budgetDepartmentCode" column="BUDGET_DEPARTMENT_CODE" /><!-- 需求部门(采购申请的预算所属部门)-->
+		<result property="officeLocation" column="OFFICE_LOCATION" /><!-- 办公地点(采购申请的办公地点)-->
+		
+		<result property="storageLocation" column="STORAGE_LOCATION"/><!-- 存放位置(根据办公地点 获取   办公地点 从申请单头抓取  TB_FA_APPLY_ORDER.OFFICE_LOCATION) -->
+		<result property="goodsCount" column="GOODS_COUNT"/><!-- 收货数量（订单的行）-->
+		<result property="checkCount" column="CHECK_COUNT"/><!-- 验收数量（订单的行）-->
+		<result property="thisCheckCount" column="THIS_CHECK_COUNT"/><!-- 本次验收数量-->
+		<result property="serialNumber" column="SERIAL_NUMBER"/><!-- 序列号(手填) -->
+		<result property="pasteAssetsTag" column="PASTE_ASSETS_TAG"/><!-- 是否有粘贴资产标签(手填) -->
+		<result property="assetsPhoto" column="ASSETS_PHOTO"/><!-- 资产照片(手填) -->
+		<result property="otherCalibrationReport" column="OTHER_CALIBRATION_REPORT"/><!-- 是否有第三方校验报告(手填) -->
+		<result property="ManageapplyDepartmentCode" column="MANAGE_APPLY_DEPARTMENT_CODE" /><!-- 归口管理部门编码(手填)-->
+		<result property="shopType" column="WORK_SHOP_TYPE" /><!-- 车间类型-->
+		<result property="isBuildingContruction" column="BUILDING"/><!-- 是否房屋-->
+		<!-- 资产原值=单价（含税） --><!-- 单价从收货里取 -->
+		<!-- 资产原值*净残值率 = 净残值 -->
+	    <!-- 资产原值 - 净残值 = 资产净值 -->
+		<result property="assetsName" column="ASSETS_NAME"/><!-- 资产名称 -->
+		<result property="assetsType" column="ASSETS_TYPE"/><!-- 资产类型 -->
+		<result property="sapAssetsCode" column="SAP_ASSETS_CODE"/><!-- sap资产编码-->
+		<result property="sapMainAssetCode" column="SAP_MAIN_ASSET_CODE"/><!-- sap主编码(公共表)-->
+		<result property="sapSecAssetCode" column="SAP_SEC_ASSET_CODE"/><!-- sap次编码-->
+		<result property="mmAssetsCode" column="MM_ASSETS_CODE"/><!-- 固定资产(字段编码)MM+sap主编码+sap次级编码  -->
+		<result property="goodsCountDemand" column="GOODS_COUNT_DEMAND"/><!-- 收货的需求数量（对应tb_fa_purchase_apply_mapping.goods_count） -->
+		<result property="checkCountDemand" column="CHECK_COUNT_DEMAND"/><!-- 已验收的需求数量（对应tb_fa_purchase_apply_mapping.CHECK_count） -->
+		<result property="thisCheckCountDemand" column="THIS_CHECK_COUNT_DEMAND"/><!-- 本次验收的需求数量-->
+		<result property="projectCode" column="PROJECT_CODE"/><!-- 项目编码(tb_fa_purchase_apply_mapping) -->
+		<result property="computerCode" column="COMPANY_CODE"/>
+		<result property="computerName" column="COMPANY_NAME"/>
+		<result property="costCenter" column="COST_CENTER"/>
+		<result property="costCenterCode" column="COST_CENTER_CODE"/><!-- 成本中心 -->
+		<result property="loginUserName" column="LOGIN_USER_NAME"/>
+		<result property="loginUserCode" column="LOGIN_USER_CODE"/>
+		<!--<result property="ebeln" column="EBELN"/>
+		<result property="ebelp" column="EBELP"/>-->
+		<result property="purchaseSapNo" column="PURCHASE_SAP_NO"/>
+		<result property="itemNo" column="ITEM_NO"/>
+
+		<result property="cardId" column="CARD_ID"/>
+		<result property="assetDetailId" column="ASSET_DETAIL_ID"/>
+		<result property="attachDepartAdminName" column="ATTACH_DEPART_ADMIN_NAME" />
+		<result property="attachDepartAdminCode" column="ATTACH_DEPART_ADMIN_CODE" />
+		<result property="cnexthandlername" column="CNEXTHANDLERNAME" />
+		<result property="systeManagementCode" column="SYSTE_MANAGEMENT_CODE" />
+		<result property="orderType" column="ORDER_TYPE" />
+		<result property="applyCheckUserName" column="APPLY_CHECK_USER_NAME" />
+		<result property="applyCheckUserCode" column="APPLY_CHECK_USER_CODE" />
+		<result property="epMaterialdocu" column="EP_MATERIALDOCUMENT" /><!-- 物料凭证号(sap收货接口返回值) -->
+		<result property="epMatdocumentyear" column="EP_MATDOCUMENTYEAR" /><!-- 物料凭证年度(sap收货接口返回值) -->
+		<result property="epBelnr" column="E_BELNR" /><!-- 会计凭证号(sap收货接口返回值) -->
+		<result property="isprint" column="ISPRINT" /><!-- 会计凭证号(sap收货接口返回值) -->
+		<result property="checkApplyCode" column="CHECK_APPLY_CODE" /><!-- 验收申请人-->
+
+	</resultMap>
+
+		<!-- 验收主界面 -->
+		 <sql id="search_checkAcceptMapping_fragment">
+			SELECT DISTINCT
+			 V.COMPANY_CODE,
+			 V.COMPANY_NAME,
+			 V.ASSETS_TYPE,
+			 V.PURCHASE_ORDER_SAP_NO PURCHASE_SAP_NO,
+			 V.PURCHASE_ID,
+			 V.RECEIVE_GOODS_ID,
+			 V.CHECK_ACCEPT_ID,
+			 V.GOODS_COUNT_ALL,
+			 V.CHECK_COUNT_ALL,
+			 V.BUYER_CODE,
+			 V.BUYER_NAME,
+			 V.CHECK_APPLY_CODE,
+			 V.SUPPLIER_CODE,
+			 V.SUPPLIER_NAME,
+			 V.RECEIVE_DATE,
+			 V.CHECK_DATE,
+			 V.CAPPROVALSTATE,
+			 V.ORDER_STATUS,
+			 V.DRAFT,
+			 V.STATUS,
+			 T.CNEXTHANDLERNAME,
+			 T.APPLY_CHECK_USER_NAME,
+			 T.EP_MATERIALDOCUMENT ,
+			 T.E_BELNR,
+			 T.EP_MATDOCUMENTYEAR,
+             T.ISPRINT
+			  FROM V_FA_CHECK_ACCEPTANCE1 V
+			 left join tb_fa_check_acceptance T
+			 on V.receive_goods_id = T.receive_goods_id
+
+			 and V.CHECK_ACCEPT_ID = T.Cdocument
+
+
+
+			 WHERE 1 = 1
+			 <!-- 只有申请人和下一步处理人能看到主页面的数据-->
+			 <!--<if test="checkAcceptMapping.loginUserCode != null and checkAcceptMapping.loginUserCode != ''">
+				 and (pc.CHECK_APPLY_CODE=#{checkAcceptMapping.loginUserCode } or ca.cnexthandlercode=#{checkAcceptMapping.loginUserCode})
+			 </if>-->
+
+	 <!-- 	and  V.BUYER_CODE = #{receiveGoodsMapping.loginUserCode } -->
+			 <if
+					 test="checkAcceptMapping.costCenterCode != null and checkAcceptMapping.costCenterCode != ''">
+				 AND T.COST_CENTER_CODE LIKE '%' || #{checkAcceptMapping.costCenterCode} || '%'
+			 </if>
+		<if
+			test="checkAcceptMapping.buyerName != null and checkAcceptMapping.buyerName != ''">
+			AND V.BUYER_NAME LIKE '%' || #{checkAcceptMapping.buyerName} || '%'
+		</if>
+		 <if test="checkAcceptMapping.companyCode != null and checkAcceptMapping.companyCode != ''">
+			 AND V.company_Code= #{checkAcceptMapping.companyCode}
+		 </if>
+		<if
+			test="checkAcceptMapping.purchaseSapNo != null and checkAcceptMapping.purchaseSapNo != ''">
+			AND V.PURCHASE_ORDER_SAP_NO LIKE '%' || #{checkAcceptMapping.purchaseSapNo} || '%'
+		</if>
+		 <if
+				 test="checkAcceptMapping.purchaseId != null and checkAcceptMapping.purchaseId != ''">
+			 AND V.PURCHASE_ID LIKE '%' || #{checkAcceptMapping.purchaseId} || '%'
+		 </if>
+
+			 <!-- 物料凭证号-->
+		 <if
+				 test="checkAcceptMapping.epMaterialdocu != null and checkAcceptMapping.epMaterialdocu != ''">
+			 AND T.EP_MATERIALDOCUMENT LIKE '%' || #{checkAcceptMapping.epMaterialdocu} || '%'
+		 </if>
+
+		 <if
+				 test="checkAcceptMapping.epBelnr != null and checkAcceptMapping.epBelnr != ''">
+			 AND T.E_BELNR LIKE '%' || #{checkAcceptMapping.epBelnr} || '%'
+		 </if>
+		 <if
+				 test="checkAcceptMapping.applyCheckUserName != null and checkAcceptMapping.applyCheckUserName != ''">
+			 AND T.APPLY_CHECK_USER_NAME LIKE '%' || #{checkAcceptMapping.applyCheckUserName} || '%'
+		 </if>
+
+		<if
+			test="checkAcceptMapping.assetsType != null and checkAcceptMapping.assetsType != ''">
+			AND V.ASSETS_TYPE LIKE '%' || #{checkAcceptMapping.assetsType} || '%'
+		</if>
+		<if
+			test="checkAcceptMapping.receiveGoodsId != null and checkAcceptMapping.receiveGoodsId != ''">
+			AND V.RECEIVE_GOODS_ID LIKE '%' || #{checkAcceptMapping.receiveGoodsId} || '%'
+		</if>
+		<if
+			test="checkAcceptMapping.checkAcceptId != null and checkAcceptMapping.checkAcceptId != ''">
+			AND V.CHECK_ACCEPT_ID LIKE '%' || #{checkAcceptMapping.checkAcceptId} || '%'
+		</if>
+		<if
+			test="checkAcceptMapping.supplierName != null and checkAcceptMapping.supplierName != ''">
+			AND V.SUPPLIER_NAME LIKE '%' ||
+			#{checkAcceptMapping.supplierName} || '%'
+		</if>
+		<if
+			test="checkAcceptMapping.capprovalstate != null and checkAcceptMapping.capprovalstate != ''">
+			AND V.CAPPROVALSTATE LIKE '%' ||
+			#{checkAcceptMapping.capprovalstate} || '%'
+		</if>
+			<if
+			test="checkAcceptMapping.status != null and checkAcceptMapping.status != ''">
+			AND  V.STATUS LIKE '%' || #{checkAcceptMapping.status } || '%' 
+		</if>
+		<if
+			test='checkAcceptMapping.doProcess == "Y"'>
+			AND V.CHECK_ACCEPT_ID IS NULL
+		</if>
+		<if
+			test='checkAcceptMapping.doProcess == "N"'>
+			AND V.CHECK_ACCEPT_ID is not NULL
+		</if>
+		<if
+			test="checkAcceptMapping.checkDateStart != null and checkAcceptMapping.checkDateStart != ''">
+		<![CDATA[	AND V.CHECK_DATE >= to_date(#{checkAcceptMapping.checkDateStart},'yyyy/mm/dd')  ]]>
+		</if>
+		<if
+			test="checkAcceptMapping.checkDateEnd != null and checkAcceptMapping.checkDateEnd != ''">
+		<![CDATA[	AND V.CHECK_DATE  <= to_date(#{checkAcceptMapping.checkDateEnd},'yyyy/mm/dd')  ]]>
+		</if>
+		<if test="checkAcceptMapping.sapSecAssetCode !=null and checkAcceptMapping.sapSecAssetCode !=''">
+			AND V.RECEIVE_GOODS_ID in(
+			select pc.receive_goods_id from tb_fa_purchase_common pc
+			where pc.sap_assets_code like '%'||trim(#{checkAcceptMapping.sapSecAssetCode})||'%'
+			)
+		</if>
+		 <if test="checkAcceptMapping.assetsName !=null and checkAcceptMapping.assetsName !=''">
+			 AND V.RECEIVE_GOODS_ID in(
+			 select rgd.receive_goods_id from tb_fa_receive_goods_detail rgd
+			 where rgd.assets_name like '%'||trim(#{checkAcceptMapping.assetsName})||'%'
+			 )
+		 </if>
+			 AND (
+			 V.CHECK_APPLY_CODE = #{checkAcceptMapping.loginUserCode}
+			 OR
+			 EXISTS(SELECT 1 FROM t_Sys_Userrole TR WHERE TR.CROLECODE=#{checkAcceptMapping.assetAdminId}
+			 AND TR.CUSERCODE=#{checkAcceptMapping.loginUserCode} AND tr.cstatus='Y')
+			 )
+			 ORDER BY V.CHECK_ACCEPT_ID DESC ,V.RECEIVE_GOODS_ID DESC ,V.RECEIVE_DATE DESC
+		 </sql>
+	<!--验收单主界面分页查询 -->
+	<select id="searchCheckAcceptMapping" resultMap="checkAcceptMappingMap">
+		<include refid="pagination_Head" />
+		<include refid="search_checkAcceptMapping_fragment" />
+		<include refid="pagination_Tail" />
+		ORDER BY CHECK_ACCEPT_ID DESC ,RECEIVE_GOODS_ID DESC ,RECEIVE_DATE DESC
+	</select>
+	<!--验收单主界面分页查询  -->
+	<select id="searchCheckAcceptMappingCount" resultType="long">
+		<include refid="count_Start_Head" />
+		<include refid="search_checkAcceptMapping_fragment" />
+		<include refid="count_Start_Tail" />
+	</select>
+
+	<!-- 验收主页面list查询已验收-->
+	<sql id="search_checkAcceptMapping_fragment_all">
+		select distinct pc.purchase_order_sap_no PURCHASE_SAP_NO,
+                td.assets_name,
+                td.ep_materialdocument,
+                td.e_belnr,
+                td.purchase_id,
+                t.assets_type,
+                t.cdocument CHECK_ACCEPT_ID,
+				pc1.goods_count GOODS_COUNT_ALL,
+				pc1.check_count CHECK_COUNT_ALL,
+				t.this_check_count THIS_CHECK_COUNT, --本次验收数量
+                t.buyer_name,
+                t.supplier_code,
+                t.supplier_name,
+                t.check_date,
+                t.APPLY_CHECK_USER_NAME,
+                t.APPLY_CHECK_USER_CODE checkApplyCode,
+                t.capprovalstate,
+                t.cnexthandlername,
+                t.isprint,
+                t.status,
+				t.receive_goods_id,
+				t.company_code,
+				t.company_name
+		from tb_fa_check_acceptance t
+		 inner join tb_fa_check_acceptance_detail td
+			on td.check_accept_id = t.cdocument
+		 left join tb_fa_purchase_common pc
+		    on pc.check_accept_id=t.cdocument
+
+		left join	(select A.RECEIVE_GOODS_ID,
+			sum(1) GOODS_COUNT,
+			sum(case when A.Check_Status is null or A.Check_Status = 'N' then 0 else 1 end) CHECK_COUNT
+			from tb_fa_purchase_common A
+			where A.Receive_Status = 'Y'
+			group by A.RECEIVE_GOODS_ID, A.CHECK_APPLY_CODE,A.PURCHASE_ORDER_SAP_NO,A.PURCHASE_ID) pc1
+		on pc1.RECEIVE_GOODS_ID = t.receive_goods_id
+		where 1=1
+		<if
+				test="checkAcceptMapping.costCenterCode != null and checkAcceptMapping.costCenterCode != ''">
+			AND t.cost_Center_Code LIKE '%' || #{checkAcceptMapping.costCenterCode} || '%'
+		</if>
+		<if
+				test="checkAcceptMapping.buyerName != null and checkAcceptMapping.buyerName != ''">
+			AND t.BUYER_NAME LIKE '%' || #{checkAcceptMapping.buyerName} || '%'
+		</if>
+		<if test="checkAcceptMapping.companyCode != null and checkAcceptMapping.companyCode != ''">
+			AND t.company_Code= #{checkAcceptMapping.companyCode}
+		</if>
+		<if
+				test="checkAcceptMapping.purchaseId != null and checkAcceptMapping.purchaseId != ''">
+			AND td.purchase_id LIKE '%' || #{checkAcceptMapping.purchaseId} || '%'
+		</if>
+		<if
+				test="checkAcceptMapping.purchaseSapNo != null and checkAcceptMapping.purchaseSapNo != ''">
+			AND pc.purchase_order_sap_no LIKE '%' || #{checkAcceptMapping.purchaseSapNo} || '%'
+		</if>
+		<!-- 物料凭证号-->
+		<if
+				test="checkAcceptMapping.epMaterialdocu != null and checkAcceptMapping.epMaterialdocu != ''">
+			AND td.EP_MATERIALDOCUMENT LIKE '%' || #{checkAcceptMapping.epMaterialdocu} || '%'
+		</if>
+
+		<if
+				test="checkAcceptMapping.epBelnr != null and checkAcceptMapping.epBelnr != ''">
+			AND td.E_BELNR LIKE '%' || #{checkAcceptMapping.epBelnr} || '%'
+		</if>
+		<if
+				test="checkAcceptMapping.applyCheckUserName != null and checkAcceptMapping.applyCheckUserName != ''">
+			AND T.APPLY_CHECK_USER_NAME LIKE '%' || #{checkAcceptMapping.applyCheckUserName} || '%'
+		</if>
+
+		<if
+				test="checkAcceptMapping.assetsType != null and checkAcceptMapping.assetsType != ''">
+			AND t.ASSETS_TYPE LIKE '%' || #{checkAcceptMapping.assetsType} || '%'
+		</if>
+		<if
+				test="checkAcceptMapping.receiveGoodsId != null and checkAcceptMapping.receiveGoodsId != ''">
+			AND t.RECEIVE_GOODS_ID LIKE '%' || #{checkAcceptMapping.receiveGoodsId} || '%'
+		</if>
+		<if
+				test="checkAcceptMapping.checkAcceptId != null and checkAcceptMapping.checkAcceptId != ''">
+			AND t.cdocument LIKE '%' || #{checkAcceptMapping.checkAcceptId} || '%'
+		</if>
+		<if
+				test="checkAcceptMapping.supplierName != null and checkAcceptMapping.supplierName != ''">
+			AND t.supplier_name LIKE '%' ||
+			#{checkAcceptMapping.supplierName} || '%'
+		</if>
+		<if
+				test="checkAcceptMapping.capprovalstate != null and checkAcceptMapping.capprovalstate != ''">
+			AND t.CAPPROVALSTATE LIKE '%' ||
+			#{checkAcceptMapping.capprovalstate} || '%'
+		</if>
+		<if
+				test="checkAcceptMapping.status != null and checkAcceptMapping.status != ''">
+			AND  t.STATUS LIKE '%' || #{checkAcceptMapping.status } || '%'
+		</if>
+
+		<if
+				test="checkAcceptMapping.checkDateStart != null and checkAcceptMapping.checkDateStart != ''">
+			<![CDATA[	AND t.CHECK_DATE >= to_date(#{checkAcceptMapping.checkDateStart},'yyyy/mm/dd')  ]]>
+		</if>
+		<if
+				test="checkAcceptMapping.checkDateEnd != null and checkAcceptMapping.checkDateEnd != ''">
+			<![CDATA[	AND t.CHECK_DATE  <= to_date(#{checkAcceptMapping.checkDateEnd},'yyyy/mm/dd')  ]]>
+		</if>
+		<if test="checkAcceptMapping.sapSecAssetCode !=null and checkAcceptMapping.sapSecAssetCode !=''">
+			AND t.cdocument in(
+			select cad.check_accept_id from tb_fa_check_acceptance_detail cad
+			where cad.sap_assets_code like '%'||trim(#{checkAcceptMapping.sapSecAssetCode})||'%'
+			)
+		</if>
+		<if test="checkAcceptMapping.assetsName !=null and checkAcceptMapping.assetsName !=''">
+			AND t.cdocument in(
+			select cad.check_accept_id from tb_fa_check_acceptance_detail cad
+			where cad.assets_name like '%'||trim(#{checkAcceptMapping.assetsName})||'%'
+			)
+		</if>
+		AND (pc.CHECK_APPLY_CODE = #{checkAcceptMapping.loginUserCode}
+		OR pc.CHECK_APPLY_CODE IN (SELECT CAUTHORIZERCODE FROM T_APPROVALEMPOWER
+		WHERE CUSERCODE = #{checkAcceptMapping.loginUserCode}
+		AND SYSDATE BETWEEN CBEGINTIME AND CENDTIME AND CSTATUS='Y' AND CAPPROVALEND='Y')
+        or
+		(t.cdocument,#{checkAcceptMapping.loginUserCode} ) in (SELECT A.CBILLCODE,A.CUSERCODE
+			FROM T_WF_BILL_STEP_ALL A
+			WHERE
+			 A.TYPEID = '77078'
+			UNION ALL
+			SELECT C.CBILLCODE,B.CUSERCODE
+			FROM T_APPROVALEMPOWER B
+			INNER JOIN T_WF_BILL_STEP_ALL C
+			ON B.CAUTHORIZERCODE = C.CUSERCODE
+
+			AND C.TYPEID = '77078'
+			WHERE SYSDATE BETWEEN B.CBEGINTIME AND B.CENDTIME
+			AND B.CSTATUS = 'Y'
+			AND B.CAPPROVALEND = 'Y')
+
+		OR
+		EXISTS(SELECT 1 FROM t_Sys_Userrole TR WHERE TR.CROLECODE=#{checkAcceptMapping.assetAdminId}
+		AND TR.CUSERCODE=#{checkAcceptMapping.loginUserCode}  AND tr.cstatus='Y')
+		)
+		ORDER BY t.cdocument DESC
+	</sql>
+	<select id="searchCheckAcceptMappingAll" resultMap="checkAcceptMappingMap">
+		<include refid="pagination_Head" />
+		<include refid="search_checkAcceptMapping_fragment_all" />
+		<include refid="pagination_Tail" />
+		ORDER BY CHECK_ACCEPT_ID DESC
+	</select>
+	<select id="searchCheckAcceptMappingAllCount" resultType="long">
+		<include refid="count_Start_Head" />
+		<include refid="search_checkAcceptMapping_fragment_all" />
+		<include refid="count_Start_Tail" />
+	</select>
+
+
+
+
+
+
+
+
+<select id="exportCheckHaveChecked" resultMap="checkAcceptMappingMap">
+	<include refid="search_checkAcceptMapping_fragment_all" />
+</select>
+
+
+
+	<select id="exportCheck" resultMap="checkAcceptMappingMap">
+		<include refid="search_checkAcceptMapping_fragment" />
+	</select>
+	
+<!--(待选择界面)  验收 头 -->
+	<select id="searchTempReceiveGoodsByReceiveGoodsId" resultMap="checkAcceptMappingMap">
+		SELECT RG.ATTACH_DEPART_ADMIN_CODE,
+		        RG.ATTACH_DEPART_ADMIN_NAME,
+				RG.CDOCUMENT RECEIVE_GOODS_ID,
+			   RG.ASSETS_TYPE
+		  FROM TB_FA_RECEIVE_GOODS RG
+		 WHERE 1 = 1
+		   AND RG.CDOCUMENT  = #{receiveGoodsId }
+	</select>
+	
+<!--(待选择界面)  验收  行 -->
+	<select id="searchTempReceiveGoodsDetailByReceiveGoodsId" resultMap="checkAcceptMappingMap">
+		<!--SELECT RGD.ID RECEIVE_GOODS_DETAIL_ID,
+		       RGD.RECEIVE_GOODS_ID,
+		       RGD.PURCHASE_DETAIL_ID,
+		       RGD.APPLY_DETAIL_ID,
+		       RGD.ASSETS_NAME,
+		       RGD.APPLY_COUNT,
+		       RGD.GOODS_COUNT,
+		       NVL(RGD.CHECK_COUNT, 0) CHECK_COUNT,
+		       RGD.GOODS_COUNT - NVL(RGD.CHECK_COUNT, 0) THIS_CHECK_COUNT
+		  FROM TB_FA_RECEIVE_GOODS_DETAIL RGD
+		 WHERE 1 = 1
+		   AND RGD.RECEIVE_GOODS_ID = #{receiveGoodsId }-->
+		   SELECT RGD.ID RECEIVE_GOODS_DETAIL_ID,
+           RGD.RECEIVE_GOODS_ID,
+           RGD.PURCHASE_DETAIL_ID,
+           RGD.APPLY_DETAIL_ID,
+           RGD.ASSETS_NAME,
+           L.GOODS_COUNT, --已收货数量
+           L.CHECK_COUNT, --已验收数据量
+           L.GOODS_COUNT - L.CHECK_COUNT THIS_CHECK_COUNT, --还可以验收的数量
+           L.CHECK_APPLY_CODE  --验收人
+      FROM TB_FA_RECEIVE_GOODS_DETAIL RGD,
+      (select A.RECEIVE_GOODS_ID,
+              A.RECEIVE_GOODS_DETAIL_ID,
+                	     A.CHECK_APPLY_CODE,
+                       sum(1) GOODS_COUNT,
+                       sum(case when A.Check_Status is null or A.Check_Status = 'N' then 0 else 1 end) CHECK_COUNT
+                  from tb_fa_purchase_common A
+                 where A.Receive_Status = 'Y'
+                 group by A.RECEIVE_GOODS_ID,A.RECEIVE_GOODS_DETAIL_ID,A.CHECK_APPLY_CODE) L
+     WHERE L.RECEIVE_GOODS_ID = RGD.RECEIVE_GOODS_ID
+       AND L.RECEIVE_GOODS_DETAIL_ID = RGD.ID
+       AND RGD.RECEIVE_GOODS_ID = #{receiveGoodsId }
+		AND L.CHECK_APPLY_CODE=#{userCode}
+	</select>
+<!-- (待选择界面) 需求明细 所有的收货待验收的-->
+	<select id="searchAllDemandDetailIdByReceiveGoodsId" resultMap="checkAcceptMappingMap">
+	   <!--SELECT
+		  RCM.RECEIVE_GOODS_ID,
+		   RCM.DEMAND_ID,
+		   RCM.DEMAND_DETAIL_ID,
+		   RCM.PURCHASE_ID,
+		   RCM.PURCHASE_DETAIL_ID,
+		   RCM.APPLY_DETAIL_ID,
+		   RCM.ASSETS_NAME,
+		   RCM.ASSETS_TYPE,
+		   RCM.APPLY_COUNT_DEMAND,
+		   RCM.GOODS_COUNT_DEMAND,
+		   nvl(RCM.CHECK_COUNT_DEMAND,0) CHECK_COUNT_DEMAND,
+		   RCM.GOODS_COUNT_DEMAND - nvl(RCM.CHECK_COUNT_DEMAND,0) THIS_CHECK_COUNT_DEMAND, 
+		   RCM.BRAND,
+		   RCM.FUNCTIONS
+	    FROM 
+	   TB_FA_RECEIVE_CHECK_MAPPING RCM
+	   WHERE 1=1 
+	   AND RCM.RECEIVE_GOODS_ID = #{receiveGoodsId } -->
+		select A.RECEIVE_GOODS_ID,
+		A.DEMAND_ID,
+		A.DEMAND_DETAIL_ID,
+		A.PURCHASE_ID,
+		A.PURCHASE_DETAIL_ID,
+		A.APPLY_DETAIL_ID,
+		A.ASSETS_NAME,
+		A.ASSETS_TYPE,
+		A.DEMAND_COUNT APPLY_COUNT_DEMAND,
+		sum(1) GOODS_COUNT_DEMAND,
+		sum(case when A.Check_Status is null or A.Check_Status = 'N' then 0 else 1 end) CHECK_COUNT_DEMAND,
+		sum(1) - sum(case when A.Check_Status is null or A.Check_Status = 'N' then 0 else 1 end) THIS_CHECK_COUNT_DEMAND,
+		A.BRAND,
+		A.FUNCTIONS
+		from TB_FA_PURCHASE_COMMON A
+		where A.RECEIVE_GOODS_ID = #{receiveGoodsId}
+		and A.RECEIVE_GOODS_DETAIL_ID = #{receiveGoodsDetailId}
+		and A.CHECK_APPLY_CODE = #{userCode}   --验收人
+		group by A.RECEIVE_GOODS_ID,
+		A.DEMAND_ID,
+		A.DEMAND_DETAIL_ID,
+		A.PURCHASE_ID,
+		A.PURCHASE_DETAIL_ID,
+		A.APPLY_DETAIL_ID,
+		A.ASSETS_NAME,
+		A.ASSETS_TYPE,
+		A.Demand_Count,
+		A.BRAND,
+		A.FUNCTIONS
+
+	</select>
+	
+	<!-- 查询 得到验收单的 头 -->
+	<select id="getCheckAcceptanceByReceiveGoodsDetailId" resultMap="checkAcceptMappingMap">
+			SELECT DISTINCT
+			    RG.OFFICE_LOCATION,
+				RG.CDOCUMENT RECEIVE_GOODS_ID,
+		       RGD.ID RECEIVE_GOODS_DETAIL_ID,
+		       RG.PURCHASE_ID,
+		       RGD.APPLY_DETAIL_ID,
+			   RGD.APPLY_COUNT,
+	           RGD.GOODS_COUNT,
+	           nvl(RGD.CHECK_COUNT,0) CHECK_COUNT,
+			   RG.BUYER_CODE,
+		       RG.BUYER_NAME,
+		       RG.SUPPLIER_CODE,
+		       RG.SUPPLIER_NAME,
+		       --RG.ASSETS_TYPE,
+		       RG.CREATE_DATE RECEIVE_DATE, --到货日期(实际收货日期)
+		       RG.CONTRACT_NO,
+		       RG.APPLY_DEPARTMENT_CODE,
+		       RG.APPLY_DEPARTMENT,
+	          --RG.BUDGET_DEPARTMENT_NAME,--可能来自不同需求单，会造成查询出多条记录，导致result超过一条报错
+	          --RG.BUDGET_DEPARTMENT_CODE,
+	            RG.COMPANY_CODE,
+             RG.COMPANY_NAME,
+		       RG.COST_CENTER_CODE,
+          		RG.COST_CENTER,
+		        --L.WARRANTY_PERIOD REC_WARRANTY_PERIOD, --质保期(取的收货单的行 保固期 )
+		      -- PO.LEDGER_ACCOUNT, --总账科目
+		       RGD.BRAND,
+		       AOD.DEPRECIATION, --折旧年限(月)
+		       AOD.UNITS,
+		       PO.ORDER_TYPE, --资产类型（费用化资本化）
+		       --RGD.STORAGE_LOCATION, --存放位置
+		       --AO.OFFICE_LOCATION, --办公地点(根据办公地点 获取   办公地点 从申请单头抓取)
+		       RGD.ASSETS_TYPE
+
+		  FROM TB_FA_RECEIVE_GOODS        RG,
+		       TB_FA_RECEIVE_GOODS_DETAIL RGD,
+		      -- TB_FA_PURCHASE_ORDER_DETAIL L,
+		       TB_FA_APPLY_ORDER_DETAIL   AOD,
+		       --TB_FA_APPLY_ORDER          AO,
+		       tb_fa_purchase_order PO
+		 WHERE 1 = 1
+		   AND PO.CDOCUMENT = RG.purchase_id
+		 --	AND RGD.APPLY_DETAIL_ID = L.APPLY_DETAIL_ID
+		   AND RGD.APPLY_DETAIL_ID = AOD.ID
+		  -- AND AO.CDOCUMENT = AOD.APPLY_ORDER_ID
+		   AND RG.CDOCUMENT  = RGD.RECEIVE_GOODS_ID
+		   AND RG.CDOCUMENT   = #{receiveGoodsId }
+		   AND RGD.ID = #{receiveGoodsDetailId }
+	</select>
+	
+	<!-- 查询 得到验收单的 行 --> 
+	<select id="getCheckAcceptanceDetailByPurchaseDetailId" resultMap="checkAcceptMappingMap">
+		SELECT PC.RECEIVE_GOODS_ID,
+		   PC.PURCHASE_ID,
+		   PC.PURCHASE_DETAIL_ID,
+		   PC.APPLY_DETAIL_ID,
+		   PC.DEMAND_ID,
+		   PC.DEMAND_DETAIL_ID,
+		   PC.ASSETS_NAME,
+		   --PC.ASSETS_TYPE,
+		   PC.SAP_MAIN_ASSET_CODE,
+		   PC.SAP_SEC_ASSET_CODE,
+		   PC.SAP_ASSETS_CODE,
+		   ('MM' || PC.SAP_MAIN_ASSET_CODE || PC.SAP_SEC_ASSET_CODE) MM_ASSETS_CODE, --固定资产(字段编码)MM+sap主编码+sap次级编码
+		   PC.BRAND,
+		   PC.DEMAND_ID,
+		   PC.FUNCTIONS,
+		   PC.RECEIVE_STATUS,
+		   PC.Card_ID,
+		   RGD.ASSETS_TYPE,
+		   -- RGD.REC_WARRANTY_PERIOD,--保修周期
+		   PC.REC_WARRANTY_PERIOD, --保修周期
+		   PC.STORAGE_LOCATION, --存放位置
+		   AOD.APPLY_ORDER_ID,
+		   GA.ASSET_DETAIL_ID,
+		   GA.syste_management_code, --用来作为上传图片的document
+		   AO.BUILDING, --是否房屋
+		   AO.WORK_SHOP_TYPE --车间类型
+			  FROM TB_FA_PURCHASE_COMMON PC
+			  LEFT JOIN TB_FA_RECEIVE_GOODS_DETAIL RGD
+				ON PC.RECEIVE_GOODS_ID = RGD.RECEIVE_GOODS_ID
+			   AND PC.RECEIVE_GOODS_DETAIL_ID=RGD.ID
+			   --AND PC.PURCHASE_DETAIL_ID = RGD.PURCHASE_DETAIL_ID
+			  LEFT JOIN TB_FA_APPLY_ORDER_DETAIL AOD
+				ON PC.APPLY_DETAIL_ID = AOD.id
+			  left join TB_FA_APPLY_ORDER AO
+				on AOD.APPLY_ORDER_ID = AO.CDOCUMENT --为了获取是否房屋建筑,车间类型
+			  Left join (select id, ASSET_DETAIL_ID, SYSTE_MANAGEMENT_CODE
+						   from TB_FA_GENERAL_ASSET) GA
+				on ga.id = PC.Card_ID
+			 WHERE 1 = 1
+			   AND PC.RECEIVE_STATUS = 'Y'
+			   AND PC.CHECK_ACCEPT_ID is null
+			   AND PC.RECEIVE_GOODS_ID = #{receiveGoodsId}
+			   AND PC.Apply_Detail_Id = #{applyDetailId}
+			   AND AOD.APPLY_ORDER_ID IS NOT NULL
+			   order by PC.SAP_ASSETS_CODE
+
+	</select>
+	
+<!--(验收单 保存)   回写收货验收映射表tb_fa_receive_check_mapping.check_count_demand -->
+	<update id="updateReceiveCheckMappingByDemandDetailId">
+	UPDATE TB_FA_RECEIVE_CHECK_MAPPING RCM
+	   SET RCM.CHECK_COUNT_DEMAND = nvl(RCM.CHECK_COUNT_DEMAND,0)+ #{thisCheckCountDemand }
+	 WHERE 1 = 1
+	   AND RCM.RECEIVE_GOODS_ID =#{receiveGoodsId }
+	   AND RCM.DEMAND_DETAIL_ID =#{demandDetailId }
+	</update>
+<!--(验收单 修改)   回写收货验收映射表tb_fa_receive_check_mapping.check_count_demand -->
+	<update id="updateReceiveCheckMappingByDemandDetailIdChange">
+	UPDATE TB_FA_RECEIVE_CHECK_MAPPING RCM
+	   SET RCM.CHECK_COUNT_DEMAND = #{checkCountDemand }
+	 WHERE 1 = 1
+	   AND RCM.RECEIVE_GOODS_ID =#{receiveGoodsId }
+	   AND RCM.DEMAND_DETAIL_ID =#{demandDetailId }
+	   AND RCM.APPLY_DETAIL_ID = #{applyDetailId}	   
+	</update>
+	
+<!-- (验收单 保存) 回写收货行已经收货数量( tb_fa_receive_goods_detail.check_count) -->
+	<update id="updateReceiveGoodsDetailByReceiveGoodsDetailId">
+	UPDATE TB_FA_RECEIVE_GOODS_DETAIL RGD
+	   SET RGD.CHECK_COUNT = NVL(RGD.CHECK_COUNT,0) + #{thisCheckCount}
+	 WHERE 1 = 1
+	   AND RGD.RECEIVE_GOODS_ID =#{receiveGoodsId}
+	   AND RGD.ID =#{receiveGoodsDetailId}
+	</update>
+<!-- (验收单 修改) 回写收货行已经收货数量( tb_fa_receive_goods_detail.check_count) -->
+	<update id="updateReceiveGoodsDetailByReceiveGoodsDetailIdChange">
+	UPDATE TB_FA_RECEIVE_GOODS_DETAIL RGD
+	   SET RGD.CHECK_COUNT = #{checkCount}
+	 WHERE 1 = 1
+	   AND RGD.RECEIVE_GOODS_ID =#{receiveGoodsId}
+	   AND RGD.ID =#{receiveGoodsDetailId}
+	</update>
+	<!-- (验收单 修改) 待验收的需求明细 -->
+	<select id="searchAllDemandDetailIdByCheckAcceptId" resultMap="checkAcceptMappingMap">
+		   SELECT RCM.RECEIVE_GOODS_ID,
+		    		M.CHECK_ACCEPT_ID,
+		          RCM.DEMAND_ID,
+		          RCM.DEMAND_DETAIL_ID,
+		          RCM.PURCHASE_ID,
+		          RCM.PURCHASE_DETAIL_ID,
+		          RCM.APPLY_DETAIL_ID,
+		          RCM.ASSETS_NAME,
+		          RCM.ASSETS_TYPE,
+		          RCM.APPLY_COUNT_DEMAND,
+		          RCM.GOODS_COUNT_DEMAND,
+		          NVL(RCM.CHECK_COUNT_DEMAND, 0) CHECK_COUNT_DEMAND,
+		          RCM.BRAND,
+		          RCM.FUNCTIONS
+		     FROM TB_FA_RECEIVE_CHECK_MAPPING RCM,
+		          (SELECT DISTINCT CAD.CHECK_ACCEPT_ID,
+		                           CAD.RECEIVE_GOODS_ID,
+		                           CAD.APPLY_DETAIL_ID,
+		                           CAD.DEMAND_DETAIL_ID
+		             FROM TB_FA_CHECK_ACCEPTANCE_DETAIL CAD) M
+		    WHERE 1 = 1
+		      AND M.RECEIVE_GOODS_ID = RCM.RECEIVE_GOODS_ID
+		      AND M.DEMAND_DETAIL_ID = RCM.DEMAND_DETAIL_ID
+		      AND M.APPLY_DETAIL_ID = RCM.APPLY_DETAIL_ID
+		      AND M.CHECK_ACCEPT_ID = #{checkAcceptId}
+	</select>
+	<!-- (验收单 修改) 查询 得到验收单的 行 -->
+	<select id="getCheckAcceptanceDetailByCheckAcceptId" resultMap="checkAcceptMappingMap">
+       	  SELECT 
+       	  		DISTINCT
+       	  		 PC.RECEIVE_GOODS_ID,
+       	  		  M.CHECK_ACCEPT_ID,
+       	  		  M.CARD_ID,
+		         PC.PURCHASE_ID,
+		         PC.PURCHASE_DETAIL_ID,
+		         PC.APPLY_DETAIL_ID,
+		         PC.DEMAND_ID,
+		         PC.DEMAND_DETAIL_ID,
+		         PC.ASSETS_NAME,
+		         PC.ASSETS_TYPE,
+		         PC.SAP_MAIN_ASSET_CODE,
+		         PC.SAP_SEC_ASSET_CODE,
+		         PC.SAP_ASSETS_CODE,
+		         ('MM' || PC.SAP_MAIN_ASSET_CODE || PC.SAP_SEC_ASSET_CODE) MM_ASSETS_CODE, --固定资产(字段编码)MM+SAP主编码+SAP次级编码
+		         PC.BRAND,
+		         PC.DEMAND_ID,
+		         PC.FUNCTIONS,
+		         PC.RECEIVE_STATUS
+		    FROM TB_FA_PURCHASE_COMMON PC,
+		         (SELECT CAD.CHECK_ACCEPT_ID,
+		                 CAD.RECEIVE_GOODS_ID,
+		                 CAD.APPLY_DETAIL_ID,
+		                 CAD.DEMAND_DETAIL_ID,
+		                 CAD.MM_ASSETS_CODE,
+		                 CAD.CARD_ID
+		            FROM TB_FA_CHECK_ACCEPTANCE_DETAIL CAD         
+		          ) M
+		   WHERE 1 = 1
+		   
+		     AND M.APPLY_DETAIL_ID = PC.APPLY_DETAIL_ID
+		     AND M.RECEIVE_GOODS_ID = PC.RECEIVE_GOODS_ID
+		     AND M.DEMAND_DETAIL_ID = PC.DEMAND_DETAIL_ID
+		     AND M.CHECK_ACCEPT_ID = #{checkAcceptId}
+		    ORDER BY    ('MM' || PC.SAP_MAIN_ASSET_CODE || PC.SAP_SEC_ASSET_CODE)
+	</select>
+	<!--   AND M.MM_ASSETS_CODE =  ('MM' || PC.SAP_MAIN_ASSET_CODE || PC.SAP_SEC_ASSET_CODE)
+	 select  t.ebeln,t.ebelp,t.purchase_id from tb_fa_sap_purchase_order t where 1=1 and t.purchase_id = #{purchaseId}-->
+	<select id="getEbeln" resultMap="checkAcceptMappingMap">
+
+	  select t.Purchase_Order_Sap_No PURCHASE_SAP_NO,t.ITEM_NO,t.purchase_id from TB_FA_PURCHASE_COMMON t
+		where t.purchase_id = #{purchaseId}
+	</select>
+	<select id="getEbelnOnly" resultMap="checkAcceptMappingMap">
+
+		 select t.Purchase_Order_Sap_No PURCHASE_SAP_NO,t.ITEM_NO from TB_FA_PURCHASE_COMMON t
+		where 1=1
+		and t.COMPany_CODE = #{companyCode}
+		and t.sap_sec_asset_code = #{sapSecAssetCode}
+		and t.sap_main_asset_code =  #{sapMainAssetCode}
+		and t.purchase_id = #{purchaseId}
+	</select>
+	<!-- and ASSET_NO = #{sapMainAssetCode}
+		and SUB_NUMBER = #{sapSecAssetCode}-->
+	<select id="searchDeptCode" parameterType="string" resultType="string">
+		select  t1.cdepcode  from t_employee t1
+		where t1.cemployeecode=#{attachDepartManagerCode}
+		 AND ROWNUM <![CDATA[<=]]> 1
+	</select>
+	<select id="getCountCheckAcceptanceByReceiveGoodsId" resultType="long">
+		select count(*) from TB_FA_CHECK_ACCEPTANCE where receive_goods_id=#{receiveGoodsId}
+	</select>
+
+	<select id="getCheckAcceptMapping" resultMap="checkAcceptMappingMap">
+		select -count(*) THIS_CHECK_COUNT_DEMAND,t.RECEIVE_GOODS_ID,t.DEMAND_DETAIL_ID ,t.PURCHASE_ID,t.APPLY_DETAIL_ID
+		from  tb_fa_check_acceptance_detail t
+		 where t.check_accept_id=#{acceptId}
+		 group by t.RECEIVE_GOODS_ID,t.DEMAND_DETAIL_ID, t.PURCHASE_ID,
+          t.APPLY_DETAIL_ID
+	</select>
+
+	<update id="updateReceiveOrderStatus" parameterType="string">
+		update tb_fa_receive_goods A
+        set A.ORDER_STATUS = '1'
+        where A.Cdocument = #{receiveGoodsId}
+        and not exists (select 1
+        from tb_fa_receive_goods_detail B
+        where B.RECEIVE_GOODS_ID = A.CDOCUMENT and nvl(B.GOODS_COUNT,0) != nvl(B.CHECK_COUNT,0))
+	</update>
+</mapper>	

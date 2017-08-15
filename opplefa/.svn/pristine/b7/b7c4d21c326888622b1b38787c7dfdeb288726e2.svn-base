@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.opple.fa.purchase.dao.PurchaseCommonLoggerDAO">
+
+    <!-- oracle 分页头 -->
+    <sql id="pagination_Head" >
+        <![CDATA[select * from ( select row_.*, rownum rownum_ from ( ]]>
+    </sql>
+    <!-- oracle 分页尾 -->
+    <sql id="pagination_Tail">
+        <![CDATA[) row_ where rownum <= #{pager.pageSize}* #{pager.offset} ) where rownum_ >= #{pager.firstResult} + 1]]>
+    </sql>
+    <!-- count * from -->
+	<sql id="count_Start_Head">
+		<![CDATA[select count(*) from ( ]]>
+	</sql>
+	<sql id="count_Start_Tail">
+		<![CDATA[) countObj ]]>
+	</sql>
+	<resultMap id="purchaseCommonLoggerMap" type="com.opple.fa.purchase.entity.PurchaseCommonLogger">
+		<result property="userCode" column="USER_CODE"/>
+		<result property="createDate" column="CREATE_DATE"/>
+		<result property="document" column="CDOCUMENT"/>
+		<result property="logger" column="LOGGER"/>
+		<result property="remark" column="REMARK"/>
+	</resultMap>
+	<insert id="savePurchaseCommLogger" parameterType="com.opple.fa.purchase.entity.PurchaseCommonLogger">
+		insert into TB_FA_PURCHASE_COMMON_LOGGER 
+		(
+			USER_CODE,
+			CDOCUMENT,
+			LOGGER,
+			REMARK
+		)VALUES(
+			#{userCode},
+			#{document},
+			#{logger},
+			#{remark}
+		)
+	</insert>
+</mapper>
+

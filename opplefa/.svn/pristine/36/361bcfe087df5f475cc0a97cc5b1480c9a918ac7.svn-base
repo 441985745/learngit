@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.opple.fa.sap.dao.ReceiveGoodsISapDAO">
+	<resultMap id="receiveGoodsIModelMap" type="receiveGoodsI"><!-- -->
+		<result property="fId" column="F_ID" />					<!--外键 -->
+		<result property="material" column="MATERIAL" />					<!--物料号 -->
+		<result property="plant" column="PLANT" />	<!--工厂 -->
+		<result property="stgeLoc" column="STGE_LOC" />	<!--库存地点 -->
+		<result property="batch" column="BATCH" />    <!--批号 -->
+		<result property="moveType" column="MOVE_TYPE" />    <!--移动类型(库存管理) -->
+		<result property="stckType" column="MB_INSMK" />    <!--库存类型 -->
+		<result property="entryQnt" column="ERFMG" />					<!--条目单位的数量 -->
+		<result property="entryUom" column="ERFME" />					<!--条目单位 -->
+		<result property="costcenter" column="KOSTL" />    <!--成本中心 -->
+		<result property="moveReas" column="MB_GRBEW" />    <!--移动原因 -->
+		<result property="itemText" column="SGTXT" />    <!--项目文本 -->
+		<result property="grRcpt" column="WEMPF" />    <!--收货者 -->
+		<result property="poNumber" column="BSTNR" />    <!--采购订单号 -->
+		<result property="poItem" column="EBELP" />    <!--采购凭证的项目编号 -->
+		<result property="mvtInd" column="KZBEW" />					<!--移动标识 -->
+		<result property="orderid" column="AUFNR" />					<!--订单号 -->
+		<result property="glAccount" column="SAKNR" />					<!--总帐科目编号 -->
+		<result property="profitCtr" column="PRCTR" />    <!--利润中心 -->
+		<result property="epMaterialdocument" column="EP_MATERIALDOCUMENT" />   					<!--物料凭证号 -->
+		<result property="eBelnr" column="E_BELNR" />   					<!--会计凭证号 -->
+		<result property="epMatdocumentyear" column="EP_MATDOCUMENTYEAR" />   					<!--年度 -->
+
+	</resultMap>
+
+	<insert id="save" >
+		
+		insert into TB_FA_SAP_RECEIVEGOODS_I
+		(
+		F_ID,
+		MATERIAL,
+		PLANT,
+		STGE_LOC,
+		BATCH,
+		MOVE_TYPE,
+		MB_INSMK,
+		ERFMG,
+		ERFME,
+		KOSTL,
+		MB_GRBEW,
+		SGTXT,
+		WEMPF,
+		BSTNR,
+		EBELP,
+		KZBEW,
+		AUFNR,
+		SAKNR,
+		PRCTR
+		)
+		values
+		(
+		#{fId },
+		#{material },
+		#{plant },
+		#{stgeLoc },
+		#{batch },
+		#{moveType },
+		#{stckType },
+		#{entryQnt },
+		#{entryUom },
+		#{costcenter },
+		#{moveReas },
+		#{itemText },
+		#{grRcpt },
+		#{poNumber },
+		#{poItem },
+		#{mvtInd },
+		#{orderid },
+		#{glAccount },
+		#{profitCtr }
+
+		)
+
+	</insert>
+	
+</mapper>
+

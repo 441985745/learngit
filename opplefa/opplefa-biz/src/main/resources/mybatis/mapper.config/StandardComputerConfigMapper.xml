@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.opple.fa.config.dao.StandardComputerConfigDAO">
+      
+		<!-- oracle 分页头 -->
+	<sql id="pagination_Head">
+        <![CDATA[select * from ( select row_.*, rownum rownum_ from ( ]]>
+	</sql>
+	<!-- oracle 分页尾 -->
+	<sql id="pagination_Tail">
+        <![CDATA[) row_ where rownum <= #{pager.pageSize}* #{pager.offset} ) where rownum_ >= #{pager.firstResult} + 1]]>
+	</sql>
+	<!-- count * from -->
+	<sql id="count_Start_Head">
+		<![CDATA[select count(*) from ( ]]>
+	</sql>
+	<sql id="count_Start_Tail">
+		<![CDATA[) countObj ]]>
+	</sql>
+
+	<resultMap id="standCompConfResultMap" type="standardComputerConfig">
+		<result property="assetsCode" column="ASSETS_CODE" />	<!--资产编码 -->
+		<result property="assetsName" column="ASSETS_NAME" />	<!--资产名称 -->
+		<result property="specificationParameter" column="SPECIFICATION_PARAMETER" />	<!--规格参数 -->
+		<result property="createBy" column="CREATE_BY" />	<!--创建人 -->
+		<result property="createByCode" column="CREATE_BY_CODE" />	<!--创建人编码 -->
+		<result property="createDate" column="CREATE_DATE" />	<!--创建时间 -->
+		<result property="updateBy" column="UPDATE_BY" />	<!--最后更新人 -->
+		<result property="updateByCode" column="UPDATE_BY_CODE" />	<!--最后更新人编码 -->
+		<result property="updateDate" column="UPDATE_DATE" />	<!--更新时间 -->
+		<result property="cmemo" column="CMEMO" />	<!--备注 -->
+		<result property="status" column="STATUS" />	<!--数据状态-->
+
+	</resultMap>
+
+	<sql id="search_fragment">
+        SELECT 
+			ASSETS_CODE,
+			ASSETS_NAME,
+			SPECIFICATION_PARAMETER,
+			CREATE_BY,
+			CREATE_BY_CODE,
+			UPDATE_BY,
+			UPDATE_BY_CODE,
+			CMEMO,
+			STATUS,
+			CREATE_DATE,
+			UPDATE_DATE
+	  	 FROM TB_FA_STANDARD_COMPUTER_CONFIG 
+	 	 WHERE 1=1
+          
+	</sql>
+	
+	<sql id="search_fragment_cond">
+		<if
+			test="standardComputerConfig.assetsCode != null and  standardComputerConfig.assetsCode != ''">
+			AND ASSETS_CODE LIKE '%' || TRIM(#{standardComputerConfig.assetsCode }) || '%'
+		</if>
+		<if
+			test="standardComputerConfig.assetsName != null and  standardComputerConfig.assetsName != ''">
+			AND ASSETS_NAME LIKE '%' || TRIM(#{standardComputerConfig.assetsName }) || '%'
+		</if>
+		<if
+			test="standardComputerConfig.specificationParameter != null and  standardComputerConfig.specificationParameter != ''">
+			AND SPECIFICATION_PARAMETER LIKE '%' ||
+			TRIM(#{standardComputerConfig.specificationParameter}) || '%'
+		</if>
+		<if test="standardComputerConfig.status != null and  standardComputerConfig.status != ''">
+			AND STATUS = #{standardComputerConfig.status} 
+		</if>
+		<if test="standardComputerConfig.updateBy != null and  standardComputerConfig.updateBy != ''">
+			AND UPDATE_BY LIKE '%' || TRIM(#{standardComputerConfig.updateBy}) || '%'
+		</if>
+		<if
+			test="standardComputerConfig.updateDateBegin != null and  standardComputerConfig.updateDateBegin != ''">
+			AND UPDATE_DATE >= to_date(#{standardComputerConfig.updateDateBegin},'yyyy/mm/dd')
+		</if>
+		<if
+			test="standardComputerConfig.updateDateEnd != null and  standardComputerConfig.updateDateEnd != ''">
+			 AND UPDATE_DATE <![CDATA[<= ]]>to_date(#{standardComputerConfig.updateDateEnd},'yyyy/mm/dd')
+		</if>
+	</sql>
+
+	<insert id="save">
+		INSERT INTO TB_FA_STANDARD_COMPUTER_CONFIG
+		(
+		ASSETS_CODE,
+		ASSETS_NAME,
+		SPECIFICATION_PARAMETER,
+		CREATE_BY,
+		CREATE_BY_CODE,
+		UPDATE_BY,
+		UPDATE_BY_CODE,
+		CMEMO,
+		STATUS,
+		CREATE_DATE,
+		UPDATE_DATE
+		)
+		VALUES
+		(
+		#{standardComputerConfig.assetsCode },
+		#{standardComputerConfig.assetsName },
+		#{standardComputerConfig.specificationParameter },
+		#{standardComputerConfig.createBy },
+		#{standardComputerConfig.createByCode },
+		#{standardComputerConfig.createBy },
+		#{standardComputerConfig.createByCode },
+		#{standardComputerConfig.cmemo },
+		#{standardComputerConfig.status },
+		SYSDATE,
+		SYSDATE
+		)
+	</insert>
+	
+		<!-- 批量插入 -->
+	<insert id="saveBatch" >
+	  	INSERT INTO TB_FA_STANDARD_COMPUTER_CONFIG
+		(
+		ASSETS_NAME,
+		SPECIFICATION_PARAMETER,
+		ASSETS_CODE,
+		CREATE_BY,
+		CREATE_BY_CODE,
+		UPDATE_BY,
+		UPDATE_BY_CODE,
+		CMEMO,
+		STATUS,
+		CREATE_DATE,
+		UPDATE_DATE
+		)
+		VALUES
+		 <foreach collection="list" item="item" index="index"  
+	        separator=",">
+	        	(
+				#{item.assetsName },
+				#{item.specificationParameter },
+				#{item.assetsCode },
+				#{item.createBy },
+				#{item.createByCode },
+				#{item.createBy },
+				#{item.createByCode },
+				#{item.cmemo },
+				#{item.status },
+				SYSDATE,
+				SYSDATE
+				)
+	      </foreach>
+  	</insert>
+    
+	<!-- 修改是否可用状态 -->
+	<delete id="delete">
+		UPDATE TB_FA_STANDARD_COMPUTER_CONFIG
+		SET
+		STATUS = 'N',
+		UPDATE_BY = #{standardComputerConfig.updateBy },
+		UPDATE_BY_CODE = #{standardComputerConfig.updateByCode },
+		UPDATE_DATE = SYSDATE
+
+		WHERE ASSETS_CODE IN 
+		<foreach collection="standardComputerConfig.assetsCodes" item="assetsCode" separator="," open="(" close=")">
+			#{assetsCode }
+		</foreach>
+			
+	</delete>
+	
+	<!-- 修改 -->
+	<update id="update">
+		UPDATE TB_FA_STANDARD_COMPUTER_CONFIG
+		SET
+		ASSETS_NAME = #{standardComputerConfig.assetsName },
+		SPECIFICATION_PARAMETER = #{standardComputerConfig.specificationParameter },
+		CMEMO = #{standardComputerConfig.cmemo },
+		STATUS = #{standardComputerConfig.status },
+		UPDATE_BY = #{standardComputerConfig.updateBy },
+		UPDATE_BY_CODE = #{standardComputerConfig.updateByCode },
+		UPDATE_DATE = SYSDATE
+
+		WHERE ASSETS_CODE = #{standardComputerConfig.assetsCode }
+	</update>
+	
+
+	<!-- 单条查询 -->
+ 	<select id="get" parameterType="string" resultMap="standCompConfResultMap">
+ 	
+    	<include refid="search_fragment" />
+    	AND ASSETS_CODE = #{assetsCode }
+    </select>
+    
+	<!-- 查询 -->
+	<select id="searchList" resultMap="standCompConfResultMap">
+		<include refid="pagination_Head" />
+		<include refid="search_fragment" />
+		<include refid="search_fragment_cond" />
+		<include refid="pagination_Tail" />
+	</select>
+	<select id="searchListCount" resultType="long">
+		<include refid="count_Start_Head" />
+		<![CDATA[SELECT ASSETS_CODE
+	  	 FROM TB_FA_STANDARD_COMPUTER_CONFIG 
+	 	 WHERE 1=1
+	 	  ]]>
+		<include refid="search_fragment_cond" />
+		<include refid="count_Start_Tail" />
+	</select>
+
+<!-- 查询 -->
+	<select id="getList" resultMap="standCompConfResultMap">
+		<include refid="search_fragment" />
+		<include refid="search_fragment_cond" />
+	</select>
+	
+	<select id="findAll" resultMap="standCompConfResultMap">
+           SELECT
+	           	ASSETS_NAME,
+				SPECIFICATION_PARAMETER
+             FROM
+                TB_FA_STANDARD_COMPUTER_CONFIG
+                WHERE STATUS = 'Y'
+    </select>
+    
+    <!-- 查看编码是否存在 -->
+	<select id="selectExistCodes" parameterType="java.util.List" resultType="string">
+		SELECT ASSETS_CODE FROM TB_FA_STANDARD_COMPUTER_CONFIG
+		WHERE ASSETS_CODE IN 
+		<foreach collection="assetsCodes" item="assetsCode" separator="," open="(" close=")">
+			#{assetsCode }
+		</foreach>
+	</select>
+	
+	<select id="checkUnitCode" resultType="long">
+		select count(*) from TB_FA_STANDARD_COMPUTER_CONFIG WHERE
+		ASSETS_CODE = #{assetsCode }
+	</select>
+	
+</mapper>
+

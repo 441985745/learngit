@@ -1,0 +1,120 @@
+body {
+    font:normal 12px tahoma, Verdana;
+    margin:0;
+}
+#header {
+    background: #7F99BE url(../Images/layout-browser-hd-bg.gif) repeat-x center;
+    height:40px;
+}
+#header h1 {
+    font-size: 16px;
+    color: #fff;
+    font-weight: normal;
+    padding: 5px 10px;
+}
+.menu
+{
+    background-image: url(../Scripts/ExtJs/resources/images/default/toolbar/bg.gif);
+    height: 25px; line-height: 25px;border: 1px #8db2e3 solid; 
+    padding-left: 10px; padding-right: 10px
+}
+.south
+{
+    text-align:center;background-color:#DFE8F6;
+}
+
+.loading-indicator {
+    font-size:11px;
+    background-image:url('../../resources/images/default/grid/loading.gif');
+    background-repeat: no-repeat;
+    background-position:top left;
+    padding-left:20px;
+	height:18px;
+	text-align:left;
+}
+#loading-mask{
+	position:absolute;
+	left:0;
+	top:0;
+    width:100%;
+    height:100%;
+    z-index:20000;
+    background-color:white;
+}
+#loading{
+	position:absolute;
+	left:45%;
+	top:40%;
+	padding:2px;
+	z-index:20001;
+    height:auto;
+}
+#loading img {
+    margin-bottom:5px;
+}
+#loading .loading-indicator{
+	background:white;
+	color:#555;
+	font:bold 13px tahoma,arial,helvetica;
+	padding:10px;
+	margin:0;
+    text-align:center;
+    height:auto;
+}
+
+/* Ext iconCLS */
+.settings {background-image:url(../Scripts/ExtJs/icons/fam/folder_wrench.png) !important;} 
+.nav {background-image:url(../Scripts/ExtJs/icons/fam/folder_go.png) !important;} 
+/*BodyStyle Class*/
+.bodystyle{font-size:16pt; color:Red;margin:0px;padding:0px;}
+
+.x-layout-collapsed-west{background-image:url(../Images/navigation.gif);
+            background-repeat:no-repeat;
+		    background-position:center;}
+.Txt-Center
+{
+    position:absolute;
+	left:30%;
+	top:40%;
+	padding:2px;
+	z-index:20001;
+    height:auto;
+}
+
+/* ��ർ����ʽ */
+.LeftNav
+{
+    margin:0px;
+    margin-left:10px;
+    padding:10px;
+    list-style-type:none;
+    list-style-image:url(../ExtJs/icons/fav.gif);
+    list-style-position:outside;
+}
+.LeftNav li
+{
+  /* line-height:16px;*/
+  padding-left:3px;
+}
+.LeftNav li a:hover
+{
+    text-decoration:underline;
+    color:red;
+}
+.LeftNav li a
+{
+    text-decoration:none;
+    color:Maroon;
+}
+.index-ico {background: url(../Images/ToolbarButton/application_home.png) left no-repeat !important;}
+.user-ico {background: url(../Images/ToolbarButton/user.png) left no-repeat !important;}
+.msg-ico {background: url(../Images/ToolbarButton/email.png) left no-repeat !important;}
+.pwdwindow-ico {background: url(../Images/ToolbarButton/key.png) left no-repeat !important;}
+.refresh-ico {background: url(../Images/ToolbarButton/refresh.ico) left no-repeat !important;}
+.help-ico {background: url(../Images/ToolbarButton/help.gif) left no-repeat !important;}
+.appref-ico {background: url(../Images/ToolbarButton/exclamation.png) left no-repeat !important;}
+.appexit-ico {background: url(../Images/ToolbarButton/09524.ico) left no-repeat !important;}
+.yhbcc-ico {background: url(../Images/bcc.png) left no-repeat !important;}
+.nav {background:url(../Images/ToolbarButton/folder_go.png) left no-repeat !important;}
+.nsCollapse{background:url(../Images/ns-collapse.gif) left no-repeat !important;}
+.nsExpand{background:url(../Images/ns-expand.gif) left no-repeat !important;}

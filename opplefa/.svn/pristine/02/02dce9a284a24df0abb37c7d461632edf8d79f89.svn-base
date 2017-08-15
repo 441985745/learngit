@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<HTML>
+<HEAD>
+	<TITLE> ZTREE DEMO - noIcon </TITLE>
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+	<link rel="stylesheet" href="../../../css/demo.css" type="text/css">
+	<link rel="stylesheet" href="../../../css/zTreeStyle/zTreeStyle.css" type="text/css">
+	<script type="text/javascript" src="../../../js/jquery-1.4.4.min.js"></script>
+	<script type="text/javascript" src="../../../js/jquery.ztree.core-3.5.js"></script>
+	<!--  <script type="text/javascript" src="../../../js/jquery.ztree.excheck-3.5.js"></script>
+	  <script type="text/javascript" src="../../../js/jquery.ztree.exedit-3.5.js"></script>-->
+	<SCRIPT type="text/javascript">
+		<!--
+		var setting = {
+			view: {
+				showIcon: showIconForTree
+			},
+			data: {
+				simpleData: {
+					enable: true
+				}
+			}
+		};
+
+		var zNodes =[
+			{ id:1, pId:0, name:"父节点1 - 展开", open:true},
+			{ id:11, pId:1, name:"父节点11 - 折叠"},
+			{ id:111, pId:11, name:"叶子节点111"},
+			{ id:112, pId:11, name:"叶子节点112"},
+			{ id:113, pId:11, name:"叶子节点113"},
+			{ id:114, pId:11, name:"叶子节点114"},
+			{ id:3, pId:0, name:"父节点3 - 没有子节点", isParent:true}
+		];
+
+		function showIconForTree(treeId, treeNode) {
+			return !treeNode.isParent;
+		};
+
+		$(document).ready(function(){
+			$.fn.zTree.init($("#treeDemo"), setting, zNodes);
+		});
+		//-->
+	</SCRIPT>
+
+</HEAD>
+
+<BODY>
+<h1>不显示节点图标的树</h1>
+<h6>[ 文件路径: core/noicon.html ]</h6>
+<div class="content_wrap">
+	<div class="zTreeDemoBackground left">
+		<ul id="treeDemo" class="ztree"></ul>
+	</div>
+	
+</div>
+</BODY>
+</HTML>

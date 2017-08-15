@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.opple.fa.config.dao.PositionDAO">
+
+	<resultMap id="positionResultMap" type="position">
+		<result property="cpositionCode" column="CPOSITION_CODE" />		<!--存放位置编码 -->
+		<result property="cposition" column="CPOSITION" />		<!--存放位置 -->
+		<result property="workAddressCode" column="WORK_ADDRESS_CODE" />		<!--办公地点编码 -->
+		<result property="workAddress" column="WORK_ADDRESS" />		<!--办公地点 -->
+		<result property="ccreateBy" column="CCREATE_BY" />		<!--创建人 -->
+		<result property="dcreateDate" column="DCREATE_DATE" />		<!--创建时间 -->
+		<result property="cupdateBy" column="CUPDATE_BY" />		<!--更新人 -->
+		<result property="dupdateDate" column="DUPDATE_DATE" />		<!--更新时间 -->
+		<result property="ccreateByCode" column="CCREATE_BY_CODE" />		<!--创建人编码 -->
+		<result property="cupdateByCode" column="CUPDATE_BY_CODE" />		<!--最后更新人编码 -->
+		<result property="cmemo" column="CMEMO" />		<!--备注 -->
+		<result property="cstatus" column="CSTATUS" />		<!--数据状态, -->
+
+	</resultMap>
+
+	<!-- oracle 分页头 -->
+	<sql id="pagination_Head">
+        <![CDATA[select * from ( select row_.*, rownum rownum_ from ( ]]>
+	</sql>
+	<!-- oracle 分页尾 -->
+	<sql id="pagination_Tail">
+        <![CDATA[) row_ where rownum <= #{pager.pageSize}* #{pager.offset} ) where rownum_ >= #{pager.firstResult} + 1]]>
+	</sql>
+	<!-- count * from -->
+	<sql id="count_Start_Head">
+		<![CDATA[select count(*) from ( ]]>
+	</sql>
+	<sql id="count_Start_Tail">
+		<![CDATA[) countObj ]]>
+	</sql>
+
+	<sql id="search_fragment">
+
+        SELECT
+			CPOSITION_CODE,
+			CPOSITION,
+			WORK_ADDRESS_CODE,
+			WORK_ADDRESS,
+			CCREATE_BY,
+			DCREATE_DATE,
+			CUPDATE_BY,
+			DUPDATE_DATE,
+			CCREATE_BY_CODE,
+			CUPDATE_BY_CODE,
+			CMEMO,
+			CSTATUS
+
+		FROM TB_FA_POSITION
+		WHERE 1 = 1
+	</sql>
+
+	<sql id="search_fragment_cond">
+		<if test="position.cpositionCode != null and position.cpositionCode != ''">
+			AND CPOSITION_CODE LIKE '%' || TRIM(#{position.cpositionCode })
+			|| '%'
+		</if>
+		<if test="position.cposition != null and position.cposition != ''">
+			AND CPOSITION LIKE '%' || TRIM(#{position.cposition }) || '%'
+		</if>
+		<if test="position.workAddressCode != null and position.workAddressCode != ''">
+			AND WORK_ADDRESS_CODE LIKE '%' || TRIM(#{position.workAddressCode}) ||
+			'%'
+		</if>
+		<if test="position.workAddress != null and position.workAddress != ''">
+			AND WORK_ADDRESS LIKE '%' || TRIM(#{position.workAddress}) ||
+			'%'
+		</if>
+		<if test="position.cstatus != null and position.cstatus != ''">
+			AND CSTATUS = #{position.cstatus} 
+		</if>
+		<if test="position.cupdateBy != null and position.cupdateBy != ''">
+			AND CUPDATE_BY LIKE '%' || TRIM(#{position.cupdateBy}) || '%'
+		</if>
+		<if
+			test="position.updateDateBegin != null and position.updateDateBegin != ''">
+			AND DUPDATE_DATE <![CDATA[>=]]>to_date(#{position.updateDateBegin},'yyyy/mm/dd')
+		</if>
+		<if
+			test="position.updateDateEnd != null and position.updateDateEnd != ''">
+			AND DUPDATE_DATE <![CDATA[<=]]>to_date(#{position.updateDateEnd},'yyyy/mm/dd')
+		</if>
+		ORDER BY DUPDATE_DATE DESC ,CPOSITION_CODE
+	</sql>
+
+	<insert id="save">
+		INSERT INTO TB_FA_POSITION
+		(
+		CPOSITION_CODE,
+		CPOSITION,
+		WORK_ADDRESS_CODE,
+		WORK_ADDRESS,
+		CCREATE_BY,
+		DCREATE_DATE,
+		CUPDATE_BY,
+		DUPDATE_DATE,
+		CCREATE_BY_CODE,
+		CUPDATE_BY_CODE,
+		CMEMO,
+		CSTATUS
+
+		)
+		VALUES
+		(
+		#{position.cpositionCode },
+		#{position.cposition },
+		#{position.workAddressCode },
+		#{position.workAddress },
+		#{position.ccreateBy },
+		SYSDATE,
+		#{position.ccreateBy },
+		SYSDATE,
+		#{position.ccreateByCode },
+		#{position.ccreateByCode },
+		#{position.cmemo },
+		#{position.cstatus }
+		)
+	</insert>
+
+<!-- 批量插入 -->
+	<insert id="saveBatch" >
+	  	INSERT INTO TB_FA_POSITION
+		(
+		CPOSITION_CODE,
+		CPOSITION,
+		WORK_ADDRESS_CODE,
+		WORK_ADDRESS,
+		CCREATE_BY,
+		DCREATE_DATE,
+		CUPDATE_BY,
+		DUPDATE_DATE,
+		CCREATE_BY_CODE,
+		CUPDATE_BY_CODE,
+		CMEMO,
+		CSTATUS
+		)
+		VALUES
+		 <foreach collection="list" item="item" index="index"  
+	        separator=",">
+	        	(
+				#{item.cpositionCode },
+				#{item.cposition },
+				#{item.workAddressCode },
+				#{item.workAddress },
+				#{item.ccreateBy },
+				SYSDATE,
+				#{item.ccreateBy },
+				SYSDATE,
+				#{item.ccreateByCode },
+				#{item.ccreateByCode },
+				#{item.cmemo },
+				#{item.cstatus }
+				)
+	      </foreach>
+  	</insert>
+    
+    
+	<!-- 删除-修改状态 -->
+	<delete id="delete">
+		UPDATE TB_FA_POSITION
+		SET
+		CSTATUS = #{position.cstatus },
+		CUPDATE_BY = #{position.cupdateBy },
+		CUPDATE_BY_CODE = #{position.cupdateByCode },
+		DUPDATE_DATE = SYSDATE
+
+		WHERE CPOSITION_CODE IN
+		<foreach collection="position.cpositionCodes" item="cpositionCode" separator="," open="(" close=")">
+			#{cpositionCode }
+		</foreach>
+	</delete>
+
+	<!-- 修改 -->
+	<update id="update">
+		UPDATE TB_FA_POSITION
+		SET
+		CPOSITION = #{position.cposition },
+		WORK_ADDRESS_CODE = #{position.workAddressCode },
+		WORK_ADDRESS = #{position.workAddress },
+		CUPDATE_BY = #{position.cupdateBy },
+		DUPDATE_DATE = SYSDATE,
+		CUPDATE_BY_CODE = #{position.cupdateByCode },
+		CMEMO = #{position.cmemo },
+		CSTATUS = #{position.cstatus }
+
+		WHERE CPOSITION_CODE = #{position.cpositionCode }
+	</update>
+
+	<!-- 查询 -->
+	<select id="get" resultMap="positionResultMap">
+		<include refid="search_fragment" />
+		AND CPOSITION_CODE = #{cpositionCode }
+	</select>
+
+	<select id="searchList" resultMap="positionResultMap">
+		<include refid="pagination_Head" />
+		<include refid="search_fragment" />
+		<include refid="search_fragment_cond" />
+		<include refid="pagination_Tail" />
+	</select>
+	<select id="searchListCount" resultType="long">
+		<include refid="count_Start_Head" />
+
+        SELECT
+			CPOSITION_CODE
+
+		FROM TB_FA_POSITION
+		WHERE 1 = 1
+		<include refid="search_fragment_cond" />
+
+		<include refid="count_Start_Tail" />
+	</select>
+
+<!-- 查询 -->
+	<select id="getList" resultMap="positionResultMap">
+		<include refid="search_fragment" />
+		<include refid="search_fragment_cond" />
+	</select>
+	
+    <!-- 查看编码是否存在 -->
+	<select id="selectExistCodes" parameterType="java.util.List" resultType="string">
+		SELECT CPOSITION_CODE FROM TB_FA_POSITION
+		WHERE CPOSITION_CODE IN 
+		<foreach collection="cpositionCodes" item="cpositionCode" separator="," open="(" close=")">
+			#{cpositionCode }
+		</foreach>
+	</select>
+	<select id="checkPositionCode" parameterType="string" resultType="integer">
+		SELECT count(*) FROM TB_FA_POSITION
+		WHERE CPOSITION_CODE = #{positionCode }
+	</select>
+	<select id="checkPositionName" resultType="integer">
+		SELECT count(*) FROM TB_FA_POSITION
+		WHERE CPOSITION = #{position.cposition }
+		<if test="position.cpositionCode != null and position.cpositionCode != ''">
+			AND CPOSITION_CODE != #{position.cpositionCode}
+		</if>
+
+	</select>
+
+</mapper>
+

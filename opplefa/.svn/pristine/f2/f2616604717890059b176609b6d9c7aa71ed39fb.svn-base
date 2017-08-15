@@ -1,0 +1,733 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.opple.fa.purchase.dao.PurchaseOrderDAO">
+
+    <!-- oracle 分页头 -->
+    <sql id="pagination_Head">
+        <![CDATA[select * from ( select row_.*, rownum rownum_ from ( ]]>
+    </sql>
+    <!-- oracle 分页尾 -->
+    <sql id="pagination_Tail">
+        <![CDATA[) row_ where rownum <= #{pager.pageSize}* #{pager.offset} ) where rownum_ >= #{pager.firstResult} + 1]]>
+    </sql>
+    <!-- count * from -->
+    <sql id="count_Start_Head">
+        <![CDATA[select count(*) from ( ]]>
+    </sql>
+    <sql id="count_Start_Tail">
+        <![CDATA[) countObj ]]>
+    </sql>
+    <resultMap id="purchaseOrderMap" type="purchaseOrder">
+        <result property="cdocument" column="CDOCUMENT"  />  <!--采购订单号-->
+        <result property="purchaseOrderSapId" column="PURCHASE_ORDER_SAP_ID"  />  <!--采购订单号(SAP)-->
+        <result property="orderMoney" column="ORDER_MONEY"  />  <!--订单金额-->
+        <result property="applyUser" column="APPLY_USER"  />  <!--申请人-->
+        <result property="applyDate" column="APPLY_DATE"  />  <!--申请日期-->
+        <result property="capprovalstate" column="CAPPROVALSTATE"  />  <!--审批状态-->
+        <result property="orderStatus" column="ORDER_STATUS"  />  <!--订单状态-->
+        <result property="draft" column="DRAFT"  />  <!--草稿-->
+        <result property="createBy" column="CREATE_BY"  />  <!--创建人-->
+        <result property="createDate" column="CREATE_DATE"  />  <!--创建时间-->
+        <result property="updateBy" column="UPDATE_BY"  />  <!--更新人-->
+        <result property="updateDate" column="UPDATE_DATE"  />  <!--更新时间-->
+        <result property="createByCode" column="CREATE_BY_CODE"  />  <!--创建人编码-->
+        <result property="updateByCode" column="UPDATE_BY_CODE"  />  <!--更新人编码-->
+        <result property="applyUserCode" column="APPLY_USER_CODE"  />  <!--申请人编码-->
+        <result property="capprovalend" column="CAPPROVALEND"  />  <!--是否审批结束-->
+        <result property="causercode" column="CAUSERCODE"  />  <!--审批人编码-->
+        <result property="causername" column="CAUSERNAME"  />  <!--审批人名称-->
+        <result property="dlastadate" column="DLASTADATE"  />  <!--审批日期-->
+        <result property="cnexthandlercode" column="CNEXTHANDLERCODE"  />  <!--下一处理人编码-->
+        <result property="cnexthandlername" column="CNEXTHANDLERNAME"  />  <!--下一处理人名称-->
+        <result property="buyerName" column="BUYER_NAME"  />  <!--采购员名称-->
+        <result property="buyerCode" column="BUYER_CODE"  />  <!--采购员编码-->
+        <result property="currencyCode" column="CURRENCY_CODE"  />  <!--币种编码-->
+        <result property="exchangeRate" column="EXCHANGE_RATE"  />  <!--汇率-->
+        <result property="taxRate" column="TAX_RATE"  />  <!--税率-->
+        <result property="budgetDepartmentCode" column="BUDGET_DEPARTMENT_CODE"  />  <!--预算所述部门编码-->
+        <result property="budgetDepartmentName" column="BUDGET_DEPARTMENT_NAME"  />  <!--预算所述部门名称-->
+        <result property="companyName" column="COMPANY_NAME"  />  <!--公司名称-->
+        <result property="companyCode" column="COMPANY_CODE"  />  <!--公司编码-->
+        <result property="platform" column="PLATFORM"  />  <!--平台-->
+        <result property="assetType" column="ASSET_TYPE"  />  <!--资产类型-->
+        <result property="purchasingGroup" column="PURCHASING_GROUP"  />  <!--采购组-->
+        <result property="procurementOrganization" column="PROCUREMENT_ORGANIZATION"  />  <!--采购组织-->
+        <result property="orderType" column="ORDER_TYPE"  />  <!--订单类别-->
+        <result property="supplierName" column="SUPPLIER_NAME"  />  <!--供应商名称-->
+        <result property="supplierCode" column="SUPPLIER_CODE"  />  <!--供应商编码-->
+        <result property="paymentTypeCode" column="PAYMENT_TYPE_CODE"  />  <!--付款方式编码-->
+        <result property="paymentTypeName" column="PAYMENT_TYPE_NAME"  />  <!--付款方式名称-->
+        <result property="bankNumber" column="BANK_NUMBER"  />  <!--银行账号-->
+        <result property="contactNumber" column="CONTACT_NUMBER"  />  <!--联行号-->
+        <result property="contacts" column="CONTACTS"  />  <!--联系人-->
+        <result property="telephone" column="TELEPHONE"  />  <!--电话-->
+        <result property="costCenter" column="COST_CENTER"  />  <!--成本中心-->
+        <result property="costCenterCode" column="COST_CENTER_CODE"  />  <!--成本中心编码-->
+        <result property="factoryCode" column="FACTORY_CODE"  />  <!--工厂代码-->
+        <result property="companyAddress" column="COMPANY_ADDRESS"  />  <!--公司地址-->
+        <result property="companySpecificName" column="COMPANY_SPECIFIC_NAME"  />  <!--公司具体名称-->
+        <result property="country" column="COUNTRY"  />  <!--国家-->
+        <result property="city" column="CITY"  />  <!--城市-->
+        <result property="zipCode" column="ZIP_CODE"  />  <!--邮编-->
+        <result property="buyerRemark" column="BUYER_REMARK"  />  <!--采购员备注-->
+        <result property="headerTextDescription" column="HEADER_TEXT_DESCRIPTION"  />  <!--抬头文本说明-->
+        <result property="bankCode" column="BANK_CODE"  />  <!--开户银行编码-->
+        <result property="bankName" column="BANK_NAME"  />  <!--开户银行名称-->
+        <result property="currencyName" column="CURRENCY_NAME"  />  <!--币种名称-->
+        <result property="unreceivedCount" column="UNRECEIVED_COUNT"  />  <!--未收货数量(李凯)-->
+        <result property="taxRateCode" column="TAX_RATE_CODE"  />  <!--税码-->
+        <result property="print" column="PRINT" />
+        <result property="officeLocation" column="OFFICE_LOCATION" />
+        <result property="purchaseOrderSapProjectId" column="PURCHASE_ORDER_SAP_PROJECT_ID" />
+        <result property="matnr" column="MATNR" />
+        <result property="ledgerAccount" column="LEDGER_ACCOUNT" />
+        <result property="meins" column="MEINS" />
+		<result property="attachDepartManagerName" column="ATTACH_DEPART_MANAGER_NAME" />
+		<result property="attachDepartManagerCode" column="ATTACH_DEPART_MANAGER_CODE" />
+        <result property="attachDepartAdminName" column="ATTACH_DEPART_ADMIN_NAME"/>
+        <result property="attachDepartAdminCode" column="ATTACH_DEPART_ADMIN_CODE"/>
+        <result property="purchasingManagerName" column="PURCHASING_MANAGER_NAME"/>
+        <result property="purchasingManagerCode" column="PURCHASING_MANAGER_CODE"/>
+        <result property="cinternalordercode" column="CINTERNALORDERCODE"/>
+        <result property="status" column="STATUS"/>
+        <result property="deliveryAddress" column="DELIVERY_ADDRESS"/>
+
+    </resultMap>
+
+    <resultMap id="departmentMap" type="com.opple.fa.config.entity.Department">
+        <result property="departmentCode" column="DEPARTMENT_CODE" />
+        <result property="departmentName" column="DEPARTMENT_NAME" />
+        <result property="costCenterCode" column="COST_CENTER_CODE" />
+        <result property="costCenter" column="COST_CENTER" />
+    </resultMap>
+
+    <sql id="search_purchase_order">
+        SELECT DISTINCT T.*
+        FROM BCC.TB_FA_PURCHASE_ORDER T
+
+	    LEFT JOIN TB_FA_PURCHASE_ORDER_DETAIL TD
+	    ON T.CDOCUMENT = TD.PURCHASE_ORDER_ID
+        WHERE 1=1
+        <if
+                test="purchaseOrderModel.applyOrderId != null and purchaseOrderModel.applyOrderId != ''">
+            AND TD.APPLY_ORDER_ID LIKE '%' || #{purchaseOrderModel.applyOrderId} || '%'
+        </if>
+        <if
+                test="purchaseOrderModel.cdocument != null and purchaseOrderModel.cdocument != ''">
+            AND T.CDOCUMENT LIKE '%' ||
+            #{purchaseOrderModel.cdocument} || '%'
+        </if>
+
+        <if
+                test="purchaseOrderModel.applyDateStart != null and purchaseOrderModel.applyDateStart != ''">
+            <![CDATA[ AND T.APPLY_DATE >= #{purchaseOrderModel.applyDateStart} ]]>
+        </if>
+        <if
+                test="purchaseOrderModel.applyDateEnd != null and purchaseOrderModel.applyDateEnd != ''">
+            <![CDATA[ AND T.APPLY_DATE <= #{purchaseOrderModel.applyDateEnd} ]]>
+        </if>
+        <if
+                test="purchaseOrderModel.buyerName != null and purchaseOrderModel.buyerName != ''">
+            AND T.BUYER_NAME LIKE '%' ||
+            #{purchaseOrderModel.buyerName} || '%'
+        </if>
+        <if
+                test="purchaseOrderModel.costCenter != null and purchaseOrderModel.costCenter != ''">
+            AND (T.COST_CENTER LIKE '%' || #{purchaseOrderModel.costCenter} || '%'  OR  T.COST_CENTER_CODE LIKE '%' || #{purchaseOrderModel.costCenter} || '%' )
+        </if>
+        <if
+                test="purchaseOrderModel.purchaseOrderSapId != null and purchaseOrderModel.purchaseOrderSapId != ''">
+            AND T.PURCHASE_ORDER_SAP_ID LIKE '%' ||
+            #{purchaseOrderModel.purchaseOrderSapId} || '%'
+        </if>
+        <if
+                test="purchaseOrderModel.supplierName != null and purchaseOrderModel.supplierName != ''">
+            AND T.SUPPLIER_NAME LIKE '%' ||
+            #{purchaseOrderModel.supplierName} || '%'
+        </if>
+        <if
+                test="purchaseOrderModel.draft != null and purchaseOrderModel.draft != ''">
+            AND T.DRAFT LIKE '%' || #{purchaseOrderModel.draft} || '%'
+        </if>
+        <if
+                test="purchaseOrderModel.capprovalstate != null and purchaseOrderModel.capprovalstate != ''">
+            AND T.CAPPROVALSTATE LIKE '%' ||
+            #{purchaseOrderModel.capprovalstate} || '%'
+        </if>
+        <if
+                test="purchaseOrderModel.companyCode != null and purchaseOrderModel.companyCode != ''">
+            AND T.COMPANY_CODE =
+            #{purchaseOrderModel.companyCode}
+        </if>
+        <if
+                test="purchaseOrderModel.orderStatus != null and purchaseOrderModel.orderStatus != ''">
+            AND T.ORDER_STATUS LIKE '%' || #{purchaseOrderModel.orderStatus}
+            || '%'
+        </if>
+        <if
+                test="purchaseOrderModel.isCloseForPayment != null and purchaseOrderModel.isCloseForPayment != ''">
+            AND T.IS_CLOSE_FOR_PAYMENT LIKE '%' || #{purchaseOrderModel.isCloseForPayment}
+            || '%'
+        </if>
+        <if
+                test="purchaseOrderModel.assetType != null and purchaseOrderModel.assetType != ''">
+            AND T.ASSET_TYPE LIKE '%' || #{purchaseOrderModel.assetType}
+            || '%'
+        </if>
+		AND T.STATUS = 'Y'
+        AND (
+        T.APPLY_USER_CODE = #{purchaseOrderModel.loginUserCode}
+
+        OR T.APPLY_USER_CODE IN (SELECT CAUTHORIZERCODE FROM T_APPROVALEMPOWER 
+										WHERE CUSERCODE = #{purchaseOrderModel.loginUserCode}  AND SYSDATE BETWEEN CBEGINTIME AND CENDTIME 
+										AND CSTATUS='Y' AND CAPPROVALEND='Y')
+        or
+        (T.CDOCUMENT,#{purchaseOrderModel.loginUserCode} ) in (SELECT A.CBILLCODE,A.CUSERCODE
+        FROM T_WF_BILL_STEP_ALL A
+        WHERE
+        A.TYPEID = '77021'
+        UNION ALL
+        SELECT C.CBILLCODE,B.CUSERCODE
+        FROM T_APPROVALEMPOWER B
+        INNER JOIN T_WF_BILL_STEP_ALL C
+        ON B.CAUTHORIZERCODE = C.CUSERCODE
+
+        AND C.TYPEID = '77021'
+        WHERE SYSDATE BETWEEN B.CBEGINTIME AND B.CENDTIME
+        AND B.CSTATUS = 'Y'
+        AND B.CAPPROVALEND = 'Y')
+		
+		OR 
+		EXISTS(SELECT 1 FROM t_Sys_Userrole TR WHERE TR.CROLECODE=#{purchaseOrderModel.assetAdminId} 
+		AND TR.CUSERCODE=#{purchaseOrderModel.loginUserCode}  AND tr.cstatus='Y')
+		
+        )  
+		
+		ORDER BY T.CREATE_DATE DESC
+    </sql>
+
+    <select id="searchPurchaseOrder" resultMap="purchaseOrderMap">
+        <include refid="pagination_Head" />
+        <include refid="search_purchase_order" />
+        <include refid="pagination_Tail" />
+    </select>
+
+    <select id="searchPurchaseOrderCount" resultType="long">
+        <include refid="count_Start_Head" />
+        <include refid="search_purchase_order" />
+        <include refid="count_Start_Tail" />
+    </select>
+
+    <select id="get" resultMap="purchaseOrderMap">
+        SELECT
+        CDOCUMENT ,
+        PURCHASE_ORDER_SAP_ID ,
+        ORDER_MONEY ,
+        APPLY_USER ,
+        APPLY_DATE ,
+        ASSET_TYPE,
+        CAPPROVALSTATE ,
+        ORDER_STATUS ,
+        DRAFT ,
+        CREATE_BY ,
+        CREATE_DATE ,
+        UPDATE_BY ,
+        UPDATE_DATE,
+        SUPPLIER_NAME,
+        SUPPLIER_CODE
+        FROM
+        TB_FA_PURCHASE_ORDER
+        WHERE 1=1
+        <if test="purchaseOrder.cdocument != null and purchaseOrder.cdocument != ''">
+            AND CDOCUMENT=#{purchaseOrder.cdocument}
+        </if>
+    </select>
+
+    <!-- 查询下个序列 -->
+    <select id="searchNextSequence" resultType="int">
+        SELECT SEQ_PURCHASE_ORDER.NEXTVAL FROM DUAL
+    </select>
+    <insert id="saveDelete" >
+        INSERT INTO TB_FA_PURCHASE_ORDER_BC
+        (	CDOCUMENT,
+        PURCHASE_ORDER_SAP_ID,
+        ORDER_MONEY,
+        APPLY_USER,
+        APPLY_DATE,
+        CAPPROVALSTATE,
+        ORDER_STATUS,
+        DRAFT,
+        CREATE_BY,
+        CREATE_DATE,
+        UPDATE_BY,
+        UPDATE_DATE,
+        CREATE_BY_CODE,
+        UPDATE_BY_CODE,
+        APPLY_USER_CODE,
+        CAPPROVALEND,
+        CAUSERCODE,
+        CAUSERNAME,
+        DLASTADATE,
+        CNEXTHANDLERCODE,
+        CNEXTHANDLERNAME,
+        BUYER_NAME,
+        BUYER_CODE,
+        CURRENCY_CODE,
+        EXCHANGE_RATE,
+        TAX_RATE,
+        BUDGET_DEPARTMENT_CODE,
+        BUDGET_DEPARTMENT_NAME,
+        COMPANY_NAME,
+        COMPANY_CODE,
+        PLATFORM,
+        ASSET_TYPE,
+        PURCHASING_GROUP,
+        PROCUREMENT_ORGANIZATION,
+        ORDER_TYPE,
+        SUPPLIER_NAME,
+        SUPPLIER_CODE,
+        PAYMENT_TYPE_CODE,
+        PAYMENT_TYPE_NAME,
+        BANK_NUMBER,
+        CONTACT_NUMBER,
+        CONTACTS,
+        TELEPHONE,
+        COST_CENTER,
+        COST_CENTER_CODE,
+        FACTORY_CODE,
+        COMPANY_ADDRESS,
+        COMPANY_SPECIFIC_NAME,
+        COUNTRY,
+        CITY,
+        ZIP_CODE,
+        BUYER_REMARK,
+        HEADER_TEXT_DESCRIPTION,
+        BANK_CODE,
+        BANK_NAME,
+        CURRENCY_NAME,
+        UNRECEIVED_COUNT,
+        TAX_RATE_CODE,
+        PRINT,
+        OFFICE_LOCATION,
+		ATTACH_DEPART_MANAGER_NAME,
+		ATTACH_DEPART_MANAGER_CODE,
+		ATTACH_DEPART_ADMIN_NAME,
+		ATTACH_DEPART_ADMIN_CODE,
+		PURCHASING_MANAGER_NAME,
+		PURCHASING_MANAGER_CODE,
+		STATUS,
+		DELIVERY_ADDRESS)
+        VALUES
+        ( #{cdocument},
+        #{purchaseOrderSapId},
+        #{orderMoney},
+        #{applyUser},
+        #{applyDate},
+        #{capprovalstate},
+        #{orderStatus},
+        #{draft},
+        #{createBy},
+        #{createDate},
+        #{updateBy},
+        sysdate,
+        #{createByCode},
+        #{updateByCode},
+        #{applyUserCode},
+        #{capprovalend},
+        #{causercode},
+        #{causername},
+        #{dlastadate},
+        #{cnexthandlercode},
+        #{cnexthandlername},
+        #{buyerName},
+        #{buyerCode},
+        #{currencyCode},
+        #{exchangeRate},
+        #{taxRate},
+        #{budgetDepartmentCode},
+        #{budgetDepartmentName},
+        #{companyName},
+        #{companyCode},
+        #{platform},
+        #{assetType},
+        #{purchasingGroup},
+        #{procurementOrganization},
+        #{orderType},
+        #{supplierName},
+        #{supplierCode},
+        #{paymentTypeCode},
+        #{paymentTypeName},
+        #{bankNumber},
+        #{contactNumber},
+        #{contacts},
+        #{telephone},
+        #{costCenter},
+        #{costCenterCode},
+        #{factoryCode},
+        #{companyAddress},
+        #{companySpecificName},
+        #{country},
+        #{city},
+        #{zipCode},
+        #{buyerRemark},
+        #{headerTextDescription},
+        #{bankCode},
+        #{bankName},
+        #{currencyName},
+        #{unreceivedCount},
+        #{taxRateCode},
+        #{print},
+        #{officeLocation},
+		#{attachDepartManagerName},
+		#{attachDepartManagerCode},
+		#{attachDepartAdminName},
+		#{attachDepartAdminCode},
+		#{purchasingManagerName},
+		#{purchasingManagerCode},
+		'Y',
+		#{deliveryAddress})
+    </insert>
+    <insert id="save">
+        INSERT INTO TB_FA_PURCHASE_ORDER
+        (	CDOCUMENT,
+        PURCHASE_ORDER_SAP_ID,
+        ORDER_MONEY,
+        APPLY_USER,
+        APPLY_DATE,
+        CAPPROVALSTATE,
+        ORDER_STATUS,
+        DRAFT,
+        CREATE_BY,
+        CREATE_DATE,
+        UPDATE_BY,
+        UPDATE_DATE,
+        CREATE_BY_CODE,
+        UPDATE_BY_CODE,
+        APPLY_USER_CODE,
+        CAPPROVALEND,
+        CAUSERCODE,
+        CAUSERNAME,
+        DLASTADATE,
+        CNEXTHANDLERCODE,
+        CNEXTHANDLERNAME,
+        BUYER_NAME,
+        BUYER_CODE,
+        CURRENCY_CODE,
+        EXCHANGE_RATE,
+        TAX_RATE,
+        BUDGET_DEPARTMENT_CODE,
+        BUDGET_DEPARTMENT_NAME,
+        COMPANY_NAME,
+        COMPANY_CODE,
+        PLATFORM,
+        ASSET_TYPE,
+        PURCHASING_GROUP,
+        PROCUREMENT_ORGANIZATION,
+        ORDER_TYPE,
+        SUPPLIER_NAME,
+        SUPPLIER_CODE,
+        PAYMENT_TYPE_CODE,
+        PAYMENT_TYPE_NAME,
+        BANK_NUMBER,
+        CONTACT_NUMBER,
+        CONTACTS,
+        TELEPHONE,
+        COST_CENTER,
+        COST_CENTER_CODE,
+        FACTORY_CODE,
+        COMPANY_ADDRESS,
+        COMPANY_SPECIFIC_NAME,
+        COUNTRY,
+        CITY,
+        ZIP_CODE,
+        BUYER_REMARK,
+        HEADER_TEXT_DESCRIPTION,
+        BANK_CODE,
+        BANK_NAME,
+        CURRENCY_NAME,
+        UNRECEIVED_COUNT,
+        TAX_RATE_CODE,
+        PRINT,
+        OFFICE_LOCATION,
+		ATTACH_DEPART_MANAGER_NAME,
+		ATTACH_DEPART_MANAGER_CODE,
+		ATTACH_DEPART_ADMIN_NAME,
+		ATTACH_DEPART_ADMIN_CODE,
+		PURCHASING_MANAGER_NAME,
+		PURCHASING_MANAGER_CODE,
+		STATUS,
+		DELIVERY_ADDRESS)
+        VALUES
+        ( #{cdocument},
+        #{purchaseOrderSapId},
+        #{orderMoney},
+        #{applyUser},
+        #{applyDate},
+        #{capprovalstate},
+        #{orderStatus},
+        #{draft},
+        #{createBy},
+        #{createDate},
+        #{updateBy},
+        #{updateDate},
+        #{createByCode},
+        #{updateByCode},
+        #{applyUserCode},
+        #{capprovalend},
+        #{causercode},
+        #{causername},
+        #{dlastadate},
+        #{cnexthandlercode},
+        #{cnexthandlername},
+        #{buyerName},
+        #{buyerCode},
+        #{currencyCode},
+        #{exchangeRate},
+        #{taxRate},
+        #{budgetDepartmentCode},
+        #{budgetDepartmentName},
+        #{companyName},
+        #{companyCode},
+        #{platform},
+        #{assetType},
+        #{purchasingGroup},
+        #{procurementOrganization},
+        #{orderType},
+        #{supplierName},
+        #{supplierCode},
+        #{paymentTypeCode},
+        #{paymentTypeName},
+        #{bankNumber},
+        #{contactNumber},
+        #{contacts},
+        #{telephone},
+        #{costCenter},
+        #{costCenterCode},
+        #{factoryCode},
+        #{companyAddress},
+        #{companySpecificName},
+        #{country},
+        #{city},
+        #{zipCode},
+        #{buyerRemark},
+        #{headerTextDescription},
+        #{bankCode},
+        #{bankName},
+        #{currencyName},
+        #{unreceivedCount},
+        #{taxRateCode},
+        #{print},
+        #{officeLocation},
+		#{attachDepartManagerName},
+		#{attachDepartManagerCode},
+		#{attachDepartAdminName},
+		#{attachDepartAdminCode},
+		#{purchasingManagerName},
+		#{purchasingManagerCode},
+		'Y',
+		#{deliveryAddress})
+    </insert>
+    <update id="update">
+        UPDATE TB_FA_PURCHASE_ORDER
+        SET
+        PURCHASE_ORDER_SAP_ID = #{purchaseOrderSapId},
+        ORDER_MONEY = #{orderMoney},
+        APPLY_USER = #{applyUser},
+        <!-- APPLY_DATE = #{applyDate},  -->
+        CAPPROVALSTATE = #{capprovalstate},
+        ORDER_STATUS = #{orderStatus},
+        DRAFT = #{draft},
+        <!-- CREATE_BY = #{createBy},
+        CREATE_DATE = #{createDate},  -->
+        UPDATE_BY = #{updateBy},
+        UPDATE_DATE = #{updateDate},
+        <!-- CREATE_BY_CODE = #{createByCode},  -->
+        UPDATE_BY_CODE = #{updateByCode},
+        APPLY_USER_CODE = #{applyUserCode},
+        CAPPROVALEND = #{capprovalend},
+        CAUSERCODE = #{causercode},
+        CAUSERNAME = #{causername},
+        DLASTADATE = #{dlastadate},
+        CNEXTHANDLERCODE = #{cnexthandlercode},
+        CNEXTHANDLERNAME = #{cnexthandlername},
+        BUYER_NAME = #{buyerName},
+        BUYER_CODE = #{buyerCode},
+        CURRENCY_CODE = #{currencyCode},
+        EXCHANGE_RATE = #{exchangeRate},
+        TAX_RATE = #{taxRate},
+        BUDGET_DEPARTMENT_CODE = #{budgetDepartmentCode},
+        BUDGET_DEPARTMENT_NAME = #{budgetDepartmentName},
+        COMPANY_NAME = #{companyName},
+        COMPANY_CODE = #{companyCode},
+        PLATFORM = #{platform},
+        ASSET_TYPE = #{assetType},
+        PURCHASING_GROUP = #{purchasingGroup},
+        PROCUREMENT_ORGANIZATION = #{procurementOrganization},
+        ORDER_TYPE = #{orderType},
+        SUPPLIER_NAME = #{supplierName},
+        SUPPLIER_CODE = #{supplierCode},
+        PAYMENT_TYPE_CODE = #{paymentTypeCode},
+        PAYMENT_TYPE_NAME = #{paymentTypeName},
+        BANK_NUMBER = #{bankNumber},
+        CONTACT_NUMBER = #{contactNumber},
+        CONTACTS = #{contacts},
+        TELEPHONE = #{telephone},
+        COST_CENTER = #{costCenter},
+        COST_CENTER_CODE = #{costCenterCode},
+        FACTORY_CODE = #{factoryCode},
+        COMPANY_ADDRESS = #{companyAddress},
+        COMPANY_SPECIFIC_NAME = #{companySpecificName},
+        COUNTRY = #{country},
+        CITY = #{city},
+        ZIP_CODE = #{zipCode},
+        BUYER_REMARK = #{buyerRemark},
+        HEADER_TEXT_DESCRIPTION = #{headerTextDescription},
+        BANK_CODE = #{bankCode},
+        BANK_NAME = #{bankName},
+        CURRENCY_NAME = #{currencyName},
+        UNRECEIVED_COUNT = #{unreceivedCount},
+        TAX_RATE_CODE = #{taxRateCode},
+        PRINT = #{print},
+		ATTACH_DEPART_MANAGER_NAME = #{attachDepartManagerName},
+		ATTACH_DEPART_MANAGER_CODE = #{attachDepartManagerCode},
+		ATTACH_DEPART_ADMIN_NAME = #{attachDepartAdminName},
+		ATTACH_DEPART_ADMIN_CODE = #{attachDepartAdminCode},
+		DELIVERY_ADDRESS = #{deliveryAddress}
+        WHERE  CDOCUMENT = #{cdocument}
+    </update>
+    <update id="updatePurchaseOrder">
+        UPDATE TB_FA_PURCHASE_ORDER
+        SET
+          PURCHASE_ORDER_SAP_ID = #{purchaseOrder.purchaseOrderSapId} ,
+          PURCHASE_ORDER_SAP_PROJECT_ID = #{purchaseOrder.purchaseOrderSapProjectId} ,
+          MATNR = #{purchaseOrder.matnr} ,
+          LEDGER_ACCOUNT = #{purchaseOrder.ledgerAccount} ,
+          MEINS = #{purchaseOrder.meins}
+        WHERE CDOCUMENT = #{purchaseOrder.cdocument}
+    </update>
+    <select id="searchPurchaseOrderByOrderId" resultMap="purchaseOrderMap">
+        SELECT PO.*,THC.CINTERNALORDERCODE
+        FROM BCC.TB_FA_PURCHASE_ORDER PO LEFT JOIN t_tybx_handv_costcenter THC ON PO.COST_CENTER_CODE=THC.CCOSTCENTERCODE
+        WHERE 1=1
+        <if test="cdocument != null and cdocument != ''">
+            AND PO.CDOCUMENT LIKE '%' || #{cdocument} || '%'
+        </if>
+		AND PO.STATUS = 'Y'
+    </select>
+    <select id="searchPurchaseOrderByOrderIdOnly" resultMap="purchaseOrderMap">
+        SELECT PO.*
+        FROM BCC.TB_FA_PURCHASE_ORDER PO
+        WHERE PO.CDOCUMENT =#{cdocument}
+        AND PO.STATUS = 'Y'
+    </select>
+    <delete id="deletePurchaseOrderByPurchaseId">
+        DELETE FROM TB_FA_PURCHASE_ORDER WHERE CDOCUMENT = #{cdocument}
+    </delete>
+
+    <!-- 根据登录人筛选部门 -->
+    <select id="searchDepartmentByUserCode" resultMap="departmentMap">
+        SELECT DISTINCT
+        TD.BUDGET_DEPARTMENT_CODE DEPARTMENT_CODE,
+        TD.BUDGET_DEPARTMENT_NAME DEPARTMENT_NAME,
+        TD.COST_CENTER_CODE,
+        TD.COST_CENTER
+        FROM TB_FA_APPLY_ORDER TD
+        where TD.CDOCUMENT IN (SELECT TDD.APPLY_ORDER_ID
+			                          FROM TB_FA_APPLY_ORDER_DETAIL TDD
+			                         WHERE TDD.NOT_APPLY_COUNT > 0)
+        AND (TD.BUYER_CODE = #{purchaseOrderModel.loginUserCode}
+        		OR TD.BUYER_CODE IN (SELECT CAUTHORIZERCODE FROM T_APPROVALEMPOWER 
+										WHERE CUSERCODE = #{purchaseOrderModel.loginUserCode}  AND SYSDATE BETWEEN CBEGINTIME AND CENDTIME 
+										AND CSTATUS='Y' AND CAPPROVALEND='Y')
+        	)
+        AND TD.BUDGET_DEPARTMENT_CODE is not null
+        AND TD.BUDGET_DEPARTMENT_NAME is not null
+        AND TD.STATUS = 'Y'                      
+	   	AND TD.DRAFT = 'N'                      
+	   	AND TD.ORDER_STATUS = '未关闭'                      
+	   	AND TD.CAPPROVALSTATE = '已完成'
+        <if test="purchaseOrderModel.companyCode != null and purchaseOrderModel.companyCode != ''">
+            AND TD.COMPANY_CODE = #{purchaseOrderModel.companyCode}
+        </if>
+        <if test="purchaseOrderModel.costCenter != null and purchaseOrderModel.costCenter != ''">
+            AND ( TD.COST_CENTER LIKE '%' || #{purchaseOrderModel.costCenter} || '%'
+            OR TD.COST_CENTER_CODE  LIKE '%' || #{purchaseOrderModel.costCenter} || '%' )
+        </if>
+        <if test="purchaseOrderModel.budgetDepartmentName != null and purchaseOrderModel.budgetDepartmentName != ''">
+            AND ( TD.BUDGET_DEPARTMENT_NAME LIKE '%' || #{purchaseOrderModel.budgetDepartmentName} || '%'
+            OR TD.BUDGET_DEPARTMENT_CODE  LIKE '%' || #{purchaseOrderModel.budgetDepartmentName} || '%' )
+        </if>
+    </select>
+
+	<update id="updateOrderStatus" >
+		UPDATE TB_FA_PURCHASE_ORDER 	
+		  SET 
+			ORDER_STATUS = #{orderStatus}
+		  WHERE CDOCUMENT = #{cdocument}
+	</update>
+	<update id="updateOrderStatusForPayment" >
+		UPDATE TB_FA_PURCHASE_ORDER 	
+		  SET 
+			IS_CLOSE_FOR_PAYMENT = #{isCloseForPayment}
+		  WHERE CDOCUMENT = #{cdocument}
+	</update>
+	<update id = "updateOrderIssap">
+		UPDATE TB_FA_PURCHASE_ORDER
+		  SET
+			ISSAP ='是'
+		  WHERE CDOCUMENT = #{cdocument}
+	</update>
+	<!-- 弃审时查询收货单使用采购订单的数量 -->
+	<select id="searchNextReceiveCount" resultType="long">
+		 SELECT COUNT(*)
+		   FROM TB_FA_RECEIVE_GOODS T
+		  WHERE T.PURCHASE_ID = #{cdocument}
+	</select>
+	<!-- 导出数据 -->
+	<select id="exportPurchaseOrder" resultMap="purchaseOrderMap">
+		<include refid="search_purchase_order"></include>
+	</select>
+	<!-- 恢复采购申请单的最大值据 -->
+	<update id = "updateApplyNextSecondarycoding">
+		UPDATE TB_FA_APPLY_ORDER_DETAIL A
+		   SET A.NEXT_SECONDARYCODING =
+		       (SELECT SUBSTR(B.SECONDARY, 1, 4)
+		          FROM TB_FA_PURCHASE_ORDER_DETAIL B
+		         WHERE A.ID = B.APPLY_DETAIL_ID
+		           AND B.PURCHASE_ORDER_ID= #{cdocument})
+		 WHERE EXISTS (SELECT 1
+		          FROM TB_FA_PURCHASE_ORDER_DETAIL B
+		         WHERE A.ID = B.APPLY_DETAIL_ID
+		           AND B.PURCHASE_ORDER_ID= #{cdocument})
+	</update>
+	<!-- 采购订单次级编码置空-->
+	<update id = "updatePurchaseSecondary">
+		UPDATE TB_FA_PURCHASE_ORDER_DETAIL T
+		   SET T.SECONDARY = ''
+		 WHERE T.PURCHASE_ORDER_ID = #{cdocument}
+	</update>
+
+    <!-- 当收货数量等于订单详情表中的数量时，表示收货完成，将状态改为关闭-->
+    <update id="updateOrderStatusByGoodsCount" parameterType="string">
+        update TB_FA_PURCHASE_ORDER A
+        set A.ORDER_STATUS = '关闭'
+        where A.CDOCUMENT = #{purchaseId}
+        and not exists (select 1
+        from TB_FA_PURCHASE_ORDER_DETAIL B
+        where B.PURCHASE_ORDER_ID = A.CDOCUMENT and nvl(B.GOODS_COUNT,0) != nvl(B.APPLY_COUNT,0))
+    </update>
+	<!-- 修改打印状态-->
+    <update id="updatePrint">
+        update TB_FA_PURCHASE_ORDER A
+        set A.print = 'Y'
+        where A.CDOCUMENT = #{cdocument}
+    </update>
+    <select id="searchApplyOrderStatus" resultType="string">
+
+    select t.order_status from tb_fa_apply_order t where t.cdocument=#{id}
+    </select>
+</mapper>

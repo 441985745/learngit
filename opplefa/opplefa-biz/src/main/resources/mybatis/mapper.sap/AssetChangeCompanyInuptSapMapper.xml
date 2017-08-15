@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.opple.fa.sap.dao.AssetChangeCompanyISapDAO">
+	<resultMap id="iAmtranMap" type="iAmtran">
+		<result property="id"	column="ID"/>		<!-- ID                                --> 		
+		<result property="compCode"	column="BUKRS"/>		<!--  公司代码                          --> 		
+		<result property="mainAssetNo"	column="ANLN1"/>		<!-- 主资产号                            --> 		
+		<result property="assetSubNo"	column="ANLN2"/>		<!--     资产次级编号                   --> 		
+		<result property="year"	column="GJAHR"/>		<!--  会计年度                          --> 		
+		<result property="monthPeriod"	column="MONAT"/>		<!-- 会计期间                --> 	
+		<result property="parCompCode"	column="PBUKR"/>		<!-- 伙伴公司代码               --> 	
+		<result property="parAssetNo"	column="PANL1"/>		<!-- 合伙人资产主号（公司内部往来）             --> 		
+		<result property="parAssetSubNo"	column="PANL2"/>		<!-- 合伙人资产子编号（公司内部往来）             --> 		
+		<result property="trava"	column="TRAVA"/>		<!-- 公司内部资产往来变式             --> 		
+		<result property="currency"	column="WAERS"/>		<!-- 货币代码               --> 		
+		<result property="docType"	column="BLART"/>		<!-- 凭证类型               --> 		
+		<result property="docDate"	column="BUDAT"/>		<!-- 凭证中的记帐日期             --> 		
+
+	</resultMap>
+
+	<insert id="save" keyProperty="id" useGeneratedKeys="true">
+		<selectKey keyProperty="id" order="BEFORE" resultType="long">
+			SELECT SEQ_FA_SAP_ASSET_CHANGE_COMP_I.NEXTVAL from dual		
+		</selectKey>
+		insert into TB_FA_SAP_ASSET_CHANGE_COMP_I
+		(
+		ID,
+		BUKRS,
+		ANLN1,
+		ANLN2,
+		GJAHR,
+		MONAT,
+		PBUKR,
+		PANL1,
+		PANL2,
+		TRAVA,
+		WAERS,
+		BLART,
+		BUDAT
+		)
+		values
+		(
+		#{id},
+		#{compCode },
+		#{mainAssetNo },
+		#{assetSubNo },
+		#{year },
+		#{monthPeriod },
+		#{parCompCode },
+		#{parAssetNo },
+		#{parAssetSubNo },
+		#{trava },
+		#{currency },
+		#{docType },
+		#{docDate }
+
+		)
+
+	</insert>
+</mapper>
+

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.opple.fa.sap.dao.CurrencyamountSapDAO">
+	<resultMap id="currencyamountMap" type="currencyamount">
+		<result property="prId"	column="PR_ID"/>				
+		<result property="itemnoAcc"	column="ITEMNO_ACC"/>		<!--会计凭证行项目编号 	是	01  02  03 -->      
+		<result property="currType"	column="CURR_TYPE"/>		<!--货币和评估视图--> 		                  
+		<result property="currency"	column="CURRENCY"/>			<!-- 货币代码	是 -->
+		<result property="currencyIso"	column="CURRENCY_ISO"/>		<!--iso代码货币--> 		                          
+		<result property="amtDoccur"	column="AMT_DOCCUR"/>		<!--凭证货币金额 	是	行项目的金额        -->     
+		<result property="exchRate"	column="EXCH_RATE"/>		<!--汇率--> 		                                  
+		<result property="exchRateV"	column="EXCH_RATE_V"/>		<!--间接引用的汇率--> 		                  
+		<result property="amtBase"	column="AMT_BASE"/>		<!--用凭证货币表示的税收基础金额--> 		          
+		<result property="discBase"	column="DISC_BASE"/>		<!--可用来计算现金折扣的符合条件金额(以凭证货币形式)--> 		
+		<result property="discAmt"	column="DISC_AMT"/>		<!--以货币类型货币计的现金折扣金额                  --> 		
+
+	</resultMap>
+
+	<insert id="save" parameterType="currencyamount">
+		insert into TB_FA_SAP_CURRENCYAMOUNT
+		(
+		PR_ID,
+		ITEMNO_ACC,
+		CURR_TYPE,
+		CURRENCY,
+		CURRENCY_ISO,
+		AMT_DOCCUR,
+		EXCH_RATE,
+		EXCH_RATE_V,
+		AMT_BASE,
+		DISC_BASE,
+		DISC_AMT
+
+		)
+		values
+		(
+		#{currencyamount.prId },
+		#{currencyamount.itemnoAcc },
+		#{currencyamount.currType },
+		#{currencyamount.currency },
+		#{currencyamount.currencyIso },
+		#{currencyamount.amtDoccur },
+		#{currencyamount.exchRate },
+		#{currencyamount.exchRateV },
+		#{currencyamount.amtBase },
+		#{currencyamount.discBase },
+		#{currencyamount.discAmt }
+
+		)
+
+	</insert>
+</mapper>
+

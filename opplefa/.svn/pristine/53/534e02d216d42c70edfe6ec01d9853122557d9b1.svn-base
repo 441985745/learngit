@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.opple.fa.config.dao.BudgetAssetstypeConfigDAO">
+       <!-- oracle 分页头 -->
+    <sql id="pagination_Head" >
+        <![CDATA[select * from ( select row_.*, rownum rownum_ from ( ]]>
+    </sql>
+    <!-- oracle 分页尾 -->
+    <sql id="pagination_Tail">
+        <![CDATA[) row_ where rownum <= #{pager.pageSize}* #{pager.offset} ) where rownum_ >= #{pager.firstResult} + 1]]>
+    </sql>
+    <!-- count * from -->
+	<sql id="count_Start_Head">
+		<![CDATA[select count(*) from ( ]]>
+	</sql>
+	<sql id="count_Start_Tail">
+		<![CDATA[) countObj ]]>
+	</sql>
+	<resultMap id="budgetAssetstypeConfigResultMap" type="budgetAssetstypeConfig">
+        <result property="id" column="ID"/>
+        <result property="budgetAssetsType" column="BUDGET_ASSETS_TYPE"/>
+        <result property="assetsType" column="ASSETS_TYPE"/>
+        <result property="createBy" column="CREATE_BY" />		<!--创建人 -->
+		<result property="createDate" column="CREATE_DATE" />		<!--创建时间 -->
+		<result property="updateBy" column="UPDATE_BY" />		<!--更新人 -->
+		<result property="updateDate" column="UPDATE_DATE" />		<!--更新时间 -->
+		<result property="createByCode" column="CREATE_BY_CODE" />		<!--创建人编码 -->
+		<result property="updateByCode" column="UPDATE_BY_CODE" />		<!--最后更新人编码 -->
+		<result property="memo" column="MEMO" />		<!--备注 -->
+		<result property="status" column="STATUS" />		<!--数据状态 -->
+			
+	</resultMap>
+
+	<select id="searchByBudgetAssetstype"  resultMap="budgetAssetstypeConfigResultMap">
+              SELECT *
+                FROM
+                   TB_FA_BUDGET_ASSETSTYPE_CONFIG t
+                   WHERE t.BUDGET_ASSETS_TYPE = #{budgetAssetsType}
+                   AND ROWNUM = 1 AND STATUS = 'Y'
+    </select>
+
+<sql id="search_fragment">
+        SELECT
+        	ID,
+			BUDGET_ASSETS_TYPE,
+			ASSETS_TYPE,
+			CREATE_BY,
+			CREATE_DATE,
+			UPDATE_BY,
+			UPDATE_DATE,
+			CREATE_BY_CODE,
+			UPDATE_BY_CODE,
+			MEMO,
+			STATUS
+	  	 FROM TB_FA_BUDGET_ASSETSTYPE_CONFIG  
+	 	 WHERE 1=1
+          
+	</sql>
+	
+	<sql id="search_fragment_cond">
+		<if
+			test="budgetAssetstypeConfig.budgetAssetsType != null and  budgetAssetstypeConfig.budgetAssetsType != ''">
+			AND BUDGET_ASSETS_TYPE LIKE '%' || TRIM(#{budgetAssetstypeConfig.budgetAssetsType }) || '%'
+		</if>
+		<if
+			test="budgetAssetstypeConfig.assetsType != null and  budgetAssetstypeConfig.assetsType != ''">
+			AND ASSETS_TYPE LIKE '%' || TRIM(#{budgetAssetstypeConfig.assetsType }) || '%'
+		</if>
+		<if test="budgetAssetstypeConfig.status != null and  budgetAssetstypeConfig.status != ''">
+			AND STATUS = #{budgetAssetstypeConfig.status} 
+		</if>
+		<if test="budgetAssetstypeConfig.updateBy != null and  budgetAssetstypeConfig.updateBy != ''">
+			AND UPDATE_BY LIKE '%' || TRIM(#{budgetAssetstypeConfig.updateBy}) || '%'
+		</if>
+		<if
+			test="budgetAssetstypeConfig.updateDateBegin != null and  budgetAssetstypeConfig.updateDateBegin != ''">
+			AND UPDATE_DATE >= to_date(#{budgetAssetstypeConfig.updateDateBegin},'yyyy/mm/dd')
+		</if>
+		<if
+			test="budgetAssetstypeConfig.updateDateEnd != null and  budgetAssetstypeConfig.updateDateEnd != ''">
+			 AND UPDATE_DATE <![CDATA[<= ]]>to_date(#{budgetAssetstypeConfig.updateDateEnd},'yyyy/mm/dd')
+		</if>
+		ORDER BY ID, UPDATE_DATE DESC
+	</sql>
+
+	<insert id="save">
+		INSERT INTO TB_FA_BUDGET_ASSETSTYPE_CONFIG
+		(
+		ID,
+		BUDGET_ASSETS_TYPE,
+		ASSETS_TYPE,
+		CREATE_BY,
+		CREATE_BY_CODE,
+		UPDATE_BY,
+		UPDATE_BY_CODE,
+		MEMO,
+		STATUS,
+		CREATE_DATE,
+		UPDATE_DATE
+		)
+		VALUES
+		(
+		SEQ_FA_BUDGETASSETCONF_ID.NEXTVAL,
+		#{budgetAssetstypeConfig.budgetAssetsType },
+		#{budgetAssetstypeConfig.assetsType },
+		#{budgetAssetstypeConfig.createBy },
+		#{budgetAssetstypeConfig.createByCode },
+		#{budgetAssetstypeConfig.createBy },
+		#{budgetAssetstypeConfig.createByCode },
+		#{budgetAssetstypeConfig.memo },
+		#{budgetAssetstypeConfig.status },
+		SYSDATE,
+		SYSDATE
+		)
+	</insert>
+	
+		<!-- 批量插入 -->
+	<insert id="saveBatch" >
+	  	INSERT INTO TB_FA_BUDGET_ASSETSTYPE_CONFIG
+		(
+		ID,
+		ASSETS_TYPE,
+		BUDGET_ASSETS_TYPE,
+		CREATE_BY,
+		CREATE_BY_CODE,
+		UPDATE_BY,
+		UPDATE_BY_CODE,
+		MEMO,
+		STATUS,
+		CREATE_DATE,
+		UPDATE_DATE
+		)
+		VALUES
+		 <foreach collection="list" item="item" index="index"  
+	        separator=",">
+	        	(
+			 SEQ_FA_BUDGETASSETCONF_ID.NEXTVAL,
+				#{item.assetsType },
+				#{item.budgetAssetsType },
+				#{item.createBy },
+				#{item.createByCode },
+				#{item.createBy },
+				#{item.createByCode },
+				#{item.memo },
+				#{item.status },
+				SYSDATE,
+				SYSDATE
+				)
+	      </foreach>
+  	</insert>
+    
+	<!-- 修改是否可用状态 -->
+	<delete id="delete">
+		UPDATE TB_FA_BUDGET_ASSETSTYPE_CONFIG
+		SET
+		STATUS = 'N',
+		UPDATE_BY = #{budgetAssetstypeConfig.updateBy },
+		UPDATE_BY_CODE = #{budgetAssetstypeConfig.updateByCode },
+		UPDATE_DATE = SYSDATE
+
+		WHERE ID IN 
+		<foreach collection="budgetAssetstypeConfig.ids" item="id" separator="," open="(" close=")">
+			${id }
+		</foreach>
+			
+	</delete>
+	
+	<!-- 修改 -->
+	<update id="update">
+		UPDATE TB_FA_BUDGET_ASSETSTYPE_CONFIG
+		SET
+		BUDGET_ASSETS_TYPE = #{budgetAssetstypeConfig.budgetAssetsType },
+		ASSETS_TYPE = #{budgetAssetstypeConfig.assetsType },
+		MEMO = #{budgetAssetstypeConfig.memo },
+		STATUS = #{budgetAssetstypeConfig.status },
+		UPDATE_BY = #{budgetAssetstypeConfig.updateBy },
+		UPDATE_BY_CODE = #{budgetAssetstypeConfig.updateByCode },
+		UPDATE_DATE = SYSDATE
+
+		WHERE ID = ${budgetAssetstypeConfig.id }
+	</update>
+	<update id="updateByType">
+		UPDATE TB_FA_BUDGET_ASSETSTYPE_CONFIG
+		SET
+		MEMO = #{budgetAssetstypeConfig.memo },
+		STATUS = #{budgetAssetstypeConfig.status },
+		UPDATE_BY = #{budgetAssetstypeConfig.updateBy },
+		UPDATE_BY_CODE = #{budgetAssetstypeConfig.updateByCode },
+		UPDATE_DATE = SYSDATE
+		WHERE BUDGET_ASSETS_TYPE = #{budgetAssetstypeConfig.budgetAssetsType }
+			AND ASSETS_TYPE = #{budgetAssetstypeConfig.assetsType }
+	</update>
+	
+
+	<!-- 单条查询 -->
+ 	<select id="get" parameterType="string" resultMap="budgetAssetstypeConfigResultMap">
+ 	
+    	<include refid="search_fragment" />
+    	AND ID = #{id }
+    </select>
+    
+	<!-- 查询 -->
+	<select id="searchList" resultMap="budgetAssetstypeConfigResultMap">
+		<include refid="pagination_Head" />
+		<include refid="search_fragment" />
+		<include refid="search_fragment_cond" />
+		<include refid="pagination_Tail" />
+	</select>
+	<select id="searchListCount" resultType="long">
+		<include refid="count_Start_Head" />
+		<![CDATA[SELECT BUDGET_ASSETS_TYPE
+	  	 FROM TB_FA_BUDGET_ASSETSTYPE_CONFIG 
+	 	 WHERE 1=1
+	 	  ]]>
+		<include refid="search_fragment_cond" />
+		<include refid="count_Start_Tail" />
+	</select>
+
+<!-- 查询 -->
+	<select id="getList" resultMap="budgetAssetstypeConfigResultMap">
+		<include refid="search_fragment" />
+		<include refid="search_fragment_cond" />
+	</select>
+	
+    <!-- 查看编码是否存在 -->
+	<select id="selectExistCodes" parameterType="java.util.List" resultType="string">
+		SELECT BUDGET_ASSETS_TYPE FROM TB_FA_BUDGET_ASSETSTYPE_CONFIG
+		WHERE CONCAT(BUDGET_ASSETS_TYPE,ASSETS_TYPE) IN 
+		<foreach collection="budgetAssetstypeAssetsTypes" item="budgetAssetstypeAssetsType" separator="," open="(" close=")">
+			#{budgetAssetstypeAssetsType }
+		</foreach>
+	</select>
+
+	<select id="checkBudgetAssetType" resultType="integer">
+		SELECT count(*) FROM TB_FA_BUDGET_ASSETSTYPE_CONFIG
+		WHERE BUDGET_ASSETS_TYPE = #{budgetAssetstypeConfig.budgetAssetsType}
+			AND ASSETS_TYPE = #{budgetAssetstypeConfig.assetsType}
+	</select>
+
+
+</mapper>
+

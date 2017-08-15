@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx" xmlns:jee="http://www.springframework.org/schema/jee"
+	xmlns:lang="http://www.springframework.org/schema/lang"
+	xsi:schemaLocation="
+     http://www.springframework.org/schema/beans 
+     http://www.springframework.org/schema/beans/spring-beans.xsd
+     http://www.springframework.org/schema/tx
+     http://www.springframework.org/schema/tx/spring-tx.xsd
+     http://www.springframework.org/schema/aop 
+     http://www.springframework.org/schema/aop/spring-aop.xsd
+     http://www.springframework.org/schema/jee 
+     http://www.springframework.org/schema/jee/spring-jee.xsd
+     http://www.springframework.org/schema/context
+     http://www.springframework.org/schema/context/spring-context.xsd
+     http://www.springframework.org/schema/lang
+     http://www.springframework.org/schema/lang/spring-lang.xsd">
+<!--
+     <beans profile="PRODUCTION,PRE-PRODUCTION">
+		<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close"> 
+		    <property name="url" value="jdbc:mysql://192.168.201.133:3306/ecorpdb?useUnicode=true&amp;characterEncoding=utf8&amp;autoReconnect=true" />
+		    <property name="username" value="ecorp" />
+		    <property name="password" value="ecorp" />
+		    <property name="filters" value="log4j" />
+		    <property name="maxActive" value="20" />
+		    <property name="initialSize" value="10" />
+		    <property name="maxWait" value="60000" />
+		    <property name="minIdle" value="1" />
+		    <property name="timeBetweenEvictionRunsMillis" value="3000" />
+		    <property name="minEvictableIdleTimeMillis" value="300000" />
+		    <property name="validationQuery" value="SELECT 'x'" />
+		    <property name="testWhileIdle" value="true" />
+		    <property name="testOnBorrow" value="false" />
+		    <property name="testOnReturn" value="false" />
+		    <property name="poolPreparedStatements" value="false" />
+		    <property name="maxPoolPreparedStatementPerConnectionSize" value="20" />
+		</bean>
+		<bean id="oracleDataSource"
+			class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
+			<property name="driverClassName" value="${jdbc.driverClassName}"></property>
+			<property name="url" value="${jdbc.url}"></property>
+			<property name="username" value="${jdbc.username}"></property>
+			<property name="password" value="${jdbc.password}"></property>
+		</bean> 
+     </beans>
+-->
+		<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
+		    <!--<property name="url" value="jdbc:oracle:thin:@10.10.1.51:1521/MRM" />-->
+		    <property name="url" value="jdbc:oracle:thin:@10.10.1.51:1521:BCC/MRM" />
+		    <property name="username" value="bcc" />
+		    <property name="password" value="bcc.51" />
+		    <property name="filters" value="logback" />
+		    <property name="maxActive" value="20" />
+		    <property name="initialSize" value="10" />
+		    <property name="maxWait" value="60000" />
+		    <property name="minIdle" value="1" />
+		    <property name="timeBetweenEvictionRunsMillis" value="3000" />
+		    <property name="minEvictableIdleTimeMillis" value="300000" />
+		    <property name="validationQuery" value="SELECT 'x'" />
+		    <property name="testWhileIdle" value="true" />
+		    <property name="testOnBorrow" value="false" />
+		    <property name="testOnReturn" value="false" />
+		    <property name="poolPreparedStatements" value="false" />
+		    <property name="maxPoolPreparedStatementPerConnectionSize" value="20" />
+		</bean>
+		<!--<bean id="oracleDataSource"
+			class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
+			<property name="driverClassName" value="${jdbc.driverClassName}"></property>
+			<property name="url" value="jdbc:oracle:thin:@10.135.13.168:1521/testdb"></property>
+			<property name="username" value="alm"></property>
+			<property name="password" value="alm"></property>
+		</bean>-->
+</beans>

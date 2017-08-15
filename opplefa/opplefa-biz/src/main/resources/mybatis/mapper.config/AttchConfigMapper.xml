@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.opple.fa.config.dao.AttchConfigDAO">
+    <!-- oracle 分页头 -->
+    <sql id="pagination_Head" >
+        <![CDATA[select * from ( select row_.*, rownum rownum_ from ( ]]>
+    </sql>
+    <!-- oracle 分页尾 -->
+    <sql id="pagination_Tail">
+        <![CDATA[) row_ where rownum <= #{pager.pageSize}* #{pager.offset} ) where rownum_ >= #{pager.firstResult} + 1]]>
+    </sql>
+    <!-- count * from -->
+    <sql id="count_Start_Head">
+        <![CDATA[select count(*) from ( ]]>
+    </sql>
+    <sql id="count_Start_Tail">
+        <![CDATA[) countObj ]]>
+    </sql>
+	<resultMap id="attchConfigResultMap" type="com.opple.fa.config.entity.AttchConfig">
+        <result property="id" column="ID"/>
+        <result property="companyCode" column="COMPANY_CODE"/>
+        <result property="companyName" column="COMPANY_NAME"/>
+        <result property="costcenterCode" column="COSTCENTER_CODE"/>
+        <result property="costcenterName" column="COSTCENTER_NAME"/>
+        <result property="officeLocation" column="OFFICE_LOCATION"/>
+        <result property="platform" column="PLATFORM"/>
+        <result property="assetType" column="ASSET_TYPE"/>
+        <result property="workShopType" column="WORK_SHOP_TYPE"/>
+        <result property="attachDepartAdminCode" column="ATTACH_DEPART_ADMIN_CODE"/>
+        <result property="attachDepartAdminName" column="ATTACH_DEPART_ADMIN_NAME"/>
+        <result property="attachDepartManagerCode" column="ATTACH_DEPART_MANAGER_CODE"/>
+        <result property="attachDepartManagerName" column="ATTACH_DEPART_MANAGER_NAME"/>
+
+        <result property="attachDepartMajordomoCode" column= "ATTACH_DEPART_MAJORDOMO_CODE"/>
+        <result property="attachDepartMajordomoName" column= "ATTACH_DEPART_MAJORDOMO_NAME"/>
+        <result property="attachDepartVpresidentCode" column="ATTACH_DEPART_VPRESIDENT_CODE"/>
+        <result property="attachDepartVpresidentName" column="ATTACH_DEPART_VPRESIDENT_NAME"/>
+
+        <result property="buyerCodea" column="BUYER_CODEA"/>
+        <result property="buyerNamea" column="BUYER_NAMEA"/>
+        <result property="buyerCodeb" column="BUYER_CODEB"/>
+        <result property="buyerNameb" column="BUYER_NAMEB"/>
+        <result property="buyerCodec" column="BUYER_CODEC"/>
+        <result property="buyerNamec" column="BUYER_NAMEC"/>
+        <result property="buyerCoded" column="BUYER_CODED"/>
+        <result property="buyerNamed" column="BUYER_NAMED"/>
+        <result property="buyerCodee" column="BUYER_CODEE"/>
+        <result property="buyerNamee" column="BUYER_NAMEE"/>
+        <result property="buyerCodef" column="BUYER_CODEF"/>
+        <result property="buyerNamef" column="BUYER_NAMEF"/>
+        <result property="buyerCodeg" column="BUYER_CODEG"/>
+        <result property="buyerNameg" column="BUYER_NAMEG"/>
+        <result property="buyerCodeh" column="BUYER_CODEH"/>
+        <result property="buyerNameh" column="BUYER_NAMEH"/>
+
+        <result property="purchasingManagerCode" column="PURCHASING_MANAGER_CODE"/>
+        <result property="purchasingManagerName" column="PURCHASING_MANAGER_NAME"/>
+        <result property="twoDepartmentHeadCode" column="TWO_DEPARTMENT_HEAD_CODE"/>
+        <result property="twoDepartmentHeadName" column="TWO_DEPARTMENT_HEAD_NAME"/>
+
+        <result property="status" column="STATUS"/>
+        <result property="createBy" column="CREATE_BY"/>
+        <result property="createUserName" column="CREATE_BY_NAME"/>
+        <result property="createDate" column="CREATE_DATE"/>
+        <result property="updateBy" column="UPDATE_BY"/>
+        <result property="updateUserName" column="UPDATE_BY_NAME"/>
+        <result property="updateDate" column="UPDATE_DATE"/>
+	</resultMap>
+
+	<select id="searchByCostcenterCodeAndAssetType" resultMap="attchConfigResultMap">
+           SELECT *
+			  FROM TB_FA_ATTACH_CONFIG 
+			 WHERE COSTCENTER_CODE = #{costcenterCode}
+			   AND ASSET_TYPE = #{assetType}
+			   AND ROWNUM <![CDATA[<=]]> 1
+			   AND STATUS = '0'
+    </select>
+    <select id="searchByCostcenterCode" resultMap="attchConfigResultMap" parameterType="com.opple.fa.config.entity.AssetsBudgetFromBUD">
+           SELECT distinct T.PLATFORM,
+                            T.TWO_DEPARTMENT_HEAD_CODE,
+                            T.TWO_DEPARTMENT_HEAD_NAME,
+           				    T.OFFICE_LOCATION
+			  FROM tb_fa_attach_config T
+			 WHERE 1=1 and T.COSTCENTER_CODE = #{costCenter} and rownum=1
+    </select>
+    <select id="serachByUseCode" resultMap="attchConfigResultMap">
+    		SELECT
+    		T.ASSET_TYPE ,
+    		T.COSTCENTER_CODE
+   			FROM TB_FA_ATTACH_CONFIG T
+		    WHERE 1=1 and T.ATTACH_DEPART_MANAGER_CODE = #{attachDepartManagerCode}
+    </select>
+
+    <select id="searchByPurchaseManagerCode" resultMap="attchConfigResultMap">
+        select * from TB_FA_ATTACH_CONFIG t where t.purchasing_manager_code = #{id} and rownum=1
+    </select>
+    <select id="searchPurchaseManager" resultMap="attchConfigResultMap">
+        select * from tb_fa_attach_config t where (t.buyer_codea =#{id} or t.buyer_codeb=#{id} or t.buyer_codec=#{id}
+		or t.buyer_coded=#{id} ) and STATUS = '0' and  rownum =1
+    </select>
+
+    <!--根据归口部门管理员查询资产类型-->
+    <select id="getAssetTypeListByAdmin" parameterType="string" resultMap="attchConfigResultMap">
+            SELECT DISTINCT ASSET_TYPE FROM TB_FA_ATTACH_CONFIG WHERE ATTACH_DEPART_ADMIN_CODE = #{userCode}
+    </select>
+
+    <sql id="attachConfig_domain">
+        ID, COMPANY_CODE, COSTCENTER_CODE, OFFICE_LOCATION, PLATFORM, ASSET_TYPE, WORK_SHOP_TYPE,
+        ATTACH_DEPART_ADMIN_CODE, ATTACH_DEPART_ADMIN_NAME, ATTACH_DEPART_MANAGER_CODE,
+        ATTACH_DEPART_MANAGER_NAME, ATTACH_DEPART_MAJORDOMO_CODE, ATTACH_DEPART_MAJORDOMO_NAME,
+        ATTACH_DEPART_VPRESIDENT_CODE, ATTACH_DEPART_VPRESIDENT_NAME, BUYER_CODEA, BUYER_NAMEA,
+        BUYER_CODEB, BUYER_NAMEB, BUYER_CODEC, BUYER_NAMEC, BUYER_CODED, BUYER_NAMED,
+        BUYER_CODEE, BUYER_NAMEE,BUYER_CODEF, BUYER_NAMEF, BUYER_CODEG, BUYER_NAMEG, BUYER_CODEH, BUYER_NAMEH,
+        PURCHASING_MANAGER_CODE, PURCHASING_MANAGER_NAME, TWO_DEPARTMENT_HEAD_CODE, TWO_DEPARTMENT_HEAD_NAME,
+        STATUS, CREATE_BY, CREATE_BY_NAME, CREATE_DATE, UPDATE_BY, UPDATE_BY_NAME, UPDATE_DATE, COSTCENTER_NAME,
+        COMPANY_NAME
+    </sql>
+    <sql id="search_attach_config_fragment">
+        SELECT
+            <include refid="attachConfig_domain"/>
+        FROM
+        TB_FA_ATTACH_CONFIG
+        where 1 = 1
+        <if test="attchConfig.companyCode != null and attchConfig.companyCode != ''">
+            AND ( COMPANY_CODE LIKE '%' || #{attchConfig.companyCode} || '%'OR COMPANY_NAME LIKE '%' || #{attchConfig.companyCode} || '%')
+        </if>
+        <if test="attchConfig.costcenterCode != null and attchConfig.costcenterCode != ''">
+            AND ( COSTCENTER_CODE LIKE '%' || #{attchConfig.costcenterCode} || '%' OR COSTCENTER_NAME LIKE '%' || #{attchConfig.costcenterCode} || '%' )
+        </if>
+        <if test="attchConfig.platform != null and attchConfig.platform != ''">
+            AND PLATFORM LIKE '%' || #{attchConfig.platform} || '%'
+        </if>
+        <if test="attchConfig.assetType != null and attchConfig.assetType != ''">
+            AND ASSET_TYPE LIKE '%' || #{attchConfig.assetType} || '%'
+        </if>
+        <if test="attchConfig.status != null and attchConfig.status != ''">
+            AND STATUS = #{attchConfig.status}
+        </if>
+        ORDER BY ID ASC
+    </sql>
+    <select id="searchAttchConfigList" resultMap="attchConfigResultMap">
+        <include refid="pagination_Head"/>
+        <include refid="search_attach_config_fragment"/>
+        <include refid="pagination_Tail"/>
+    </select>
+    <select id="searchAttchConfigListCount" resultType="long">
+        <include refid="count_Start_Head"/>
+        <include refid="search_attach_config_fragment"/>
+        <include refid="count_Start_Tail"/>
+    </select>
+    <select id="exportAttchConfigList" resultMap="attchConfigResultMap">
+        <include refid="search_attach_config_fragment"/>
+    </select>
+
+    <select id="getAttchConfigByID" parameterType="string" resultMap="attchConfigResultMap">
+        SELECT
+        <include refid="attachConfig_domain"/>
+        FROM
+        TB_FA_ATTACH_CONFIG
+        where ID = #{id}
+    </select>
+
+    <select id="getAttchConfigNumByImport" resultType="integer" parameterType="com.opple.fa.config.entity.AttchConfig">
+        SELECT count(*) FROM TB_FA_ATTACH_CONFIG WHERE 1=1
+        <if test="companyCode != null and companyCode != ''">
+            AND COMPANY_CODE = #{companyCode}
+        </if>
+        <if test="costcenterCode != null and costcenterCode != ''">
+            AND COSTCENTER_CODE = #{costcenterCode}
+        </if>
+        <if test="assetType != null and assetType != ''">
+            AND ASSET_TYPE = #{assetType}
+        </if>
+
+    </select>
+
+    <insert id="addAttchConfig" parameterType="com.opple.fa.config.entity.AttchConfig">
+        INSERT INTO TB_FA_ATTACH_CONFIG(
+        ID, COMPANY_CODE, COSTCENTER_CODE, OFFICE_LOCATION, PLATFORM, ASSET_TYPE, WORK_SHOP_TYPE,
+        ATTACH_DEPART_ADMIN_CODE, ATTACH_DEPART_ADMIN_NAME, ATTACH_DEPART_MANAGER_CODE,
+        ATTACH_DEPART_MANAGER_NAME, ATTACH_DEPART_MAJORDOMO_CODE, ATTACH_DEPART_MAJORDOMO_NAME,
+        ATTACH_DEPART_VPRESIDENT_CODE, ATTACH_DEPART_VPRESIDENT_NAME, BUYER_CODEA, BUYER_NAMEA,
+        BUYER_CODEB, BUYER_NAMEB, BUYER_CODEC, BUYER_NAMEC, BUYER_CODED, BUYER_NAMED,BUYER_CODEE,
+        BUYER_NAMEE, BUYER_CODEF, BUYER_NAMEF, BUYER_CODEG, BUYER_NAMEG,BUYER_CODEH, BUYER_NAMEH,
+        PURCHASING_MANAGER_CODE, PURCHASING_MANAGER_NAME, TWO_DEPARTMENT_HEAD_CODE, TWO_DEPARTMENT_HEAD_NAME,
+        STATUS, CREATE_BY, CREATE_BY_NAME, CREATE_DATE, UPDATE_BY, UPDATE_BY_NAME, UPDATE_DATE,COSTCENTER_NAME,
+        COMPANY_NAME
+        ) VALUES (
+        SEQ_FA_ATTACH_CONFIG.NEXTVAL,
+        #{companyCode},
+        #{costcenterCode},
+        #{officeLocation},
+        #{platform},
+        #{assetType},
+        #{workShopType},
+        #{attachDepartAdminCode},
+        #{attachDepartAdminName},
+        #{attachDepartManagerCode},
+        #{attachDepartManagerName},
+        #{attachDepartMajordomoCode},
+        #{attachDepartMajordomoName},
+        #{attachDepartVpresidentCode},
+        #{attachDepartVpresidentName},
+        #{buyerCodea},
+        #{buyerNamea},
+        #{buyerCodeb},
+        #{buyerNameb},
+        #{buyerCodec},
+        #{buyerNamec},
+        #{buyerCoded},
+        #{buyerNamed},
+        #{buyerCodee},
+        #{buyerNamee},
+        #{buyerCodef},
+        #{buyerNamef},
+        #{buyerCodeg},
+        #{buyerNameg},
+        #{buyerCodeh},
+        #{buyerNameh},
+        #{purchasingManagerCode},
+        #{purchasingManagerName},
+        #{twoDepartmentHeadCode},
+        #{twoDepartmentHeadName},
+        #{status},
+        #{createBy},
+        #{createUserName},
+        SYSDATE,
+        #{updateBy},
+        #{updateUserName},
+        SYSDATE,
+        #{costcenterName},
+        #{companyName}
+        )
+    </insert>
+
+    <update id="updateAttchConfig" parameterType="com.opple.fa.config.entity.AttchConfig">
+        UPDATE TB_FA_ATTACH_CONFIG SET
+        OFFICE_LOCATION = #{officeLocation},
+        PLATFORM = #{platform},
+        WORK_SHOP_TYPE = #{workShopType},
+        ATTACH_DEPART_ADMIN_CODE = #{attachDepartAdminCode},
+        ATTACH_DEPART_ADMIN_NAME = #{attachDepartAdminName},
+        ATTACH_DEPART_MANAGER_CODE = #{attachDepartManagerCode},
+        ATTACH_DEPART_MANAGER_NAME = #{attachDepartManagerName},
+        ATTACH_DEPART_MAJORDOMO_CODE = #{attachDepartMajordomoCode},
+        ATTACH_DEPART_MAJORDOMO_NAME = #{attachDepartMajordomoName},
+        ATTACH_DEPART_VPRESIDENT_CODE = #{attachDepartVpresidentCode},
+        ATTACH_DEPART_VPRESIDENT_NAME = #{attachDepartVpresidentName},
+        BUYER_CODEA = #{buyerCodea},
+        BUYER_NAMEA = #{buyerNamea},
+        BUYER_CODEB = #{buyerCodeb},
+        BUYER_NAMEB = #{buyerNameb},
+        BUYER_CODEC = #{buyerCodec},
+        BUYER_NAMEC = #{buyerNamec},
+        BUYER_CODED = #{buyerCoded},
+        BUYER_NAMED = #{buyerNamed},
+        BUYER_CODEE = #{buyerCodee},
+        BUYER_NAMEE = #{buyerNamee},
+        BUYER_CODEF = #{buyerCodef},
+        BUYER_NAMEF = #{buyerNamef},
+        BUYER_CODEG = #{buyerCodeg},
+        BUYER_NAMEG = #{buyerNameg},
+        BUYER_CODEH = #{buyerCodeh},
+        BUYER_NAMEH = #{buyerNameh},
+        PURCHASING_MANAGER_CODE = #{purchasingManagerCode},
+        PURCHASING_MANAGER_NAME = #{purchasingManagerName},
+        TWO_DEPARTMENT_HEAD_CODE = #{twoDepartmentHeadCode},
+        TWO_DEPARTMENT_HEAD_NAME = #{twoDepartmentHeadName},
+        STATUS = #{status},
+        UPDATE_BY = #{updateBy},
+        UPDATE_BY_NAME = #{updateUserName},
+        UPDATE_DATE = SYSDATE
+        WHERE 1 = 1
+        <if test="id != null and id != ''">
+            AND ID = #{id}
+        </if>
+        <if test="companyCode != null and companyCode != ''">
+            AND COMPANY_CODE = #{companyCode}
+        </if>
+        <if test="costcenterCode != null and costcenterCode != ''">
+            AND COSTCENTER_CODE = #{costcenterCode}
+        </if>
+        <if test="assetType != null and assetType != ''">
+            AND ASSET_TYPE = #{assetType}
+        </if>
+    </update>
+
+    <update id="updateStatusOfAttchConfig" parameterType="com.opple.fa.config.entity.AttchConfig">
+        UPDATE TB_FA_ATTACH_CONFIG SET
+        STATUS = #{status},
+        UPDATE_BY = #{updateBy},
+        UPDATE_BY_NAME = #{updateUserName},
+        UPDATE_DATE = SYSDATE
+        WHERE 1 = 1
+        <if test="id != null and id != ''">
+            AND ID = #{id}
+        </if>
+    </update>
+
+
+
+</mapper>
+

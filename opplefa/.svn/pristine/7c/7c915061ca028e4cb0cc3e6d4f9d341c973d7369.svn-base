@@ -1,0 +1,501 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.opple.fa.purchase.dao.CheckAcceptanceDAO">
+	<!-- oracle 分页头 -->
+	<sql id="pagination_Head">
+		<![CDATA[select * from ( select row_.*, rownum rownum_ from ( ]]>
+	</sql>
+	<!-- oracle 分页尾 -->
+	<sql id="pagination_Tail">
+		<![CDATA[) row_ where rownum <= #{pager.pageSize}* #{pager.offset} ) where rownum_ >= #{pager.firstResult} + 1]]>
+	</sql>
+	<!-- count * from -->
+	<sql id="count_Start_Head">
+		<![CDATA[select count(*) from ( ]]>
+	</sql>
+	<sql id="count_Start_Tail">
+		<![CDATA[) countObj ]]>
+	</sql>
+
+	<resultMap id="checkAcceptanceMap" type="com.opple.fa.purchase.entity.CheckAcceptance">
+		<result property="id" column="ID" />
+		<result property="purchaseId" column="PURCHASE_ID" />
+		<result property="checkAcceptId" column="CHECK_ACCEPT_ID" />
+		<result property="applyDetailId" column="APPLY_DETAIL_ID" />
+		<result property="purchaseDetailId" column="PURCHASE_DETAIL_ID" />
+		<result property="cdocument" column="CDOCUMENT" />
+		<result property="receiveGoodsDetailId" column="RECEIVE_GOODS_DETAIL_ID" />
+		<result property="buyerName" column="BUYER_NAME" /><!-- 采购员名称（订单行） -->
+		<result property="buyerCode" column="BUYER_CODE" /><!-- 采购员CODE（订单行） -->
+		<result property="supplierCode" column="SUPPLIER_CODE" />
+		<result property="supplierName" column="SUPPLIER_NAME" />
+		<result property="useInfo" column="USE_INFO" /><!-- 使用信息 (直接显示:在用（界面）)-->
+		<result property="assetsName" column="ASSETS_NAME"/><!-- 资产名称 -->
+		<result property="useStatus" column="USE_STATUS" /><!-- 使用状态（正在使用，一个字段） -->
+		<result property="assetsType" column="ASSETS_TYPE"/><!-- 资产类型 -->
+		<result property="receiveDate" column="RECEIVE_DATE"/><!-- 到货日期（实际收货日期） -->
+		<result property="checkCycle" column="CHECK_CYCLE"/><!-- 检定周期 （手填）-->
+		<result property="contractNo" column="CONTRACT_NO" /><!-- 合同号（收货头） -->
+		<result property="depreciation" column="DEPRECIATION" /><!-- 使用年限（申请行里，折旧年限(月) -->
+		<result property="checkActiveDate" column="CHECK_ACTIVE_DATE" /><!-- 核定有效年月（手填） -->
+		<result property="brand" column="BRAND"/><!-- 规格型号(申请表带出) -->
+		<result property="ledgerAccount" column="LEDGER_ACCOUNT"/><!-- 总账科目 （收货行）-->
+		<result property="recWarrantyPeriod" column="REC_WARRANTY_PERIOD"/><!-- 保固期，收货行 -->
+		<result property="units" column="UNITS"/><!-- 计量单位（收货的单位，收货是从申请的行） -->
+		<result property="enableDate" column="ENABLE_DATE"/><!-- 启用日期(手填)-->
+		<result property="approvalCode" column="APPROVAL_CODE"/><!-- 批准文号(手填)-->
+		
+		<result property="applyDepartment" column="APPLY_DEPARTMENT" /><!-- 申请部门(采购申请的部门)-->
+		<result property="applyDepartmentCode" column="APPLY_DEPARTMENT_CODE" /><!-- 申请部门code(采购申请的部门)-->
+		<result property="budgetDepartmentName" column="BUDGET_DEPARTMENT_NAME" /><!-- 需求部门code(采购申请的预算所属部门)-->
+		<result property="budgetDepartmentCode" column="BUDGET_DEPARTMENT_CODE" /><!-- 需求部门(采购申请的预算所属部门)-->
+		<result property="officeLocation" column="OFFICE_LOCATION" /><!-- 办公地点(采购申请的办公地点)-->
+		<result property="companyCode" column="COMPANY_CODE"/>
+		<result property="companyName" column="COMPANY_NAME"/>
+		<result property="costCenter" column="COST_CENTER"/>
+		<result property="costCenterCode" column="COST_CENTER_CODE"/><!-- 成本中心 -->
+		<result property="storageLocation" column="STORAGE_LOCATION"/><!-- 存放位置(根据办公地点 获取   办公地点 从申请单头抓取  TB_FA_APPLY_ORDER.OFFICE_LOCATION) -->
+		<result property="receiveGoodsId" column="RECEIVE_GOODS_ID" />
+		<result property="goodsCount" column="GOODS_COUNT"/><!-- 收货数量（订单的行）-->
+		<result property="checkCount" column="CHECK_COUNT"/><!-- 验收数量（订单的行）-->
+		<result property="thisCheckCount" column="THIS_CHECK_COUNT"/><!-- 本次验收数量-->
+		
+		<result property="idea" column="IDEA" />
+		<result property="isEmail" column="ISEMAIL" />
+		<result property="cuserCode" column="CUSERCODE" />
+		<result property="cuserName" column="CUSERNAME" />
+		<result property="isPhoneMessage" column="ISPHONEMESSAGE" />
+		<result property="cnexthandlercode" column="CNEXTHANDLERCODE" />
+		<result property="cnexthandlername" column="CNEXTHANDLERNAME" />
+		<result property="checkDate" column="CHECK_DATE" />
+		
+		<result property="epMaterialdocu" column="EP_MATERIALDOCUMENT" /><!-- 物料凭证号(sap收货接口返回值) -->
+		<result property="epMatdocumentyear" column="EP_MATDOCUMENTYEAR" /><!-- 物料凭证年度(sap收货接口返回值) -->
+		<result property="epBelnr" column="E_BELNR" /><!-- 会计凭证号(sap收货接口返回值) -->
+		
+		<!-- 创建人 创建时间 更新人 更新时间 -->
+		<result property="createBy" column="CREATE_BY" />
+		<result property="createDate" column="CREATE_DATE" />
+		<result property="updateBy" column="UPDATE_BY" />
+		<result property="updateDate" column="UPDATE_DATE" />
+		<result property="isSap" column="ISSAP" />
+		<result property="lastCheckDate" column="LAST_CHECK_DATE" />
+		<result property="attachDepartAdminName" column="ATTACH_DEPART_ADMIN_NAME" />
+		<result property="attachDepartAdminCode" column="ATTACH_DEPART_ADMIN_CODE" />
+
+		<result property="attachDepartManagerName" column="ATTACH_DEPART_MANAGER_NAME" />
+		<result property="attachDepartManagerCode" column="ATTACH_DEPART_MANAGER_CODE" />
+		<result property="applyCheckUserName" column="APPLY_CHECK_USER_NAME" />
+		<result property="applyCheckUserCode" column="APPLY_CHECK_USER_CODE" />
+		<result property="isUpdateAssetsFrom" column="IS_UPDATE_ASSETS_FROM" />
+		<result property="orderType" column="ORDER_TYPE" />
+		<result property="isprint" column="ISPRINT" />
+		</resultMap>
+		<!-- 生成收货编码用 -->
+	<select id="searchNextSequence" resultType="long">
+		SELECT SEQ_FA_CHECK_ACCEPTANCE_ID.NEXTVAL FROM DUAL
+	</select>
+	
+<!-- 		     CA.CHECK_ACCEPT_ID, -->
+	<!-- 保存验收头 -->
+	<insert id="saveCheckAcceptance">
+		INSERT INTO TB_FA_CHECK_ACCEPTANCE CA
+			  (CA.CDOCUMENT,
+			   CA.RECEIVE_GOODS_ID,
+			   CA.RECEIVE_GOODS_DETAIL_ID,
+			   CA.PURCHASE_DETAIL_ID,
+			   CA.APPLY_DETAIL_ID,
+			   CA.PURCHASE_ID,
+			   CA.CHECK_DATE,
+			   CA.BUYER_CODE,
+			   CA.BUYER_NAME,
+			   CA.APPLY_DEPARTMENT,
+			   CA.APPLY_DEPARTMENT_CODE,
+			   CA.BUDGET_DEPARTMENT_NAME,
+			   CA.BUDGET_DEPARTMENT_CODE,
+			   CA.COMPANY_CODE,
+			   CA.COMPANY_NAME,
+			   CA.COST_CENTER,
+			   CA.COST_CENTER_CODE,
+			   CA.SUPPLIER_CODE,
+			   CA.SUPPLIER_NAME,
+			   CA.USE_INFO,
+			   CA.USE_STATUS,
+			   CA.UNITS,
+			   CA.BRAND,
+			   CA.ASSETS_TYPE,
+			   CA.DEPRECIATION,
+			   CA.CONTRACT_NO,
+			   CA.LEDGER_ACCOUNT,
+			   CA.CHECK_CYCLE,
+			   CA.CHECK_ACTIVE_DATE,
+			   CA.ENABLE_DATE,
+			   CA.RECEIVE_DATE,
+
+			   CA.APPROVAL_CODE,
+			   CA.GOODS_COUNT,
+			   CA.CHECK_COUNT,
+			   CA.THIS_CHECK_COUNT,
+			   CA.ATTACH_DEPART_MANAGER_NAME,
+				CA.ATTACH_DEPART_MANAGER_CODE,
+			   CA.ATTACH_DEPART_ADMIN_CODE,
+			   CA.ATTACH_DEPART_ADMIN_NAME,
+			   CA.APPLY_CHECK_USER_NAME,
+			   CA.APPLY_CHECK_USER_CODE,
+			   CA.ORDER_TYPE,
+			   CA.OFFICE_LOCATION
+			   )
+			VALUES
+			  (#{checkAcceptId},
+			   #{receiveGoodsId},
+			   #{receiveGoodsDetailId},
+			   #{purchaseDetailId},
+			   #{applyDetailId},
+			   #{purchaseId},
+			   TRUNC(SYSDATE,'DD'),
+			   #{buyerCode},
+			   #{buyerName},
+			   #{applyDepartment},
+			   #{applyDepartmentCode},
+			   #{budgetDepartmentName},
+			   #{budgetDepartmentCode},
+			   #{computerCode},
+			   #{computerName},
+			   #{costCenter},
+			   #{costCenterCode},
+			   #{supplierCode},
+			   #{supplierName},
+			   #{useInfo},
+			   #{useStatus},
+			   #{units},
+			   #{brand},
+			   #{assetsType},
+			   #{depreciation},
+			   #{contractNo},
+			   #{ledgerAccount},
+			   #{checkCycle},
+			   #{checkActiveDate},
+			   #{enableDate},
+			   #{receiveDate},
+
+			   #{approvalCode},
+			   #{goodsCount},
+			   nvl(#{checkCount},0) + #{thisCheckCount},
+			   #{thisCheckCount},
+			   #{attachDepartManagerName},
+			   #{attachDepartManagerCode},
+			   #{attachDepartAdminCode},
+			   #{attachDepartAdminName},
+			   #{applyCheckUserName},
+			   #{applyCheckUserCode},
+			   #{orderType},
+			   #{officeLocation}
+			   )
+	</insert>
+	<insert id="saveDelete">
+		INSERT INTO TB_FA_CHECK_ACCEPTANCE_BK CA
+			  (CA.CDOCUMENT,
+			   CA.RECEIVE_GOODS_ID,
+			   CA.RECEIVE_GOODS_DETAIL_ID,
+			   CA.PURCHASE_DETAIL_ID,
+			   CA.APPLY_DETAIL_ID,
+			   CA.PURCHASE_ID,
+			   CA.CHECK_DATE,
+			   CA.BUYER_CODE,
+			   CA.BUYER_NAME,
+			   CA.APPLY_DEPARTMENT,
+			   CA.APPLY_DEPARTMENT_CODE,
+			   CA.BUDGET_DEPARTMENT_NAME,
+			   CA.BUDGET_DEPARTMENT_CODE,
+			   CA.COMPANY_CODE,
+			   CA.COMPANY_NAME,
+			   CA.COST_CENTER,
+			   CA.COST_CENTER_CODE,
+			   CA.SUPPLIER_CODE,
+			   CA.SUPPLIER_NAME,
+			   CA.USE_INFO,
+			   CA.USE_STATUS,
+			   CA.UNITS,
+			   CA.BRAND,
+			   CA.ASSETS_TYPE,
+			   CA.DEPRECIATION,
+			   CA.CONTRACT_NO,
+			   CA.LEDGER_ACCOUNT,
+			   CA.CHECK_CYCLE,
+			   CA.CHECK_ACTIVE_DATE,
+			   CA.ENABLE_DATE,
+			   CA.RECEIVE_DATE,
+
+			   CA.APPROVAL_CODE,
+			   CA.GOODS_COUNT,
+			   CA.CHECK_COUNT,
+			   CA.THIS_CHECK_COUNT,
+			   CA.ATTACH_DEPART_MANAGER_NAME,
+				CA.ATTACH_DEPART_MANAGER_CODE,
+			   CA.ATTACH_DEPART_ADMIN_CODE,
+			   CA.ATTACH_DEPART_ADMIN_NAME,
+			   CA.APPLY_CHECK_USER_NAME,
+			   CA.APPLY_CHECK_USER_CODE,
+			   CA.ORDER_TYPE,
+			   CA.OFFICE_LOCATION,
+			   CA.UPDATE_DATE
+			   )
+			VALUES
+			  (#{cdocument},
+			   #{receiveGoodsId},
+			   #{receiveGoodsDetailId},
+			   #{purchaseDetailId},
+			   #{applyDetailId},
+			   #{purchaseId},
+			   TRUNC(SYSDATE,'DD'),
+			   #{buyerCode},
+			   #{buyerName},
+			   #{applyDepartment},
+			   #{applyDepartmentCode},
+			   #{budgetDepartmentName},
+			   #{budgetDepartmentCode},
+			   #{computerCode},
+			   #{computerName},
+			   #{costCenter},
+			   #{costCenterCode},
+			   #{supplierCode},
+			   #{supplierName},
+			   #{useInfo},
+			   #{useStatus},
+			   #{units},
+			   #{brand},
+			   #{assetsType},
+			   #{depreciation},
+			   #{contractNo},
+			   #{ledgerAccount},
+			   #{checkCycle},
+			   #{checkActiveDate},
+			   #{enableDate},
+			   #{receiveDate},
+
+			   #{approvalCode},
+			   #{goodsCount},
+			   nvl(#{checkCount},0) + #{thisCheckCount},
+			   #{thisCheckCount},
+			   #{attachDepartManagerName},
+			   #{attachDepartManagerCode},
+			   #{attachDepartAdminCode},
+			   #{attachDepartAdminName},
+			   #{applyCheckUserName},
+			   #{applyCheckUserCode},
+			   #{orderType},
+			   #{officeLocation},
+			   sysdate
+			   )
+	</insert>
+	
+	<select id="getCheckAcceptanceByDocument"  resultMap="checkAcceptanceMap">
+		SELECT *
+		  FROM TB_FA_CHECK_ACCEPTANCE CA
+	 WHERE 1 = 1
+			and ca.CDOCUMENT=#{checkAcceptId} 
+			and  STATUS='0'
+	</select>
+<!-- 		     CA.RECEIVE_DATE, -->
+	
+	<!-- 绑定审批流 失败 后删除验收单的表头 -->
+	<delete id="delCheckAcceptanceByCheckAcceptId">
+	 DELETE TB_FA_CHECK_ACCEPTANCE CA 
+	 WHERE 1=1
+	 AND ca.CDOCUMENT = #{checkAcceptId } 
+	</delete>
+	
+	<!-- 修改 验收单的头 -->
+	<update id="updateCheckAcceptance">
+	UPDATE TB_FA_CHECK_ACCEPTANCE CA
+	   SET CA.RECEIVE_GOODS_ID       = #{receiveGoodsId},
+	       CA.PURCHASE_ID            = #{purchaseId},
+	       CA.BUYER_CODE             = #{buyerCode},
+	       CA.BUYER_NAME             = #{buyerName},
+	       CA.APPLY_DEPARTMENT       = #{applyDepartment},
+	       CA.APPLY_DEPARTMENT_CODE  = #{applyDepartmentCode},
+	       CA.BUDGET_DEPARTMENT_NAME = #{budgetDepartmentName},
+	       CA.BUDGET_DEPARTMENT_CODE = #{budgetDepartmentCode},
+	       CA.COMPANY_CODE           = #{computerCode},
+	       CA.COMPANY_NAME           = #{computerName},
+	       CA.COST_CENTER            = #{costCenter},
+	       CA.COST_CENTER_CODE       = #{costCenterCode},
+	       CA.SUPPLIER_CODE          = #{supplierCode},
+	       CA.SUPPLIER_NAME          = #{supplierName},
+	       CA.USE_INFO               = #{useInfo},
+	       CA.USE_STATUS             = #{useStatus},
+	       CA.UNITS                  = #{units},
+	       CA.BRAND                  = #{brand},
+	       CA.ASSETS_TYPE            = #{assetsType},
+	       CA.DEPRECIATION           = #{depreciation},
+	       CA.CONTRACT_NO            = #{contractNo},
+	       CA.LEDGER_ACCOUNT         = #{ledgerAccount},
+	       CA.CHECK_CYCLE            = #{checkCycle},
+	       CA.CHECK_ACTIVE_DATE      = #{checkActiveDate},
+	       CA.ENABLE_DATE            = #{enableDate},
+	       CA.RECEIVE_DATE           = #{receiveDate},
+	       CA.REC_WARRANTY_PERIOD    = #{recWarrantyPeriod},
+
+	       CA.APPROVAL_CODE          = #{approvalCode},
+	       CA.CHECK_COUNT 			 = #{checkCount},
+	       CA.ORDER_TYPE  = #{orderType}
+	 WHERE 1 = 1
+	   AND CA.CDOCUMENT = #{cdocument}
+	</update>	
+	<!-- (验收单 保存)的头(sap验收单接口调用返回值保存) -->
+	<update id="updateCheckAcceptanceBySap">
+	UPDATE TB_FA_CHECK_ACCEPTANCE CA
+	   SET
+	   CA.ISSAP='Y',
+	   CA.EP_MATERIALDOCUMENT = #{epMaterialdocu},
+	   CA.E_BELNR = #{epBelnr },
+	   CA.EP_MATDOCUMENTYEAR = #{epMatdocumentyear}
+	 WHERE 1 = 1
+	   AND CA.CDOCUMENT = #{cdocument}
+	</update>
+	<update id="updateLastCheckDate">
+		UPDATE TB_FA_CHECK_ACCEPTANCE
+	   SET
+	   LAST_CHECK_DATE = sysdate
+	   where CDOCUMENT = #{cdocument}
+	</update>
+
+	<select id="getUserCode" parameterType="string" resultType="string">
+		SELECT CAUTHORIZERCODE FROM T_APPROVALEMPOWER
+		WHERE CUSERCODE = #{userCode} AND SYSDATE BETWEEN CBEGINTIME AND CENDTIME AND CSTATUS='Y' AND CAPPROVALEND='Y'
+	</select>
+
+
+	<update id="updateCheckAcceptanceByUpdateSap" parameterType="string">
+		UPDATE TB_FA_CHECK_ACCEPTANCE CA
+	   SET
+	   CA.IS_UPDATE_ASSETS_FROM='Y'
+
+	 WHERE 1 = 1
+	   AND CA.CDOCUMENT = #{document}
+	</update>
+
+	<resultMap id="checkMachineMap" type="com.opple.fa.purchase.entity.CheckMachine">
+		<result property="id" column="id" ></result>
+		<result property="checkId" column="check_id" ></result>
+		<result property="machine1" column="machine1" ></result>
+		<result property="machine2" column="machine2" ></result>
+		<result property="machine3" column="machine3" ></result>
+		<result property="machine4" column="machine4" ></result>
+		<result property="machine5" column="machine5" ></result>
+		<result property="machine6" column="machine6" ></result>
+		<result property="machine7" column="machine7" ></result>
+		<result property="machine8" column="machine8" ></result>
+		<result property="machine9" column="machine9" ></result>
+		<result property="machine10" column="machine10" ></result>
+		<result property="machine11" column="machine11" ></result>
+		<result property="machine12" column="machine12" ></result>
+		<result property="machine13" column="machine13" ></result>
+		<result property="machine14" column="machine14" ></result>
+		<result property="machine15" column="machine15" ></result>
+	</resultMap>
+
+	<select id="getCheckMachineByCheckId" resultMap="checkMachineMap">
+		SELECT * from TB_FA_CHECK_MACHINE where check_id=#{checkId}
+	</select>
+
+	<insert id="saveCheckMachine" >
+		INSERT INTO TB_FA_CHECK_MACHINE t(
+			t.id,
+			t.check_id,
+			t.machine1,
+			t.machine2,
+			t.machine3,
+			t.machine4,
+			t.machine5,
+			t.machine6,
+			t.machine7,
+			t.machine8,
+			t.machine9,
+			t.machine10,
+			t.machine11,
+			t.machine12,
+			t.machine13,
+			t.machine14,
+			t.machine15
+
+		)VALUES (
+			sys_guid(),
+			#{checkId},
+			#{machine1},
+			#{machine2},
+			#{machine3},
+			#{machine4},
+			#{machine5},
+			#{machine6},
+			#{machine7},
+			#{machine8},
+			#{machine9},
+			#{machine10},
+			#{machine11},
+			#{machine12},
+			#{machine13},
+			#{machine14},
+			#{machine15}
+		)
+	</insert>
+
+	<update id="updateCheckMachineByCheckId">
+		UPDATE  TB_FA_CHECK_MACHINE SET
+
+			t.machine1 = #{machine1},
+			t.machine2 = #{machine2},
+			t.machine3 = #{machine3},
+			t.machine4 = #{machine4},
+			t.machine5 = #{machine5},
+			t.machine6 = #{machine6},
+			t.machine7 = #{machine7},
+			t.machine8 = #{machine8},
+			t.machine9 = #{machine9},
+			t.machine10= #{machine10},
+			t.machine11= #{machine11},
+			t.machine12= #{machine12},
+			t.machine13= #{machine13},
+			t.machine14= #{machine14},
+			t.machine15=#{machine15}
+			where t.check_id = #{checkId},
+	</update>
+
+
+	<update id="updateIsprint">
+		UPDATE  TB_FA_CHECK_ACCEPTANCE t SET
+		t.isprint = 'Y'
+		where t.cdocument = #{checkId}
+	</update>
+	<resultMap id="apphistory" type="com.opple.fa.purchase.model.ApproveHistoryCheckPrint">
+		<result column="CUSERROLE" property="cuserrole" ></result>
+		<result column="CUSER" property="cuser" ></result>
+		<result column="DDATE" property="ddate" ></result>
+		<result column="CSTATE" property="cstate" ></result>
+		<result column="CSYSLOG" property="csyslog" ></result>
+	</resultMap>
+	<select id="getApproveHistory" resultMap="apphistory">
+		SELECT CASE B.ASSIGNBASE WHEN '0' THEN B.DEPTNAME || ' ' || B.ROLENAME
+		WHEN '1' THEN B.ROLENAME
+		WHEN '2' THEN B.USERNAME
+		WHEN '3' THEN B.ACTIVITYNAME  END AS CUSERROLE, A.CUSER,A.DDATE,
+		CASE A.CSTATE WHEN '1' THEN '同意'
+		WHEN '2' THEN '拒绝'
+		WHEN '3' THEN '退回'
+		WHEN '4' THEN '弃审' ELSE '等待审批' END AS CSTATE,
+		A.CSYSLOG,A.APPROVALMONEY,A.ACTIVITYID
+		FROM T_WF_BILL_STEP A
+		INNER JOIN T_WF_ACTIVITY_BIND B
+		ON A.WORKFLOWID = B.WORKFLOWID
+		AND A.ACTIVITYID = B.ACTIVITYID
+		AND A.CBILLCODE = B.BILLCODE
+		AND A.TYPEID = B.TYPEID
+		WHERE A.CBILLCODE=#{checkAcceptId} AND A.TYPEID = #{typeId} AND A.CSTATE != '0'
+		ORDER BY A.INSERTDATE
+
+	</select>
+</mapper>

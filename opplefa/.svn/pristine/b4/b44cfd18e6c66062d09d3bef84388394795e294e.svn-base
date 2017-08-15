@@ -1,0 +1,30 @@
+@CHARSET "UTF-8";
+
+.table_stamp{
+	border:none;
+	
+}
+.table_stamp td{
+	text-align: center;
+}
+.table_content{
+	border:none;
+}
+.table_content tr{
+	
+	height: 30px;
+}
+.table_content_t{
+	font-size: 15px;
+	width: 20%;
+}
+.table_content_bt{
+	text-align: center; 
+	font-size: 40px;
+	letter-spacing:8px;
+}
+.table_content_t2{
+	width: 530px;
+}
+
+

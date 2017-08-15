@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.opple.fa.assetcheck.dao.AssetsInventoryDetailDAO">
+    <!-- oracle 分页头 -->
+    <sql id="pagination_Head" >
+        <![CDATA[select * from ( select row_.*, rownum rownum_ from ( ]]>
+    </sql>
+    <!-- oracle 分页尾 -->
+    <sql id="pagination_Tail">
+        <![CDATA[) row_ where rownum <= #{pager.pageSize}* #{pager.offset} ) where rownum_ >= #{pager.firstResult} + 1]]>
+    </sql>
+    <!-- count * from -->
+	<sql id="count_Start_Head">
+		<![CDATA[select count(*) from ( ]]>
+	</sql>
+	<sql id="count_Start_Tail">
+		<![CDATA[) countObj ]]>
+	</sql>
+	<resultMap id="assetsInventoryDetailMap" type="com.opple.fa.assetcheck.entity.AssetsInventoryDetail">
+        <result property="id" column="ID"/>
+        <result property="createBy" column="CREATE_BY"/>
+        <result property="createDate" column="CREATE_DATE"/>
+        <result property="updateBy" column="UPDATE_BY"/>
+        <result property="updateDate" column="UPDATE_DATE"/>
+        <result property="deletedFlag" column="DELETED_FLAG"/>
+        <result property="assetsInventoryId" column="ASSETS_INVENTORY_ID"/>
+        <result property="generalAssetId" column="GENERAL_ASSET_ID"/>
+     </resultMap>
+	
+	<insert id="saveApply" parameterType="com.opple.fa.assetcheck.entity.AssetsInventoryDetail">
+	<!-- <selectKey keyProperty="id"  order="BEFORE" resultType="long">
+			select seq_assets_inventory_detail.nextval as id from dual
+		</selectKey> -->
+    	INSERT INTO TB_FA_ASSETS_INVENTORY_DETAIL
+		  (ID,
+		  CREATE_BY,
+		  CREATE_DATE,
+		  UPDATE_BY,
+		  UPDATE_DATE,
+		  DELETED_FLAG,
+		  ASSETS_INVENTORY_ID,
+		  GENERAL_ASSET_ID
+			)   
+	     VALUES
+	      ( 
+	        seq_assets_inventory_detail.nextval,
+	        #{createBy},
+	        #{createDate}, 
+	        #{updateBy},
+	        #{updateDate},
+	        #{deletedFlag},
+	        #{assetsInventoryId},
+	        #{generalAssetId}
+	        )
+    </insert>
+</mapper>

@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.opple.fa.purchase.dao.PaymentOrderDetailDAO">
+	<!-- oracle 分页头 -->
+	<sql id="pagination_Head">
+		<![CDATA[select * from ( select row_.*, rownum rownum_ from ( ]]>
+	</sql>
+	<!-- oracle 分页尾 -->
+	<sql id="pagination_Tail">
+		<![CDATA[) row_ where rownum <= #{pager.pageSize}* #{pager.offset} ) where rownum_ >= #{pager.firstResult} + 1]]>
+	</sql>
+	<!-- count * from -->
+	<sql id="count_Start_Head">
+		<![CDATA[select count(*) from ( ]]>
+	</sql>
+	<sql id="count_Start_Tail">
+		<![CDATA[) countObj ]]>
+	</sql>
+	<resultMap id="paymentOrderDetailMap" type="com.opple.fa.purchase.model.PaymentOrderDetailModel">
+		  <result property="id" column="ID" />
+          <result property="paymentOrderId" column="PAYMENT_ORDER_ID" />
+          <result property="purchaseDetailId" column="PURCHASE_DETAIL_ID" />
+          <result property="nper" column="NPER" />
+          <result property="paymentType" column="PAYMENT_TYPE" />
+          <result property="payCount" column="PAY_COUNT" />
+          <result property="payPrice" column="PAY_PRICE" />
+          <result property="payPriceLocal" column="PAY_PRICE_LOCAL" />
+          <result property="purchaseOrderId" column="PURCHASE_ORDER_ID" />
+          <result property="nextPayment" column="NEXT_PAYMENT" />
+          <result property="createBy" column="CREATE_BY" />
+          <result property="createByCode" column="CREATE_BY_CODE" />
+          <result property="updateBy" column="UPDATE_BY" />
+          <result property="updateByCode" column="UPDATE_BY_CODE" />
+          <result property="createDate" column="CREATE_DATE" />
+          <result property="updateDate" column="UPDATE_DATE" />
+          <result property="finalPrice" column="FINAL_PRICE" />
+          <result property="mainAssetCode" column="MAIN_ASSET_CODE" />
+          <result property="advancePrice" column="ADVANCE_PRICE" />
+          <result property="payablePrice" column="PAYABLE_PRICE" />
+          <result property="assetsName" column="ASSETS_NAME" />
+          <result property="voucherId" column="VOUCHER_ID" />
+          <result property="itemnoAcc" column="ITEMNO_ACC" />
+          <result property="ledgerAccount" column="LEDGER_ACCOUNT" />
+          <result property="costCenterCode" column="COST_CENTER_CODE" />
+          <result property="costCenter" column="COST_CENTER" />
+          <result property="isLastTime" column="ISLASTTIME" />
+          
+          <result property="applyCount" column="APPLY_COUNT" />
+          <result property="purchaseUnitPrice" column="PURCHASE_UNIT_PRICE" />
+          <result property="purchasePrice" column="PURCHASE_PRICE" />
+          <result property="paidMoney" column="PAID_MONEY" />
+          <result property="paidCount" column="PAID_COUNT" />
+          <result property="checkCount" column="CHECK_COUNT" />
+          <result property="lastCount" column="LAST_COUNT" />
+          <result property="verificationCount" column="VERIFICATION_COUNT" />
+          <result property="verificationPrice" column="VERIFICATION_PRICE" />
+	</resultMap>
+
+	<!-- 查询下个序列 -->
+	<select id="searchNextSequence" resultType="int">
+		SELECT SEQ_PAYMENT_ORDER_DETAIL.NEXTVAL FROM DUAL
+	</select>
+	<!-- 付款选择页面 行明细 -->
+	<select id="searchPurchaseByOrderId" resultMap="paymentOrderDetailMap">
+		SELECT TPU.ID PURCHASE_DETAIL_ID,
+	       TPU.ASSETS_NAME,
+	       TPU.MAIN_ASSET_CODE,
+	       TPU.APPLY_COUNT,
+	       TPU.PURCHASE_UNIT_PRICE,
+	       TPU.PURCHASE_PRICE,
+	       NVL(TPA.PAID_MONEY,0) PAID_MONEY,
+	       NVL(TPA.PAID_COUNT,0) PAID_COUNT
+	  FROM TB_FA_PURCHASE_ORDER_DETAIL TPU
+	  LEFT JOIN (SELECT T.PURCHASE_DETAIL_ID, SUM(T.PAY_COUNT) AS PAID_COUNT, SUM(T.PAY_PRICE) AS PAID_MONEY
+	               FROM TB_FA_PAYMENT_ORDER_DETAIL T 
+	               left join tb_fa_payment_order p
+                 on p.cdocument = t.payment_order_id
+	              WHERE T.PURCHASE_ORDER_ID = #{purchaseId}
+	                AND T.NPER = #{nper} and p.status='Y' AND P.DRAFT='N'
+	              GROUP BY T.PURCHASE_DETAIL_ID) TPA
+	    ON TPU.ID = TPA.PURCHASE_DETAIL_ID
+		WHERE TPU.PURCHASE_ORDER_ID = #{purchaseId}
+		AND NOT EXISTS
+ 		(SELECT 1
+          FROM TB_FA_PAYMENT_ORDER_DETAIL A
+         WHERE A.PURCHASE_ORDER_ID = TPU.PURCHASE_ORDER_ID
+           AND A.PURCHASE_DETAIL_ID = TPU.ID
+           AND A.NPER=#{nper}
+           AND A.ISLASTTIME='Y')
+		
+	</select>
+	
+	<!-- 付款新增页面 行明细 -->
+	<select id="searchPurchaseByOrderIdNper" resultMap="paymentOrderDetailMap">
+		SELECT TD.ID,
+           TD.ASSETS_NAME,
+           TD.MAIN_ASSET_CODE,
+           TD.APPLY_COUNT,
+           TD.PURCHASE_UNIT_PRICE,
+           TD.PURCHASE_PRICE,
+       	   TD.CHECK_COUNT,
+           NVL(T.PAID_COUNT,0) PAID_COUNT,
+           NVL(T.PAID_MONEY,0) PAID_MONEY,
+       	   NVL(TT.LAST_COUNT,0) LAST_COUNT,
+       	    ap.cost_center_code,
+            ap.cost_center
+      FROM TB_FA_PURCHASE_ORDER_DETAIL TD
+      LEFT JOIN (SELECT TDD.PURCHASE_DETAIL_ID,
+                        SUM(TDD.PAY_COUNT) PAID_COUNT,
+                        SUM(TDD.PAY_PRICE) PAID_MONEY
+                   FROM TB_FA_PAYMENT_ORDER_DETAIL TDD
+                   LEFT JOIN TB_FA_PAYMENT_ORDER PO 
+           	   	   ON PO.CDOCUMENT = TDD.PAYMENT_ORDER_ID
+                  WHERE TDD.NPER = #{nper} AND PO.STATUS = 'Y' AND PO.DRAFT = 'N'
+                  GROUP BY TDD.PURCHASE_DETAIL_ID) T
+        ON TD.ID = T.PURCHASE_DETAIL_ID
+      LEFT JOIN (SELECT TDD.PURCHASE_DETAIL_ID,
+                    SUM(TDD.PAY_COUNT) LAST_COUNT
+               FROM TB_FA_PAYMENT_ORDER_DETAIL TDD
+               LEFT JOIN TB_FA_PAYMENT_ORDER PO 
+           	   ON PO.CDOCUMENT = TDD.PAYMENT_ORDER_ID
+              WHERE TDD.NPER = #{nper}-1 AND PO.CAPPROVALSTATE='已完成'
+              GROUP BY TDD.PURCHASE_DETAIL_ID) TT
+    ON TD.ID = TT.PURCHASE_DETAIL_ID
+     LEFT JOIN tb_fa_apply_order_detail ap on
+    			ap.id = td.apply_detail_id
+     WHERE TD.ID IN (${ids})
+	</select>
+	<!-- 付款修改页面 行明细 -->
+	<select id="searchPurchaseForUpdate" resultMap="paymentOrderDetailMap">
+		SELECT TD.ID,
+           TD.ASSETS_NAME,
+           TD.MAIN_ASSET_CODE,
+           TD.APPLY_COUNT,
+           TD.PURCHASE_UNIT_PRICE,
+           TD.PURCHASE_PRICE,
+       	   TD.CHECK_COUNT,
+           NVL(T.PAID_COUNT,0) PAID_COUNT,
+           NVL(T.PAID_MONEY,0) PAID_MONEY,
+       	   NVL(TT.LAST_COUNT,0) LAST_COUNT,
+       	   DD.Pay_Count,
+            DD.Pay_Price,
+            DD.Pay_Price_Local,
+            DD.NEXT_PAYMENT
+      FROM TB_FA_PURCHASE_ORDER_DETAIL TD
+      LEFT JOIN (SELECT TDD.PURCHASE_DETAIL_ID,
+                        SUM(TDD.PAY_COUNT) PAID_COUNT,
+                        SUM(TDD.PAY_PRICE) PAID_MONEY
+                   FROM TB_FA_PAYMENT_ORDER_DETAIL TDD
+                   LEFT JOIN TB_FA_PAYMENT_ORDER PO 
+           	   	   ON PO.CDOCUMENT = TDD.PAYMENT_ORDER_ID
+                  WHERE TDD.NPER = #{nper} AND PO.STATUS = 'Y' AND PO.DRAFT = 'N'
+                  GROUP BY TDD.PURCHASE_DETAIL_ID) T
+        ON TD.ID = T.PURCHASE_DETAIL_ID
+      LEFT JOIN (SELECT TDD.PURCHASE_DETAIL_ID,
+                    SUM(TDD.PAY_COUNT) LAST_COUNT
+               FROM TB_FA_PAYMENT_ORDER_DETAIL TDD
+               LEFT JOIN TB_FA_PAYMENT_ORDER PO 
+           	   ON PO.CDOCUMENT = TDD.PAYMENT_ORDER_ID
+              WHERE TDD.NPER = #{nper}-1 AND PO.CAPPROVALSTATE='已完成'
+              GROUP BY TDD.PURCHASE_DETAIL_ID) TT
+    ON TD.ID = TT.PURCHASE_DETAIL_ID
+    LEFT JOIN TB_FA_PAYMENT_ORDER_DETAIL DD
+    ON TD.ID = DD.PURCHASE_DETAIL_ID 
+     WHERE TD.ID IN (${ids}) AND DD.NPER=#{nper}  AND DD.PAYMENT_ORDER_ID = #{paymentOrderId}
+	</select>
+	
+	<select id="save">
+     INSERT INTO TB_FA_PAYMENT_ORDER_DETAIL 
+     ( ID,
+		PAYMENT_ORDER_ID,
+		PURCHASE_DETAIL_ID,
+		NPER,
+		PAYMENT_TYPE,
+		PAY_COUNT,
+		PAY_PRICE,
+		PAY_PRICE_LOCAL,
+		PURCHASE_ORDER_ID,
+		NEXT_PAYMENT,
+		CREATE_BY,
+		CREATE_BY_CODE,
+		UPDATE_BY,
+		UPDATE_BY_CODE,
+		CREATE_DATE,
+		UPDATE_DATE,
+		FINAL_PRICE,
+		MAIN_ASSET_CODE,
+		PAYABLE_PRICE,
+		ASSETS_NAME,   
+		VOUCHER_ID,
+		ITEMNO_ACC,
+		LEDGER_ACCOUNT,
+		ADVANCE_PRICE,
+		COST_CENTER_CODE,
+		COST_CENTER,
+		ISLASTTIME) 
+       VALUES
+      ( seq_payment_order_detail.nextval,  
+		#{paymentOrderId},
+		#{purchaseDetailId},
+		#{nper},
+		#{paymentType},
+		#{payCount},
+		#{payPrice},
+		#{payPriceLocal},
+		#{purchaseOrderId},
+		#{nextPayment},
+		#{createBy},
+		#{createByCode},
+		#{updateBy},
+		#{updateByCode},
+		#{createDate},
+		#{updateDate},
+		#{finalPrice},
+		#{mainAssetCode},
+		#{payablePrice},
+		#{assetsName},
+		#{voucherId},
+		#{itemnoAcc},
+		#{ledgerAccount},
+		#{advancePrice},
+		#{costCenterCode},
+		#{costCenter},
+		#{isLastTime})
+    </select>
+    <select id="searchPaymentDetailByOrderId" resultMap="paymentOrderDetailMap">
+		SELECT *
+		  FROM TB_FA_PAYMENT_ORDER_DETAIL T
+		 WHERE T.PAYMENT_ORDER_ID = #{cdocument}
+	</select>
+	<update id="delPaymentOrderDetailById">
+		delete from TB_FA_PAYMENT_ORDER_DETAIL  WHERE ID = #{id}	
+	</update>
+	
+    <select id="searchLedgerAccountByPurchaseDetailId" resultType="String">
+		SELECT TAD.LEDGER_ACCOUNT
+		  FROM TB_FA_PURCHASE_ORDER_DETAIL TD
+		  LEFT JOIN TB_FA_APPLY_ORDER_DETAIL TAD
+		    ON TD.APPLY_DETAIL_ID = TAD.ID
+		 WHERE TD.ID = #{id}
+	</select>
+	<update id="updatePaymentOrderDetail" >
+	   UPDATE TB_FA_PAYMENT_ORDER_DETAIL t SET 
+	   VOUCHER_ID =#{prepaymentDocumentNumber}
+	   WHERE t.PAYMENT_ORDER_ID = #{cdocument}
+	</update>
+	<update id="updatePaymentOrderDetailById" >
+	   UPDATE TB_FA_PAYMENT_ORDER_DETAIL t SET 
+	    NPER=#{nper},
+		PAYMENT_TYPE=#{paymentType},
+		PAY_COUNT=#{payCount},
+		PAY_PRICE=#{payPrice},
+		PAY_PRICE_LOCAL=#{payPriceLocal},
+		PURCHASE_ORDER_ID=#{purchaseOrderId},
+		NEXT_PAYMENT=#{nextPayment},
+		CREATE_BY=#{createBy},
+		CREATE_BY_CODE=#{createByCode},
+		UPDATE_BY=#{updateBy},
+		UPDATE_BY_CODE=#{updateByCode},
+		CREATE_DATE=#{createDate},
+		UPDATE_DATE=#{updateDate},
+		FINAL_PRICE=#{finalPrice},
+		MAIN_ASSET_CODE=#{mainAssetCode},
+		PAYABLE_PRICE=#{payablePrice},
+		ASSETS_NAME=#{assetsName},   
+		ITEMNO_ACC=#{itemnoAcc},
+		LEDGER_ACCOUNT=#{ledgerAccount},
+		ISLASTTIME=#{isLastTime}
+	   WHERE t.PAYMENT_ORDER_ID = #{paymentOrderId} and t.PURCHASE_DETAIL_ID=#{purchaseDetailId}
+	</update>
+	<select id="completePayment" resultType="long">
+		SELECT COUNT(*)
+    FROM TB_FA_PURCHASE_ORDER_DETAIL TPU
+    LEFT JOIN (SELECT T.PURCHASE_DETAIL_ID, SUM(T.PAY_COUNT) AS PAID_COUNT, SUM(T.PAY_PRICE) AS PAID_MONEY
+                 FROM TB_FA_PAYMENT_ORDER_DETAIL T 
+                 left join tb_fa_payment_order p
+                 on p.cdocument = t.payment_order_id
+                WHERE T.PURCHASE_ORDER_ID = #{purchaseOrderId}
+                  AND T.NPER = #{nper} and p.status='Y' AND P.DRAFT='N'
+                GROUP BY T.PURCHASE_DETAIL_ID) TPA
+      ON TPU.ID = TPA.PURCHASE_DETAIL_ID
+    WHERE TPU.PURCHASE_ORDER_ID = #{purchaseOrderId}
+    AND NOT EXISTS
+     (SELECT 1
+          FROM TB_FA_PAYMENT_ORDER_DETAIL A
+         WHERE A.PURCHASE_ORDER_ID = TPU.PURCHASE_ORDER_ID
+           AND A.PURCHASE_DETAIL_ID = TPU.ID
+           AND A.NPER=#{nper}
+           AND A.Islasttime='Y')
+	</select>
+</mapper>

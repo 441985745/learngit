@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.opple.fa.sap.dao.VoucherpostChildSapDAO">
+	<resultMap id="voucherpostChildMap" type="voucherpostChild">
+
+		<result property="caccountcode" column="CACCOUNTCODE" />      <!-- 记账码 -->
+		<result property="cspcode" column="CSPCODE" />      <!-- 特别总账标示 -->
+		<result property="crowitemtext" column="CROWITEMTEXT" />      <!-- 行项目文本 -->
+		<result property="csuppliercode" column="CSUPPLIERCODE" />      <!-- 供应商编码 -->
+		<result property="csuppliername" column="CSUPPLIERNAME" />      <!-- 供应商名称 -->
+		<result property="ccustomercode" column="CCUSTOMERCODE" />      <!-- 客户编码 -->
+		<result property="ccustomername" column="CCUSTOMERNAME" />      <!-- 客户名称 -->
+		<result property="cusercode" column="CUSERCODE" />      <!-- 人员编码 -->
+		<result property="cusername" column="CUSERNAME" />      <!-- 人员名称 -->
+		<result property="cdepcode" column="CDEPCODE" />      <!-- 部门编码(成本中心) -->
+		<result property="cdepname" column="CDEPNAME" />      <!-- 部门名称(成本中心) -->
+		<result property="cpassdocuments" column="CPASSDOCUMENTS" />      <!-- 过账凭证号 -->
+		<result property="cclearvouchcode" column="CCLEARVOUCHCODE" />      <!-- 清帐（付款）凭证号 -->
+		<result property="cordercode" column="CORDERCODE" />      <!-- 内部订单编码 -->
+		<result property="cordername" column="CORDERNAME" />      <!-- 内部订单名称 -->
+		<result property="csettiementcode" column="CSETTIEMENTCODE" />      <!-- 结算方式编码 -->
+		<result property="csettiementname" column="CSETTIEMENTNAME" />      <!-- 结算方式名称 -->
+		<result property="compCode" column="COMP_CODE" />      <!-- 记账公司码 -->
+		<result property="pstngDate" column="PSTNG_DATE" />      <!-- 记账日期 -->
+		<result property="cstatus" column="CSTATUS" />      <!-- 数据状态 -->
+		<result property="cdocumentsno" column="CDOCUMENTSNO" />      <!-- 凭证序号 -->
+		<result property="iyear" column="IYEAR" />      <!-- 会计年度 -->
+		<result property="drepayment" column="DREPAYMENT" />      <!-- 个人借支还款日期 -->
+		<result property="bqingzhang" column="BQINGZHANG" />      <!-- 是否需要清帐:0不清账，1清账，2不清账 -->
+		<result property="bautoqz" column="BAUTOQZ" />      <!-- 清帐自动生成行 -->
+		<result property="cbrnch" column="CBRNCH" />      <!-- 分支号，费用申请在今年之前的标记X，用于预提-王建 -->
+		<result property="ccurrencycode" column="CCURRENCYCODE" />      <!-- 币种编码 -->
+		<result property="ccurrencyname" column="CCURRENCYNAME" />      <!-- 币种名称 -->
+		<result property="iexchangerate" column="IEXCHANGERATE" />      <!-- 汇率 -->
+		<result property="iamount" column="IAMOUNT" />      <!-- 金额 （本币）  防止修改程序，此处本币与原币金额一致 -->
+		<result property="iamountyb" column="IAMOUNTYB" />      <!-- 金额 （原币） -->
+		<result property="cprofitcenter" column="CPROFITCENTER" />      <!-- 利润中心-手工凭证使用 -->
+		<result property="cisbefore" column="CISBEFORE" />      <!-- 是否事前借支单（Y：是，N：否） -->
+		<result property="creasoncode" column="CREASONCODE" />      <!-- 原因代码 -->
+		<result property="bflag" column="BFLAG" />      <!-- 标识是否一次性供应商、客户（一次性供应商、客户过账时需要填写姓名、城市、国家时使用） -->
+		<result property="ctranstype" column="CTRANSTYPE" />      <!-- 事务类型 -->
+
+	</resultMap>
+
+	<insert id="save" parameterType="voucherpostChild">
+		insert into
+		T_TYBX_VOUCHERPOST_CHILD
+		(
+		CKEY,
+		CDOCUMENTS,
+		CADVDOCUMENTS,
+		CTYPE,
+		CROWITEMNO,
+		CDOCUMENTSGROUP,
+		CSUBJECTCODE,
+		CSUBJECTNAME,
+		CDEBITCREDITPATH,
+		CACCOUNTCODE,
+		CSPCODE,
+		CROWITEMTEXT,
+		CSUPPLIERCODE,
+		CSUPPLIERNAME,
+		CCUSTOMERCODE,
+		CCUSTOMERNAME,
+		CUSERCODE,
+		CUSERNAME,
+		CDEPCODE,
+		CDEPNAME,
+		CPASSDOCUMENTS,
+		CCLEARVOUCHCODE,
+		CORDERCODE,
+		CORDERNAME,
+		CSETTIEMENTCODE,
+		CSETTIEMENTNAME,
+		COMP_CODE,
+		PSTNG_DATE,
+		CSTATUS,
+		CDOCUMENTSNO,
+		IYEAR,
+		DREPAYMENT,
+		BQINGZHANG,
+		BAUTOQZ,
+		CBRNCH,
+		CCURRENCYCODE,
+		CCURRENCYNAME,
+		IEXCHANGERATE,
+		IAMOUNT,
+		IAMOUNTYB,
+		CPROFITCENTER,
+		CISBEFORE,
+		CREASONCODE,
+		BFLAG,
+		CTRANSTYPE
+
+
+		)
+		values
+		(
+		#{ckey },
+		#{cdocuments },
+		#{cadvdocuments },
+		#{ctype },
+		#{crowitemno },
+		#{cdocumentsgroup },
+		#{csubjectcode },
+		#{csubjectname },
+		#{cdebitcreditpath },
+		#{caccountcode },
+		#{cspcode },
+		#{crowitemtext },
+		#{csuppliercode },
+		#{csuppliername },
+		#{ccustomercode },
+		#{ccustomername},
+		#{cusercode },
+		#{cusername },
+		#{cdepcode },
+		#{cdepname },
+		#{cpassdocuments },
+		#{cclearvouchcode },
+		#{cordercode },
+		#{cordername },
+		#{csettiementcode },
+		#{csettiementname },
+		#{compCode },
+		#{pstngDate },
+		#{cstatus },
+		#{cdocumentsno },
+		#{iyear },
+		#{drepayment },
+		#{bqingzhang },
+		#{bautoqz },
+		#{cbrnch },
+		#{ccurrencycode },
+		#{ccurrencyname },
+		#{iexchangerate },
+		#{iamount },
+		#{iamountyb },
+		#{cprofitcenter },
+		#{cisbefore },
+		#{creasoncode },
+		#{bflag },
+		#{ctranstype }
+
+		)
+
+	</insert>
+</mapper>
+

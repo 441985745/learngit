@@ -1,0 +1,88 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="tag" uri="http://mrms.opple.com/pagination" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <%@ include file="/WEB-INF/layouts/common.jsp" %>
+    <title>预算体-成本中心查看</title>
+    <meta name="modulePath" content="basic/"/>
+    <link href="${staticURL}/Styles/FormPanel.css" type="text/css" rel="stylesheet"/>
+    <link href="${staticURL}/config/css/config.css" type="text/css" rel="stylesheet"/>
+    <link rel="stylesheet" type="text/css" href="${staticURL}/jquery-easyui-1.3.2/themes/default/easyui.css">
+    <link rel="stylesheet" type="text/css" href="${staticURL}/jquery-easyui-1.3.2/themes/icon.css">
+</head>
+<body>
+<div>
+    <table cellspacing="0" cellpadding="0" style="width: 100%; height: 98%;" border="0">
+        <tbody>
+        <tr id="Button">
+            <td class="buttonbar">
+                &nbsp;&nbsp;
+                <input type="button" value="返回" id="btnBack" class="btn" onclick="dg.cancel();">
+            </td>
+        </tr>
+        <tr>
+            <td valign="top">
+                <div>
+                    <form id = "updateForm">
+                        <table border="0" cellspacing="0" cellpadding="0" id="format">
+                            <tbody>
+                            <tr>
+                                <td class="tdtitle"><span>*</span>公司编码:</td>
+                                <td><input name="companyCode" type="text" value="${deptCostCenter.companyCode}" class="colorblur require-red" disabled/> </td>
+                            </tr>
+                            <tr>
+                                <td class="tdtitle"><span>*</span>公司名称:</td>
+                                <td><input name="companyName" type="text" value="${deptCostCenter.companyName}" class="colorblur require-red" disabled/> </td>
+                            </tr>
+                            <tr>
+                                <td class="tdtitle"><span>*</span>预算体编码:</td>
+                                <td><input name="deptCode" type="text" value="${deptCostCenter.deptCode}" class="colorblur require-red" disabled/></td>
+                            </tr>
+
+                            <tr>
+                                <td class="tdtitle"><span>*</span>预算体名称:</td>
+                                <td><input name="deptName" type="text" value="${deptCostCenter.deptName}" title="${deptCostCenter.deptName}" class="colorblur require-red" disabled/></td>
+                            </tr>
+                            <tr>
+                                <td class="tdtitle"><span>*</span>成本中心编码:</td>
+                                <td><input name="costCenterCode" type="text" value="${deptCostCenter.costCenterCode}" class="colorblur require-red" disabled/></td>
+                            </tr>
+                            <tr>
+                                <td class="tdtitle"><span>*</span>成本中心名称:</td>
+                                <td><input name="costCenterName" type="text" value="${deptCostCenter.costCenterName}" class="colorblur require-red" disabled/></td>
+                            </tr>
+                            <tr>
+                                <td class="tdtitle">数据状态 :</td>
+                                <td>
+                                    <select index="1" name="status" class="colorblur" id="txtStatus" style="width: 60px;" disabled>
+                                        <option value="Y" ${deptCostCenter.status=="Y"?"selected='selected'" : ""}>有效</option>
+                                        <option value="N" ${deptCostCenter.status=="N"?"selected='selected'" : ""}>无效</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="tdtitle" style="padding-top: 8px;" valign="top">备注 :</td>
+                                <td>
+                                    <textarea cols="50" rows="3" name="memo" id="memo" class="colorblur code" disabled>${deptCostCenter.memo}</textarea>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </form>
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<%--<script src="${staticURL}/Scripts/config/crud.js" type="text/javascript"></script>--%>
+<script type="text/javascript">
+    var dg = frameElement.lhgDG;
+
+</script>
+</body>
+</html>

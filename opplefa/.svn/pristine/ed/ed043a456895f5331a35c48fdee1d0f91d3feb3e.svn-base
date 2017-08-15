@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:jee="http://www.springframework.org/schema/jee"
+	xmlns:lang="http://www.springframework.org/schema/lang"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="
+     http://www.springframework.org/schema/beans 
+     http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+     http://www.springframework.org/schema/tx
+     http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
+     http://www.springframework.org/schema/aop 
+     http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+     http://www.springframework.org/schema/jee 
+     http://www.springframework.org/schema/jee/spring-jee-3.1.xsd
+     http://www.springframework.org/schema/context
+     http://www.springframework.org/schema/context/spring-context-3.1.xsd
+     http://www.springframework.org/schema/lang
+     http://www.springframework.org/schema/lang/spring-lang-3.1.xsd
+     http://www.springframework.org/schema/util
+     http://www.springframework.org/schema/util/spring-util-3.1.xsd">
+	<!-- DAO -->
+	<bean id="assetAllocationDAO" class="org.mybatis.spring.mapper.MapperFactoryBean" parent="baseDAO">
+		<property name="mapperInterface" value="com.opple.fa.allocation.dao.AssetAllocationDAO" />
+	</bean>
+	
+	<bean id="assetAllocationDetailDAO" class="org.mybatis.spring.mapper.MapperFactoryBean" parent="baseDAO">
+		<property name="mapperInterface" value="com.opple.fa.allocation.dao.AssetAllocationDetailDAO" />
+	</bean>
+	<bean id="generalAssetDAO" class="org.mybatis.spring.mapper.MapperFactoryBean" parent="baseDAO">
+		<property name="mapperInterface" value="com.opple.fa.assetcard.dao.GeneralAssetDAO" />
+	</bean>
+	<bean id="alloctionApproveDAO" class="org.mybatis.spring.mapper.MapperFactoryBean" parent="baseDAO">
+		<property name="mapperInterface" value="com.opple.fa.allocation.dao.AlloctionApproveDAO" />
+	</bean>
+	<bean id="sapCostCenterPersonDAO" class="org.mybatis.spring.mapper.MapperFactoryBean" parent="baseDAO">
+		<property name="mapperInterface" value="com.opple.fa.allocation.dao.SapCostCenterPersonDAO"/>
+	</bean>
+	<bean id="attchConfigDAO" class="org.mybatis.spring.mapper.MapperFactoryBean" parent="baseDAO">
+		<property name="mapperInterface" value="com.opple.fa.config.dao.AttchConfigDAO"/>
+	</bean>
+	<!-- Service -->
+	<bean id="assetAllocationService" class="com.opple.fa.allocation.service.impl.AssetAllocationServiceImpl">
+		<property name="assetAllocationDAO" ref="assetAllocationDAO"/>
+		<property name="assetAllocationDetailDAO" ref="assetAllocationDetailDAO"/>
+		<property name="generalAssetDAO" ref="generalAssetDAO"/>
+		<property name="sapCostCenterPersonDAO" ref="sapCostCenterPersonDAO"/>
+		<property name="alloctionApproveDAO" ref="alloctionApproveDAO"/>
+		<property name="attchConfigDAO" ref="attchConfigDAO"/>
+	</bean>
+	<bean id="assetAllocationDetailService" class="com.opple.fa.allocation.service.impl.AssetAllocationDetailServiceImpl">
+	    <property name="assetAllocationDetailDAO" ref="assetAllocationDetailDAO"></property>
+	    <property name="generalAssetDAO" ref="generalAssetDAO"/>
+	    <property name="assetAllocationDAO" ref="assetAllocationDAO"/>
+	</bean>
+	<bean id="alloctionApproveService" class="com.opple.fa.allocation.service.impl.AlloctionApproveServiceImpl">
+	    <property name="alloctionApproveDAO" ref="alloctionApproveDAO"/>
+	</bean>
+		<bean id="sapCostCenterPersonService" class="com.opple.fa.allocation.service.impl.SapCostCenterPersonServiceImpl">
+	    <property name="sapCostCenterPersonDAO" ref="sapCostCenterPersonDAO"/>
+	</bean>
+</beans>

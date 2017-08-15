@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.opple.fa.config.dao.PersoninchargeConfigDAO">
+      
+	<resultMap id="personinchargeConfigResultMap" type="com.opple.fa.config.entity.PersoninchargeConfig">
+        <result property="id" column="ID"/>
+        <result property="companyCode" column="COMPANY_CODE"/>
+        <result property="costcenterCode" column="COSTCENTER_CODE"/>
+        <result property="platform" column="PLATFORM"/>
+        <result property="platformFinanceManagerName" column="PLATFORM_FINANCE_MANAGER_NAME"/>
+        <result property="platformFinanceManagerCode" column="PLATFORM_FINANCE_MANAGER_CODE"/>
+        <result property="purchasingDirectorName" column="PURCHASING_DIRECTOR_NAME"/>
+        <result property="purchasingDirectorCode" column="PURCHASING_DIRECTOR_CODE"/>
+        <result property="purchasingManagerName" column="PURCHASING_MANAGER_NAME"/>
+        <result property="purchasingManagerCode" column="PURCHASING_MANAGER_CODE"/>
+        <result property="buyerNamea" column="BUYER_NAMEA"/>
+        <result property="buyerCodea" column="BUYER_CODEA"/>
+        <result property="buyerNameb" column="BUYER_NAMEB"/>
+        <result property="buyerCodeb" column="BUYER_CODEB"/>
+        <result property="buyerNamec" column="BUYER_NAMEC"/>
+        <result property="buyerCodec" column="BUYER_CODEC"/>
+        <result property="buyerNamed" column="BUYER_NAMED"/>
+        <result property="buyerCoded" column="BUYER_CODED"/>
+	</resultMap>
+
+	<select id="searchByCostcenterCode" resultMap="personinchargeConfigResultMap">
+           SELECT *
+			  FROM TB_FA_PERSONINCHARGE_CONFIG T
+			 WHERE T.COSTCENTER_CODE = #{costcenterCode}
+			   AND ROWNUM <![CDATA[<=]]> 1
+    </select>
+</mapper>
+

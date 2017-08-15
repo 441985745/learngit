@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.opple.fa.purchase.dao.NotPoPaymentOrderDetailDAO">
+	<!-- oracle 分页头 -->
+	<sql id="pagination_Head">
+		<![CDATA[select * from ( select row_.*, rownum rownum_ from ( ]]>
+	</sql>
+	<!-- oracle 分页尾 -->
+	<sql id="pagination_Tail">
+		<![CDATA[) row_ where rownum <= #{pager.pageSize}* #{pager.offset} ) where rownum_ >= #{pager.firstResult} + 1]]>
+	</sql>
+	<!-- count * from -->
+	<sql id="count_Start_Head">
+		<![CDATA[select count(*) from ( ]]>
+	</sql>
+	<sql id="count_Start_Tail">
+		<![CDATA[) countObj ]]>
+	</sql>
+	<resultMap id="notPaymentOrderMap" type="com.opple.fa.purchase.entity.NotPoPaymentOrderDetail">
+		<result property="id" column="ID" />
+          <result property="notPoPaymentOrderId" column="NOTPO_PAYMENT_ORDER_ID" />
+          <result property="createBy" column="CREATE_BY" />
+          <result property="createByCode" column="CREATE_BY_CODE" />
+          <result property="updateBy" column="UPDATE_BY" />
+          <result property="updateByCode" column="UPDATE_BY_CODE" />
+          <result property="createDate" column="CREATE_DATE" />
+          <result property="updateDate" column="UPDATE_DATE" />
+          <result property="assetsName" column="ASSETS_NAME" />
+          <result property="specificationParameter" column="SPECIFICATION_PARAMETER" />
+          <result property="assetClassification" column="ASSET_CLASSIFICATION" />
+          <result property="depreciation" column="DEPRECIATION" />
+          <result property="ledgerAccount" column="LEDGER_ACCOUNT" />
+          <result property="assetsUserCode" column="ASSETS_USER_CODE" />
+          <result property="assetsUserName" column="ASSETS_USER_NAME" />
+          <result property="costCenter" column="COSTCENTER" />
+          <result property="costCenterCode" column="COSTCENTER_CODE" />
+          <result property="internalOrderNo" column="INTERNAL_ORDERNO" />
+          <result property="units" column="UNITS" />
+          <result property="assetsIncreaseValue" column="ASSETS_INCREASE_VALUE" />
+          <result property="codingMode" column="CODING_MODE" />
+          <result property="mainAssetCode" column="MAIN_ASSET_CODE" />
+          <result property="secondary" column="SECONDARY" />
+          <result property="taxUnit" column="TAX_UNIT" />
+          <result property="netPrice" column="NET_PRICR" />
+          <result property="taxTotalPrice" column="TAX_TOTAL_PRICE" />
+          <result property="tax" column="TAX" />
+          <result property="payPrice" column="PAY_PRICE" />
+          <result property="payPriceLocal" column="PAY_PRICE_LOCAL" />
+          <result property="advanceOffsetPrice" column="ADVANCE_OFFSET_PRICE" />
+          <result property="finalPrice" column="FINAL_PRICE" />
+          <result property="finalPaymentDate" column="FINAL_PAYMENT_DATE" />
+          <result property="projectCode" column="PROJECT_CODE" />
+          <result property="budgetAssetsName" column="BUDGET_ASSETS_NAME" />
+          <result property="budgetYear" column="BUDGET_YEAR" />
+          <result property="avaliableSumMoney" column="AVALIABLE_SUMMONEY" />
+          <result property="payCount" column="PAY_COUNT" />
+          <result property="text" column="TEXT" />
+          <result property="assetsType" column="ASSETS_TYPE" />
+          <result property="subordinateDepartment" column="SUBORDINATE_DEPARTMENT" />
+          <result property="subordinateDepartmentCode" column="SUBORDINATE_DEPARTMENT_CODE" />
+          <result property="officeLocation" column="OFFICE_LOCATION" />
+	</resultMap>
+
+
+
+	<!-- <select id="searchPaymentOrder" resultMap="notPaymentOrderMap">
+		<include refid="pagination_Head" />
+		<include refid="search_payment_order" />
+		<include refid="pagination_Tail" />
+	</select>
+	
+	<select id="exportNotPoPaymentOrders" resultMap="notPaymentOrderMap">
+		SELECT *
+		FROM TB_FA_NOTPO_PAYMENT_ORDER T
+	    LEFT JOIN T_WF_BILL_STEP TS
+		ON T.CDOCUMENT = TS.CBILLCODE
+		WHERE 1=1
+		AND T.STATUS = 'Y'
+	</select> -->
+
+	<!-- <select id="searchPaymentOrderCount" resultType="long">
+		<include refid="count_Start_Head" />
+		<include refid="search_payment_order" />
+		<include refid="count_Start_Tail" />
+	</select> -->
+
+	<select id="save">
+		INSERT INTO tb_fa_notpo_payment_detail
+		 (	ID,
+			NOTPO_PAYMENT_ORDER_ID,
+			CREATE_BY,
+			CREATE_BY_CODE,
+			UPDATE_BY,
+			UPDATE_BY_CODE,
+			CREATE_DATE,
+			UPDATE_DATE,
+			ASSETS_NAME,
+			SPECIFICATION_PARAMETER,
+			ASSET_CLASSIFICATION,
+			DEPRECIATION,
+			LEDGER_ACCOUNT,
+			ASSETS_USER_CODE,
+			ASSETS_USER_NAME,
+			COSTCENTER,
+			COSTCENTER_CODE,
+			INTERNAL_ORDERNO,
+			UNITS,
+			ASSETS_INCREASE_VALUE,
+			CODING_MODE,
+			MAIN_ASSET_CODE,
+			SECONDARY,
+			TAX_UNIT,
+			NET_PRICR,
+			TAX_TOTAL_PRICE,
+			TAX,
+			PAY_PRICE,
+			PAY_PRICE_LOCAL,
+			ADVANCE_OFFSET_PRICE,
+			FINAL_PRICE,
+			FINAL_PAYMENT_DATE,
+			PROJECT_CODE,
+			BUDGET_ASSETS_NAME,
+			BUDGET_YEAR,
+			AVALIABLE_SUMMONEY,
+			PAY_COUNT,
+			TEXT,
+			ASSETS_TYPE,
+			SUBORDINATE_DEPARTMENT,
+			SUBORDINATE_DEPARTMENT_CODE,
+			OFFICE_LOCATION
+		 )
+		VALUES
+			(
+			SEQ_FA_NOTPO_PAYMENT_DETAIL.nextval,
+			#{notPoPaymentOrderId},
+			#{createBy},
+			#{createByCode},
+			#{updateBy},
+			#{updateByCode},
+			#{createDate},
+			#{updateDate},
+			#{assetsName},
+			#{specificationParameter},
+			#{assetClassification},
+			#{depreciation},
+			#{ledgerAccount},
+			#{assetsUserCode},
+			#{assetsUserName},
+			#{costCenter},
+			#{costCenterCode},
+			#{internalOrderNo},
+			#{units},
+			#{assetsIncreaseValue},
+			#{codingMode},
+			#{mainAssetCode},
+			#{secondary},
+			#{taxUnit},
+			#{netPrice},
+			#{taxTotalPrice},
+			#{tax},
+			#{payPrice},
+			#{payPriceLocal},
+			#{advanceOffsetPrice},
+			#{finalPrice},
+			#{finalPaymentDate},
+			#{projectCode},
+			#{budgetAssetsName},
+			#{budgetYear},
+			#{avaliableSumMoney},
+			#{payCount},
+			#{text},
+			#{assetsType},
+			#{subordinateDepartment},
+			#{subordinateDepartmentCode},
+			#{officeLocation}
+			)
+	</select>
+	
+	<select id="searchPaymentOrderByDocument" resultMap="notPaymentOrderMap" >
+		SELECT *  
+    		FROM tb_fa_notpo_payment_detail
+		WHERE 1=1
+		<if
+			test="notPoPaymentOrderId != null and notPoPaymentOrderId != ''">
+			AND NOTPO_PAYMENT_ORDER_ID = #{notPoPaymentOrderId}
+		</if>
+	</select>
+	
+	<update id="delPaymentOrderDetailById">
+		delete from tb_fa_notpo_payment_detail  WHERE NOTPO_PAYMENT_ORDER_ID = #{notPoPaymentOrderId}	
+	</update>
+	
+	<update id="updatePaymentOrderDetailById" parameterType="com.opple.fa.purchase.entity.NotPoPaymentOrderDetail" >
+		update tb_fa_notpo_payment_detail
+		set CREATE_BY = #{createBy},
+			CREATE_BY_CODE =#{createByCode},
+			UPDATE_BY =#{updateBy},
+			UPDATE_BY_CODE =#{updateByCode},
+			CREATE_DATE =#{createDate},
+			UPDATE_DATE =#{updateDate},
+			ASSETS_NAME =#{assetsName},
+			SPECIFICATION_PARAMETER =#{specificationParameter},
+			ASSET_CLASSIFICATION =#{assetClassification},
+			DEPRECIATION =#{depreciation},
+			LEDGER_ACCOUNT =#{ledgerAccount},
+			ASSETS_USER_CODE =#{assetsUserCode},
+			ASSETS_USER_NAME =#{assetsUserName},
+			COSTCENTER =#{costCenter},
+			COSTCENTER_CODE =#{costCenterCode},
+			INTERNAL_ORDERNO =#{internalOrderNo},
+			UNITS =#{units},
+			ASSETS_INCREASE_VALUE =#{assetsIncreaseValue},
+			CODING_MODE =#{codingMode},
+			MAIN_ASSET_CODE =#{mainAssetCode},
+			SECONDARY =#{secondary},
+			TAX_UNIT =#{taxUnit},
+			NET_PRICR =#{netPrice},
+			TAX_TOTAL_PRICE =#{taxTotalPrice},
+			TAX =#{tax},
+			PAY_PRICE =#{payPrice},
+			PAY_PRICE_LOCAL =#{payPriceLocal},
+			ADVANCE_OFFSET_PRICE =#{advanceOffsetPrice},
+			FINAL_PRICE =#{finalPrice},
+			FINAL_PAYMENT_DATE =#{finalPaymentDate},
+			PROJECT_CODE =#{projectCode},
+			BUDGET_ASSETS_NAME =#{budgetAssetsName},
+			BUDGET_YEAR =#{budgetYear},
+			AVALIABLE_SUMMONEY =#{avaliableSumMoney},
+			PAY_COUNT =#{payCount},
+			TEXT =#{text},
+			ASSETS_TYPE =#{assetsType},
+			SUBORDINATE_DEPARTMENT=#{subordinateDepartment},
+			SUBORDINATE_DEPARTMENT_CODE=#{subordinateDepartmentCode},
+			OFFICE_LOCATION=#{officeLocation}
+		where NOTPO_PAYMENT_ORDER_ID = #{notPoPaymentOrderId}
+	</update>
+	<update id="updateAssetsCodeById" parameterType="com.opple.fa.purchase.entity.NotPoPaymentOrderDetail" >
+		update tb_fa_notpo_payment_detail
+		set CODING_MODE =#{codingMode},
+	  		MAIN_ASSET_CODE =#{mainAssetCode},
+			SECONDARY =#{secondary}
+			WHERE ID = #{id}
+	</update>
+</mapper>

@@ -1,0 +1,451 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.opple.fa.purchase.dao.NotPoPaymentOrderDAO">
+	<!-- oracle 分页头 -->
+	<sql id="pagination_Head">
+		<![CDATA[select * from ( select row_.*, rownum rownum_ from ( ]]>
+	</sql>
+	<!-- oracle 分页尾 -->
+	<sql id="pagination_Tail">
+		<![CDATA[) row_ where rownum <= #{pager.pageSize}* #{pager.offset} ) where rownum_ >= #{pager.firstResult} + 1]]>
+	</sql>
+	<!-- count * from -->
+	<sql id="count_Start_Head">
+		<![CDATA[select count(*) from ( ]]>
+	</sql>
+	<sql id="count_Start_Tail">
+		<![CDATA[) countObj ]]>
+	</sql>
+	<resultMap id="notPaymentOrderMap" type="com.opple.fa.purchase.entity.NotPoPaymentOrder">
+		<result property="cdocument" column="CDOCUMENT" />
+          <result property="applyUserCode" column="APPLY_USER_CODE" />
+          <result property="applyUser" column="APPLY_USER" />
+          <result property="applyDate" column="APPLY_DATE" />
+          <result property="costCenter" column="COST_CENTER" />
+          <result property="costCenterCode" column="COST_CENTER_CODE" />
+          <result property="officeLocation" column="OFFICE_LOCATION" />
+          <result property="companyName" column="COMPANY_NAME" />
+          <result property="companyCode" column="COMPANY_CODE" />
+          <result property="taxRateCode" column="TAX_RATE_CODE" />
+          <result property="iamoney" column="IAMONEY" />
+          <result property="iamoneyLocal" column="IAMONEY_LOCAL" />
+          <result property="print" column="PRINT" />
+          <result property="status" column="STATUS" />
+          <result property="issap" column="ISSAP" />
+          <result property="approvalState" column="CAPPROVALSTATE" />
+          <result property="commitType" column="COMMIT_TYPE" />
+          <result property="approvalEnd" column="CAPPROVALEND" />
+          <result property="caUserCode" column="CAUSERCODE" />
+          <result property="caUserName" column="CAUSERNAME" />
+          <result property="lastADate" column="DLASTADATE" />
+          <result property="nextHandlerCode" column="CNEXTHANDLERCODE" />
+          <result property="nextHandlerName" column="CNEXTHANDLERNAME" />
+          <result property="createBy" column="CREATE_BY" />
+          <result property="createUserName" column="CREATE_BY_NAME" />
+          <result property="createDate" column="CREATE_DATE" />
+          <result property="updateBy" column="UPDATE_BY" />
+          <result property="updateUserName" column="UPDATE_BY_NAME" />
+          <result property="updateDate" column="UPDATE_DATE" />
+          <result property="supplierCode" column="SUPPLIER_CODE" />
+          <result property="supplierName" column="SUPPLIER_NAME" />
+          <result property="companySpecificName" column="COMPANY_SPECIFIC_NAME" />
+          <result property="city" column="CITY" />
+          <result property="country" column="COUNTRY" />
+          <result property="departmentCode" column="DEPARTMENT_CODE" />
+          <result property="departmentName" column="DEPARTMENT_NAME" />
+          <result property="paymentType" column="PAYMENT_TYPE" />
+          <result property="currencyCode" column="CURRENCY_CODE" />
+          <result property="currencyName" column="CURRENCY_NAME" />
+          <result property="exchangeRate" column="EXCHANGE_RATE" />
+          <result property="taxRate" column="TAX_RATE" />
+          <result property="bankCode" column="BANK_CODE" />
+          <result property="bankName" column="BANK_NAME" />
+          <result property="bankNumber" column="BANK_NUMBER"  />  
+		  <result property="contactNumber" column="CONTACT_NUMBER"  />  
+		  <result property="paymentPeopleCode" column="PAYMENT_PEOPLE_CODE"  />
+		  <result property="paymentPeople" column="PAYMENT_PEOPLE"  />
+		  <result property="applyMoney" column="APPLY_MONEY"  />
+		  <result property="applyMoneyLocal" column="APPLY_MONEY_LOCAL"  />
+		  <result property="acceptOrderNumber" column="ACCEPT_ORDER_NUMBER"  />
+		  <result property="predictTime" column="PREDICT_TIME"  />
+		  <result property="remark" column="REMARK"  />
+		  <result property="contacts" column="CONTACTS"  />
+		  <result property="purchaseManagerCode" column="PURCHASE_MANAGER_CODE"  />
+		  <result property="purchaseManagerName" column="PURCHASE_MANAGER_NAME"  />
+		  <result property="isExpenseAssets" column="ISEXPENSE_ASSETS"  />
+		  <result property="applyFor" column="APPLY_FOR"  />
+		  <result property="profitCenter" column="PROFIT_CENTER"  />
+		  <result property="invoiceNumber" column="INVOICE_NUMBER"  />
+		  <result property="insertType" column="INSERT_TYPE"  />
+		  <result property="scanLocation" column="SCAN_LOCATION"  />
+		  <result property="isComingSAP" column="IS_COMING_SAP"  />
+		  <result property="cinputVoucher" column="CINPUTVOUCHER"  />
+		  <result property="cvoucherId" column="CVOUCHERID"  />
+		  <result property="isGetEncoding" column="IS_GET_ENCODING"  />
+		  <result property="isVat" column="IS_VAT"  />
+		  <result property="cbarStatus" column="CBARSTATUS"  />
+	</resultMap>
+
+
+	<sql id="search_payment_order">
+		  		SELECT DISTINCT T.CDOCUMENT,
+		  						T.CREATE_DATE,
+				                T.APPLY_USER_CODE,
+				                T.APPLY_USER,
+				                T.APPLY_DATE,
+				                T.COMPANY_NAME,
+				                T.COMPANY_CODE,
+				                T.PAYMENT_TYPE,
+				                T.Apply_Money,
+				                T.PRINT,
+				                T.STATUS,
+				                T.CAPPROVALSTATE,
+				                 T.COMMIT_TYPE,
+				                T.CAUSERCODE,
+				                T.CNEXTHANDLERCODE,
+				                T.CNEXTHANDLERNAME,
+				                T.SUPPLIER_CODE,
+				                T.SUPPLIER_NAME
+		          FROM TB_FA_NOTPO_PAYMENT_ORDER T
+	                    LEFT JOIN T_WF_BILL_STEP TS
+		    				ON T.CDOCUMENT = TS.CBILLCODE
+		         WHERE 1=1 
+		         <!-- 付款单号 和时间的条件 -->
+		        <if
+					test="notPoPaymentOrder.cdocument != null and notPoPaymentOrder.cdocument != ''">
+					AND T.CDOCUMENT LIKE '%' ||
+					#{notPoPaymentOrder.cdocument} || '%'   
+				</if>
+		
+				<if
+					test="notPoPaymentOrder.applyDateStart != null and notPoPaymentOrder.applyDateStart != ''">
+					 AND T.APPLY_DATE <![CDATA[>]]>= #{notPoPaymentOrder.applyDateStart}  
+				</if>
+				<if
+					test="notPoPaymentOrder.applyDateEnd != null and notPoPaymentOrder.applyDateEnd != ''">
+					AND T.APPLY_DATE <![CDATA[<=]]> #{notPoPaymentOrder.applyDateEnd} 
+				</if>
+				
+				<if
+					test="notPoPaymentOrder.applyUser != null and notPoPaymentOrder.applyUser != ''">
+					AND T.APPLY_USER LIKE '%' ||
+					#{notPoPaymentOrder.applyUser} || '%' OR T.APPLY_USER_CODE LIKE '%' || #{notPoPaymentOrder.applyUser} || '%'
+				</if>
+				<if
+					test="notPoPaymentOrder.commitType != null and notPoPaymentOrder.commitType != ''">
+					AND T.COMMIT_TYPE = #{notPoPaymentOrder.commitType}  
+				</if>
+				<if
+					test="notPoPaymentOrder.approvalState != null and notPoPaymentOrder.approvalState != ''">
+					AND T.CAPPROVALSTATE = #{notPoPaymentOrder.approvalState}  
+				</if>
+	<!-- 			<if
+					test="paymentOrderModel.cbarStatus != null and paymentOrderModel.cbarStatus != ''">
+					AND T.CBARSTATUS = #{paymentOrderModel.cbarStatus} 
+				</if> -->
+					AND T.STATUS = 'Y'
+					AND ( 
+						T.APPLY_USER_CODE = #{notPoPaymentOrder.loginUserCode}  
+						OR T.CNEXTHANDLERCODE = #{notPoPaymentOrder.loginUserCode} 
+						OR TS.CUSERCODE = #{notPoPaymentOrder.loginUserCode} 
+						OR TS.CUSERCODE IN (SELECT CAUTHORIZERCODE FROM T_APPROVALEMPOWER WHERE CUSERCODE = #{notPoPaymentOrder.loginUserCode} 
+						 AND SYSDATE BETWEEN CBEGINTIME AND CENDTIME AND CSTATUS='Y' AND CAPPROVALEND='Y')
+						 OR T.CNEXTHANDLERCODE IN (SELECT CAUTHORIZERCODE FROM T_APPROVALEMPOWER WHERE CUSERCODE = #{notPoPaymentOrder.loginUserCode} 
+						 AND SYSDATE BETWEEN CBEGINTIME AND CENDTIME AND CSTATUS='Y' AND CAPPROVALEND='Y')
+						 OR T.APPLY_USER_CODE IN (SELECT CAUTHORIZERCODE FROM T_APPROVALEMPOWER WHERE CUSERCODE = #{notPoPaymentOrder.loginUserCode} 
+						 AND SYSDATE BETWEEN CBEGINTIME AND CENDTIME AND CSTATUS='Y' AND CAPPROVALEND='Y')
+						 OR 
+						EXISTS(SELECT 1 FROM t_Sys_Userrole TR WHERE TR.CROLECODE=#{notPoPaymentOrder.adminCode} 
+						AND TR.CUSERCODE=#{notPoPaymentOrder.loginUserCode}  AND tr.cstatus='Y')
+						)
+						ORDER BY T.CREATE_DATE DESC
+	</sql>
+
+	<select id="searchPaymentOrder" resultMap="notPaymentOrderMap">
+		<include refid="pagination_Head" />
+		<include refid="search_payment_order" />
+		<include refid="pagination_Tail" />
+	</select>
+	
+	<select id="exportNotPoPaymentOrders" resultMap="notPaymentOrderMap">
+		<include refid="search_payment_order" />
+	</select>
+
+	<select id="searchPaymentOrderCount" resultType="long">
+		<include refid="count_Start_Head" />
+		<include refid="search_payment_order" />
+		<include refid="count_Start_Tail" />
+	</select>
+
+	<select id="save">
+		INSERT INTO TB_FA_NOTPO_PAYMENT_ORDER
+		 (	CDOCUMENT,
+			APPLY_USER_CODE,
+			APPLY_USER,
+			APPLY_DATE,
+			COST_CENTER,
+			COST_CENTER_CODE,
+			OFFICE_LOCATION,
+			COMPANY_NAME,
+			COMPANY_CODE,
+			TAX_RATE_CODE,
+			IAMONEY,
+			IAMONEY_LOCAL,
+			PRINT,
+			STATUS,
+			ISSAP,
+			CAPPROVALSTATE,
+			COMMIT_TYPE,
+			CAPPROVALEND,
+			CAUSERCODE,
+			CAUSERNAME,
+			DLASTADATE,
+			CNEXTHANDLERCODE,
+			CNEXTHANDLERNAME,
+			CREATE_BY,
+			CREATE_BY_NAME,
+			CREATE_DATE,
+			UPDATE_BY,
+			UPDATE_BY_NAME,
+			UPDATE_DATE,
+			SUPPLIER_CODE,
+			SUPPLIER_NAME,
+			COMPANY_SPECIFIC_NAME,
+			CITY,
+			COUNTRY,
+			DEPARTMENT_CODE,
+			DEPARTMENT_NAME,
+			PAYMENT_TYPE,
+			CURRENCY_CODE,
+			CURRENCY_NAME,
+			EXCHANGE_RATE,
+			TAX_RATE,
+			BANK_CODE,
+			BANK_NAME,
+			BANK_NUMBER,
+			CONTACT_NUMBER,
+			PAYMENT_PEOPLE_CODE,
+			PAYMENT_PEOPLE,
+			APPLY_MONEY,
+			APPLY_MONEY_LOCAL,
+			ACCEPT_ORDER_NUMBER,
+			PREDICT_TIME,
+			REMARK,
+			CONTACTS,
+			PURCHASE_MANAGER_CODE,
+			PURCHASE_MANAGER_NAME,
+			ISEXPENSE_ASSETS,
+			APPLY_FOR,
+			PROFIT_CENTER,
+			INVOICE_NUMBER,
+			INSERT_TYPE,
+			SCAN_LOCATION,
+			IS_COMING_SAP,
+			IS_VAT
+		 )
+		VALUES
+			(
+			#{cdocument},
+			#{applyUserCode},
+			#{applyUser},
+			#{applyDate},
+			#{costCenter},
+			#{costCenterCode},
+			#{officeLocation},
+			#{companyName},
+			#{companyCode},
+			#{taxRateCode},
+			#{iamoney},
+			#{iamoneyLocal},
+			'N',
+			#{status},
+			#{issap},
+			#{approvalState},
+			#{commitType},
+			#{approvalEnd},
+			#{caUserCode},
+			#{caUserName},
+			#{lastADate},
+			#{nextHandlerCode},
+			#{nextHandlerName},
+			#{createBy},
+			#{createUserName},
+			#{createDate},
+			#{updateBy},
+			#{updateUserName},
+			#{updateDate},
+			#{supplierCode},
+			#{supplierName},
+			#{companySpecificName},
+			#{city},
+			#{country},
+			#{departmentCode},
+			#{departmentName},
+			#{paymentType},
+			#{currencyCode},
+			#{currencyName},
+			#{exchangeRate},
+			#{taxRate},
+			#{bankCode},
+			#{bankName},
+			#{bankNumber},
+			#{contactNumber},
+			#{paymentPeopleCode},
+			#{paymentPeople},
+			#{applyMoney},
+			#{applyMoneyLocal},
+			#{acceptOrderNumber},
+			#{predictTime},
+			#{remark},
+			#{contacts},
+			#{purchaseManagerCode},
+			#{purchaseManagerName},
+			#{isExpenseAssets},
+			#{applyFor},
+			#{profitCenter},
+			#{invoiceNumber},
+			#{insertType},
+			#{scanLocation},
+			'N',
+			#{isVat}
+			)
+	</select>
+	
+	<!-- 查询下个序列 -->
+	<select id="searchNextSequence" resultType="int">
+		SELECT SEQ_PAYMENT_ORDER.NEXTVAL FROM DUAL
+	</select>
+	
+	<select id="searchPaymentOrderByOrderId" resultMap="notPaymentOrderMap">
+		SELECT *
+    		FROM TB_FA_NOTPO_PAYMENT_ORDER
+		WHERE 1=1
+		<if
+			test="cdocument != null and cdocument != ''">
+			AND CDOCUMENT = #{cdocument}
+		</if>
+		AND STATUS = 'Y'
+	</select>
+	<select id="searchPoPaymentOrders" resultMap="notPaymentOrderMap">
+		SELECT *
+    		FROM TB_FA_NOTPO_PAYMENT_ORDER
+		WHERE  STATUS = 'Y' AND APPLY_USER_CODE=#{applyUserCode} AND CAPPROVALSTATE='已完成' AND PAYMENT_TYPE='验收款'
+	</select>
+	<select id="searchSumPriceByCdocument" resultType="String">
+		select sum(t.final_price) from Tb_Fa_Notpo_Payment_Detail t where t.notpo_payment_order_id=#{cdocument}
+	</select>
+	<update id="delPaymentOrderByCdocument">
+		delete from TB_FA_NOTPO_PAYMENT_ORDER  WHERE CDOCUMENT = #{cdocument}	
+	</update>
+	
+	<!-- 根据成本中心编码 获得利润中心编码 -->
+	<select id="searchProfitCenter" resultType="String">
+		SELECT T.CPROFITCENTER FROM T_SAP_COSTCENTER T WHERE T.CCOSTCENTERCODE = #{costCenterCode}
+	</select>
+	<update id="updatePaymentOrderByDocument">
+	   update TB_FA_NOTPO_PAYMENT_ORDER
+		set IS_COMING_SAP = #{isComingSAP},
+		CINPUTVOUCHER = #{cinputVoucher}
+	   WHERE CDOCUMENT = #{cdocument}
+	</update>
+	<update id="updateCvoucherId">
+	   update TB_FA_NOTPO_PAYMENT_ORDER
+		set CVOUCHERID = #{cvoucherId},
+		CINPUTVOUCHER = #{cinputVoucher} 
+	   WHERE CDOCUMENT = #{cdocument}
+	</update>
+	<update id="updateIsGetCodeByDocument">
+	   update TB_FA_NOTPO_PAYMENT_ORDER
+		set IS_GET_ENCODING = 'Y'
+	   WHERE CDOCUMENT = #{cdocument}
+	</update>
+	<update id="updatePaymentOrderByCdocument">
+	   UPDATE TB_FA_NOTPO_PAYMENT_ORDER t SET 
+	   t.CBARSTATUS ='W'
+	   WHERE t.CDOCUMENT = #{cdocument}
+	</update>
+	<update id="deleteNoPoPaymentOrder">
+		UPDATE TB_FA_NOTPO_PAYMENT_ORDER t SET
+	   t.STATUS ='N'
+	   WHERE t.CDOCUMENT = #{notPoPaymentOrder.cdocument}
+	</update>
+	<select id="searchNotPoPaymentByOrderId" resultMap="notPaymentOrderMap">
+		SELECT *
+		          FROM TB_FA_NOTPO_PAYMENT_ORDER T
+	                    LEFT JOIN T_WF_BILL_STEP TS
+		    				ON T.CDOCUMENT = TS.CBILLCODE
+		         WHERE T.CDOCUMENT = #{notPoPaymentOrder.cdocument}
+	</select>
+	
+	<select id="getMainAssetCodePro" statementType="CALLABLE">
+      call PRO_FA_GETNOTPOMAINCODE(
+              #{cdocument,mode=IN,jdbcType=INTEGER})  
+	</select>
+
+	<update id="updateNotPoPaymentOrder" parameterType="com.opple.fa.purchase.entity.NotPoPaymentOrder" >
+		update TB_FA_NOTPO_PAYMENT_ORDER
+		set APPLY_USER_CODE = #{applyUserCode,jdbcType=VARCHAR},
+		APPLY_USER = #{applyUser,jdbcType=VARCHAR},
+		APPLY_DATE = #{applyDate,jdbcType=TIMESTAMP},
+		COST_CENTER = #{costCenter,jdbcType=VARCHAR},
+		COST_CENTER_CODE = #{costCenterCode,jdbcType=VARCHAR},
+		OFFICE_LOCATION = #{officeLocation,jdbcType=VARCHAR},
+		COMPANY_NAME = #{companyName,jdbcType=VARCHAR},
+		COMPANY_CODE = #{companyCode,jdbcType=VARCHAR},
+		TAX_RATE_CODE = #{taxRateCode,jdbcType=VARCHAR},
+		IAMONEY = #{iamoney,jdbcType=DECIMAL},
+		IAMONEY_LOCAL = #{iamoneyLocal,jdbcType=DECIMAL},
+		STATUS = #{status,jdbcType=VARCHAR},
+		ISSAP = #{issap,jdbcType=VARCHAR},
+		CAPPROVALSTATE = #{approvalState,jdbcType=VARCHAR},
+		COMMIT_TYPE = #{commitType,jdbcType=VARCHAR},
+		CAPPROVALEND = #{approvalEnd,jdbcType=VARCHAR},
+		CAUSERCODE = #{caUserCode,jdbcType=VARCHAR},
+		CAUSERNAME = #{caUserName,jdbcType=VARCHAR},
+		DLASTADATE = #{lastADate,jdbcType=TIMESTAMP},
+		CNEXTHANDLERCODE = #{nextHandlerCode,jdbcType=VARCHAR},
+		CNEXTHANDLERNAME = #{nextHandlerName,jdbcType=VARCHAR},
+
+		UPDATE_BY = #{updateBy,jdbcType=VARCHAR},
+		UPDATE_BY_NAME = #{updateUserName,jdbcType=VARCHAR},
+		UPDATE_DATE = #{updateDate,jdbcType=TIMESTAMP},
+		SUPPLIER_CODE = #{supplierCode,jdbcType=VARCHAR},
+		SUPPLIER_NAME = #{supplierName,jdbcType=VARCHAR},
+		COMPANY_SPECIFIC_NAME = #{companySpecificName,jdbcType=VARCHAR},
+		CITY = #{city,jdbcType=VARCHAR},
+		COUNTRY = #{country,jdbcType=VARCHAR},
+		DEPARTMENT_CODE = #{departmentCode,jdbcType=VARCHAR},
+		DEPARTMENT_NAME = #{departmentName,jdbcType=VARCHAR},
+		PAYMENT_TYPE = #{paymentType,jdbcType=VARCHAR},
+		CURRENCY_CODE = #{currencyCode,jdbcType=VARCHAR},
+		CURRENCY_NAME = #{currencyName,jdbcType=VARCHAR},
+		EXCHANGE_RATE = #{exchangeRate,jdbcType=DECIMAL},
+		TAX_RATE = #{taxRate,jdbcType=DECIMAL},
+		BANK_CODE = #{bankCode,jdbcType=VARCHAR},
+		BANK_NAME = #{bankName,jdbcType=VARCHAR},
+		BANK_NUMBER = #{bankNumber,jdbcType=VARCHAR},
+		CONTACT_NUMBER = #{contactNumber,jdbcType=VARCHAR},
+		PAYMENT_PEOPLE_CODE = #{paymentPeopleCode,jdbcType=VARCHAR},
+		PAYMENT_PEOPLE = #{paymentPeople,jdbcType=VARCHAR},
+		APPLY_MONEY = #{applyMoney,jdbcType=DECIMAL},
+		APPLY_MONEY_LOCAL = #{applyMoneyLocal,jdbcType=DECIMAL},
+		ACCEPT_ORDER_NUMBER = #{acceptOrderNumber,jdbcType=VARCHAR},
+		PREDICT_TIME = #{predictTime,jdbcType=TIMESTAMP},
+		PURCHASE_MANAGER_CODE = #{purchaseManagerCode,jdbcType=VARCHAR},
+		PURCHASE_MANAGER_NAME = #{purchaseManagerName,jdbcType=VARCHAR},
+		REMARK = #{remark,jdbcType=VARCHAR},
+		CONTACTS = #{contacts,jdbcType=VARCHAR},
+		APPLY_FOR = #{applyFor,jdbcType=VARCHAR},
+		ISEXPENSE_ASSETS = #{isExpenseAssets,jdbcType=VARCHAR},
+		PROFIT_CENTER = #{profitCenter,jdbcType=VARCHAR},
+		INVOICE_NUMBER = #{invoiceNumber,jdbcType=VARCHAR},
+		INSERT_TYPE = #{insertType,jdbcType=VARCHAR},
+		SCAN_LOCATION = #{scanLocation,jdbcType=VARCHAR},
+		IS_VAT = #{isVat,jdbcType=VARCHAR}
+		where CDOCUMENT = #{cdocument,jdbcType=VARCHAR}
+	</update>
+</mapper>

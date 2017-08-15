@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.opple.fa.assetcard.dao.ComputerAssetDAO">
+
+    <!-- oracle 分页头 -->
+    <sql id="pagination_Head" >
+        <![CDATA[select * from ( select row_.*, rownum rownum_ from ( ]]>
+    </sql>
+    <!-- oracle 分页尾 -->
+    <sql id="pagination_Tail">
+        <![CDATA[) row_ where rownum <= #{pager.pageSize}* #{pager.offset} ) where rownum_ >= #{pager.firstResult} + 1]]>
+    </sql>
+    <!-- count * from -->
+	<sql id="count_Start_Head">
+		<![CDATA[select count(*) from ( ]]>
+	</sql>
+	<sql id="count_Start_Tail">
+		<![CDATA[) countObj ]]>
+	</sql>
+	<resultMap id="itAssetsMap" type="com.opple.fa.assetcard.entity.ComputerAsset">
+
+        <result property="id" column="ID"/>
+  		<result property="createBy" column="CREATE_BY"/>
+  		<result property="createDate" column="CREATE_DATE"/>
+  		<result property="updateBy" column="UPDATE_BY"/>
+  		<result property="updateDate" column="UPDATE_DATE"/>
+  		<result property="deletedFlag" column="DELETED_FLAG"/>
+  		<result property="joinDomain" column="JOIN_DOMAIN"/>
+  		<result property="ipAddress" column="IP_ADDRESS"/>
+  		<result property="description" column="DESCRIPTION"/>
+  		<result property="operatingSystem" column="OPERATING_SYSTEM"/>
+  		<result property="dataBase" column="DATA_BASE"/>
+  		<result property="utilitySystem" column="UTILITY_SYSTEM"/>
+  		<result property="cpu" column="CPU"/>
+  		<result property="content" column="CONTENT"/>
+  		<result property="hardpan" column="HARDPAN"/>
+
+  		<result property="accumulatedDepreciation" column="ACCUMULATED_DEPRECIATION"/>
+  		<result property="netSalvage" column="NET_SALVAGE"/>
+  		<result property="netResidualValue" column="NET_RESIDUAL_VALUE"/>
+  		<result property="purchaseId" column="PURCHASE_ID"/>
+  		<result property="checkAcceptId" column="CHECK_ACCEPT_ID"/>
+  		<result property="internalMemory" column="INTERNAL_MEMORY"/>
+		<result property="serialNumber" column="SERIAL_NUMBER"/>
+		<result property="putUnderManageCode" column="PUT_UNDER_MANAGE_CODE"/>
+		</resultMap>
+	
+	<sql id="tb_fa_computer_asset_">
+		SELECT tb_fa_computer_asset_.ID,
+			tb_fa_computer_asset_.CREATE_BY,
+			tb_fa_computer_asset_.CREATE_DATE,
+			tb_fa_computer_asset_.UPDATE_BY,
+			tb_fa_computer_asset_.UPDATE_DATE,
+			tb_fa_computer_asset_.DELETED_FLAG,
+			tb_fa_computer_asset_.JOIN_DOMAIN,
+			tb_fa_computer_asset_.IP_ADDRESS,
+			tb_fa_computer_asset_.DESCRIPTION,
+			tb_fa_computer_asset_.OPERATING_SYSTEM,
+			tb_fa_computer_asset_.DATA_BASE,
+			tb_fa_computer_asset_.UTILITY_SYSTEM,
+			tb_fa_computer_asset_.CPU,
+			tb_fa_computer_asset_.CONTENT,
+			tb_fa_computer_asset_.HARDPAN,
+			tb_fa_computer_asset_.ACCUMULATED_DEPRECIATION,
+			tb_fa_computer_asset_.NET_SALVAGE,
+			tb_fa_computer_asset_.NET_RESIDUAL_VALUE,
+			tb_fa_computer_asset_.PURCHASE_ID,
+			tb_fa_computer_asset_.CHECK_ACCEPT_ID,
+			tb_fa_computer_asset_.INTERNAL_MEMORY,
+			tb_fa_computer_asset_.SERIAL_NUMBER,
+			tb_fa_computer_asset_.PUT_UNDER_MANAGE_CODE
+
+			FROM TB_FA_COMPUTER_ASSET tb_fa_computer_asset_
+	</sql>
+	
+	<select id="searchComputerAsset" resultMap="itAssetsMap">
+		<include refid="tb_fa_computer_asset_"></include>
+		<if test="computerAsset.id != null and computerAsset.id != ''">
+		 	WHERE tb_fa_computer_asset_.ID = #{computerAsset.id}
+		 	AND tb_fa_computer_asset_.DELETED_FLAG= 0 
+		</if>
+	</select>
+	<insert id="insertComputerAsset" keyProperty="id" useGeneratedKeys="true" parameterType="com.opple.fa.assetcard.entity.ComputerAsset">
+	<selectKey keyProperty="id"  order="BEFORE" resultType="long">
+		select seq_computer_asset.nextval as id from dual
+	</selectKey>
+		insert into TB_FA_COMPUTER_ASSET
+		(ID,
+		CREATE_BY,
+		CREATE_DATE,
+		UPDATE_BY,
+		UPDATE_DATE,
+		DELETED_FLAG,
+		JOIN_DOMAIN,
+		IP_ADDRESS,
+		DESCRIPTION,
+		OPERATING_SYSTEM,
+		DATA_BASE,
+		UTILITY_SYSTEM,
+		CPU,
+		CONTENT,
+		HARDPAN,
+		ACCUMULATED_DEPRECIATION,
+		NET_SALVAGE,
+		NET_RESIDUAL_VALUE,
+		PURCHASE_ID,
+		CHECK_ACCEPT_ID,
+		INTERNAL_MEMORY,
+		DEMAND_ORDER_ID,
+		APPLY_ORDER_ID,
+		SERIAL_NUMBER,
+		PUT_UNDER_MANAGE_CODE
+		
+		)
+		values(
+		#{id},
+		#{createBy},
+		#{createDate},
+		#{updateBy},
+		#{updateDate},
+		'0',
+		#{joinDomain},
+		#{ipAddress},
+		#{description},
+		#{operatingSystem},
+		#{dataBase},
+		#{utilitySystem},
+		#{cpu},
+		#{content},
+		#{hardpan},
+	
+		#{accumulatedDepreciation},
+		#{netSalvage},
+		#{netResidualValue},
+		#{purchaseId},
+		#{checkAcceptId},
+		#{internalMemory},
+		#{demandId},
+		#{applyId},
+		#{serialNumber},
+		#{putUnderManageCode}
+
+		)
+	</insert>
+
+	<update id="deleteComputerById">
+		update  TB_FA_COMPUTER_ASSET
+		 SET deleted_flag='1'
+		 where id = #{id}
+	</update>
+	<update id="updateComputerAssetCard" parameterType="com.opple.fa.assetcard.entity.ComputerAsset">
+		update TB_FA_COMPUTER_ASSET
+		<trim prefix="SET" suffixOverrides=",">
+		
+            SERIAL_NUMBER=#{serialNumber},
+      
+
+       
+            PUT_UNDER_MANAGE_CODE=#{putUnderManageCode},
+      
+
+        <if test="null != cpu and '' != cpu">
+            CPU=#{cpu},
+        </if>
+
+        <if test="null != internalMemory and '' != internalMemory">
+            INTERNAL_MEMORY=#{internalMemory},
+        </if>
+
+        <if test="null != hardpan and '' != hardpan">
+            HARDPAN=#{hardpan},
+        </if>
+
+        <if test="null != ipAddress and '' != ipAddress">
+            IP_ADDRESS=#{ipAddress},
+        </if>
+
+        <if test="null != joinDomain and '' != joinDomain">
+            JOIN_DOMAIN=#{joinDomain},
+        </if>
+
+        <if test="null != description and '' != description">
+            DESCRIPTION=#{description},
+        </if>
+
+        <if test="null != operatingSystem and '' != operatingSystem">
+            OPERATING_SYSTEM=#{operatingSystem},
+        </if>
+
+        <if test="null != utilitySystem and '' != utilitySystem">
+            UTILITY_SYSTEM=#{utilitySystem},
+        </if>
+
+        <if test="null != dataBase and '' != dataBase">
+            DATA_BASE=#{dataBase},
+        </if>
+		</trim>
+		where ID=#{id}
+	</update>
+
+
+	<update id="updateComputerAssetCard1" parameterType="com.opple.fa.assetcard.entity.ComputerAsset">
+		update TB_FA_COMPUTER_ASSET
+		set CPU=#{cpu}
+			<if test="null != serialNumber and '' != serialNumber ">
+				,SERIAL_NUMBER=#{serialNumber}
+			</if>
+			<if test="null != putUnderManageCode and '' != putUnderManageCode ">
+				,PUT_UNDER_MANAGE_CODE=#{putUnderManageCode}
+			</if>
+
+			<if test="null != internalMemory and '' != internalMemory">
+				,INTERNAL_MEMORY=#{internalMemory}
+			</if>
+
+			<if test="null != hardpan and '' != hardpan">
+				,HARDPAN=#{hardpan}
+			</if>
+
+			<if test="null != ipAddress and '' != ipAddress">
+				,IP_ADDRESS=#{ipAddress}
+			</if>
+
+			<if test="null != joinDomain and '' != joinDomain">
+				,JOIN_DOMAIN=#{joinDomain}
+			</if>
+
+			<if test="null != description and '' != description">
+				,DESCRIPTION=#{description}
+			</if>
+
+			<if test="null != operatingSystem and '' != operatingSystem">
+				,OPERATING_SYSTEM=#{operatingSystem}
+			</if>
+
+			<if test="null != utilitySystem and '' != utilitySystem">
+				,UTILITY_SYSTEM=#{utilitySystem}
+			</if>
+
+			<if test="null != dataBase and '' != dataBase">
+				,DATA_BASE=#{dataBase}
+			</if>
+		where ID=#{id}
+	</update>
+	<update id="updateComputerAssetCard2" parameterType="com.opple.fa.assetcard.entity.ComputerAsset">
+		update TB_FA_COMPUTER_ASSET
+		SET
+		SERIAL_NUMBER=#{serialNumber},
+		PUT_UNDER_MANAGE_CODE=#{putUnderManageCode},
+		CPU=#{cpu},
+		INTERNAL_MEMORY=#{internalMemory},
+		HARDPAN=#{hardpan},
+		IP_ADDRESS=#{ipAddress},
+		JOIN_DOMAIN=#{joinDomain},
+		DESCRIPTION=#{description},
+		OPERATING_SYSTEM=#{operatingSystem},
+		UTILITY_SYSTEM=#{utilitySystem},
+		DATA_BASE=#{dataBase}
+		where ID=#{id}
+	</update>
+</mapper>

@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.opple.fa.purchase.dao.ReceiveGoodsDetailDAO">
+       <!-- oracle 分页头 -->
+    <sql id="pagination_Head" >
+        <![CDATA[select * from ( select row_.*, rownum rownum_ from ( ]]>
+    </sql>
+    <!-- oracle 分页尾 -->
+    <sql id="pagination_Tail">
+        <![CDATA[) row_ where rownum <= #{pager.pageSize}* #{pager.offset} ) where rownum_ >= #{pager.firstResult} + 1]]>
+    </sql>
+    <!-- count * from -->
+	<sql id="count_Start_Head">
+		<![CDATA[select count(*) from ( ]]>
+	</sql>
+	<sql id="count_Start_Tail">
+		<![CDATA[) countObj ]]>
+	</sql>
+	
+	<resultMap id="receiveGoodsDetailResultMap" type="com.opple.fa.purchase.entity.ReceiveGoodsDetail">
+		<result property="id" column="ID"/><!-- RECEIVE_GOODS_NO_DETAIL -->
+		<result property="receiveGoodsDetailId" column="RECEIVE_GOODS_DETAIL_ID"/><!-- RECEIVE_GOODS_NO_DETAIL -->
+		<result property="receiveGoodsId" column="RECEIVE_GOODS_Id" /><!-- 关联字段（隐藏）-->		
+        <result property="purchaseDetailId" column="PURCHASE_DETAIL_ID"/><!-- 订单明细id -->
+		<result property="assetsName" column="ASSETS_NAME"/><!-- 资产名称 -->
+		<result property="brand" column="BRAND"/><!-- 规格型号 -->
+		<result property="units" column="UNITS"/><!-- 单位（申请单的行） -->
+		<result property="applyCount" column="APPLY_COUNT"/><!-- 订单数量（订单行） -->
+		<result property="goodsCount" column="GOODS_COUNT"/><!-- 已收货数量（订单行） 然后保存到收货的行里 -->
+		<result property="thisGoodsCount" column="THIS_GOODS_COUNT"/><!-- 本次收货数量（手填） -->
+		<result property="tax" column="TAX"/><!-- 税率 -->
+		<result property="purchaseUnitPrice" column="PURCHASE_UNIT_PRICE"/><!-- 单价（含税） -->
+		<result property="purchasePrice" column="PURCHASE_PRICE"/><!-- 总价（含税） -->
+		<result property="ledgerAccount" column="LEDGER_ACCOUNT"/><!-- 总账科目 -->
+		<result property="deliveryDate" column="DELIVERY_DATE"/><!-- 交货日期 -->
+		<result property="requireCheckDate" column="REQUIRE_CHECK_DATE" /><!-- 验收日期(手填) -->
+		<result property="recWarrantyPeriod" column="REC_WARRANTY_PERIOD"/><!-- 保固期，手填 -->
+		<result property="applyDetailId" column="APPLY_DETAIL_ID" /><!-- 关联字段（隐藏）-->		<!-- 创建人 创建时间 更新人 更新时间 -->
+		<result property="storageLocation" column="STORAGE_LOCATION" /><!-- 存放位置（手填） -->
+		<result property="assetsType" column="ASSETS_TYPE" />
+
+		<result property="createBy" column="CREATE_BY" />
+		<result property="createDate" column="CREATE_DATE" />
+		<result property="updateBy" column="UPDATE_BY" />
+		<result property="updateDate" column="UPDATE_DATE" />
+	</resultMap>
+	
+	<!-- 保存收货单明细 -->
+	<insert id="saveReceiveGoodsDetail" keyProperty="id" useGeneratedKeys="true">
+		<selectKey keyProperty="id" order="BEFORE" resultType="long">
+			SELECT SEQ_FA_RECEIVE_GOODS_DETAIL_ID.NEXTVAL FROM DUAL		
+		</selectKey>
+		INSERT INTO TB_FA_RECEIVE_GOODS_DETAIL RGD
+		  (
+		   RGD.ID,
+	       RGD.RECEIVE_GOODS_ID,
+	       RGD.PURCHASE_DETAIL_ID,
+	       RGD.APPLY_DETAIL_ID,
+		   RGD.ASSETS_NAME,
+	       RGD.BRAND,
+	       RGD.UNITS,
+	       RGD.APPLY_COUNT,
+	       RGD.GOODS_COUNT,
+	       RGD.THIS_GOODS_COUNT,
+	       RGD.TAX,
+	       RGD.PURCHASE_UNIT_PRICE,
+	       RGD.PURCHASE_PRICE,
+	       RGD.LEDGER_ACCOUNT,
+	       RGD.DELIVERY_DATE,
+	       RGD.REQUIRE_CHECK_DATE,
+          RGD.REC_WARRANTY_PERIOD,
+        RGD.PURCHASE_ID,
+		   RGD.ASSETS_TYPE
+		   )
+		VALUES
+		  (
+		   #{id},
+		   #{receiveGoodsId},
+		   #{purchaseDetailId},
+		   #{applyDetailId},
+		   #{assetsName},
+		   #{brand},
+		   #{units},
+		   #{applyCount},
+		   nvl(#{goodsCount},0)+ #{thisGoodsCount},
+		   #{thisGoodsCount},
+		   #{tax},
+		   #{purchaseUnitPrice},
+		   #{purchasePrice},
+		   #{ledgerAccount},
+		   #{deliveryDate},
+		   #{requireCheckDate},
+            #{recWarrantyPeriod},
+            #{purchaseId},
+		   #{assetsType}
+		   )
+	</insert>
+
+	<insert id="saveDeleteBranch">
+		INSERT INTO TB_FA_RECEIVE_DETAIL_BK RGD
+		(
+		RGD.ID,
+		RGD.RECEIVE_GOODS_ID,
+		RGD.PURCHASE_DETAIL_ID,
+		RGD.APPLY_DETAIL_ID,
+		RGD.ASSETS_NAME,
+		RGD.BRAND,
+		RGD.UNITS,
+		RGD.APPLY_COUNT,
+		RGD.GOODS_COUNT,
+		RGD.THIS_GOODS_COUNT,
+		RGD.TAX,
+		RGD.PURCHASE_UNIT_PRICE,
+		RGD.PURCHASE_PRICE,
+		RGD.LEDGER_ACCOUNT,
+		RGD.DELIVERY_DATE,
+		RGD.REQUIRE_CHECK_DATE,
+		RGD.REC_WARRANTY_PERIOD,
+		RGD.PURCHASE_ID,
+		RGD.ASSETS_TYPE
+		)
+		 <foreach item="item" index="index" collection="list" separator="union all">
+		 (
+			 SELECT
+			 #{item.receiveGoodsDetailId},
+			 #{item.receiveGoodsId},
+			 #{item.purchaseDetailId},
+			 #{item.applyDetailId},
+			 #{item.assetsName},
+			 #{item.brand},
+			 #{item.units},
+			 #{item.applyCount},
+			 nvl(#{item.goodsCount},0)+ #{item.thisGoodsCount},
+			 #{item.thisGoodsCount},
+			 #{item.tax},
+			 #{item.purchaseUnitPrice},
+			 #{item.purchasePrice},
+			 #{item.ledgerAccount},
+			 #{item.deliveryDate},
+			 #{item.requireCheckDate},
+			 #{item.recWarrantyPeriod},
+			 #{item.purchaseId},
+			 #{item.assetsType}
+			 FROM DUAL
+		 )
+		 </foreach>
+	</insert>
+
+	<!-- to_date(#{deliveryDate },'yyyy-mm-dd'), -->
+	<!-- 修改收货单的行 -->
+	<update id="updateReceiveGoodsDetail">
+	UPDATE TB_FA_RECEIVE_GOODS_DETAIL RGD
+	   SET RGD.ASSETS_NAME         = #{assetsName },
+		   RGD.BRAND               = #{brand },
+		   RGD.UNITS               = #{units },
+
+		    RGD.GOODS_COUNT         = #{goodsCount },
+		   RGD.TAX                 = #{tax },
+		   RGD.PURCHASE_UNIT_PRICE = #{purchaseUnitPrice },
+		   RGD.PURCHASE_PRICE      = #{purchasePrice },
+		   RGD.LEDGER_ACCOUNT      = #{ledgerAccount },
+		   RGD.DELIVERY_DATE       = #{deliveryDate },
+		   RGD.REQUIRE_CHECK_DATE  = #{requireCheckDate },
+		   RGD.REC_WARRANTY_PERIOD = #{recWarrantyPeriod },
+		   RGD.STORAGE_LOCATION    = #{storageLocation }
+	 where 1 = 1
+	   and RGD.RECEIVE_GOODS_ID = #{receiveGoodsId}
+	   and RGD.APPLY_DETAIL_ID = #{applyDetailId }
+	</update>
+
+	<!-- 查询收货单的行  -->	
+	<select id="searchReceiveGoodsDetailByReceiveGoodsId" resultMap="receiveGoodsDetailResultMap">
+		SELECT RGD.ID RECEIVE_GOODS_DETAIL_ID,
+	       RGD.RECEIVE_GOODS_ID,
+	       RGD.PURCHASE_DETAIL_ID,
+	       RGD.APPLY_DETAIL_ID,
+	       RGD.ASSETS_NAME,
+	       RGD.BRAND,
+	       RGD.UNITS,
+	       RGD.APPLY_COUNT,
+	       RGD.GOODS_COUNT,
+	       RGD.THIS_GOODS_COUNT,
+	       RGD.TAX,
+	       RGD.PURCHASE_UNIT_PRICE,
+	       RGD.PURCHASE_PRICE,
+	       RGD.LEDGER_ACCOUNT,
+	       RGD.DELIVERY_DATE,
+	       RGD.REQUIRE_CHECK_DATE,
+	       RGD.REC_WARRANTY_PERIOD,
+	       RGD.STORAGE_LOCATION,
+	       RGD.ASSETS_TYPE
+	  FROM TB_FA_RECEIVE_GOODS_DETAIL RGD
+	 WHERE 1 = 1
+	   AND RGD.RECEIVE_GOODS_ID = #{receiveGoodsId}
+	</select>
+
+	<delete id="deleteReceiveGoodsDetail" parameterType="java.util.List">
+		delete from TB_FA_RECEIVE_GOODS_DETAIL where id in
+			<foreach collection="list" item="id" separator="," open="(" close=")">
+			#{id}
+			</foreach>
+	</delete>
+	<update id="updateReceiveGoodsDetail1">
+		update TB_FA_RECEIVE_GOODS_DETAIL SET
+		STORAGE_LOCATION=#{storageLocation}
+		where ID=#{receiveGoodsDetailId}
+	</update>
+  </mapper>
+

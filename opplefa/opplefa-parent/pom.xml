@@ -1,0 +1,457 @@
+﻿<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.opple</groupId>
+	<artifactId>opplefa-parent</artifactId>
+	<packaging>pom</packaging>
+	<version>4.0</version>
+	<name>opplefa-parent</name>
+	<url>http://maven.apache.org</url>
+
+	<properties>
+		<spring.version>4.0.6.RELEASE</spring.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<hfs.service.client.version>2.0.1</hfs.service.client.version>
+		<jackson.version>2.4.0</jackson.version>
+		<spring-data-jpa.version>1.6.0.RELEASE</spring-data-jpa.version>
+		<hibernate.version>4.3.5.Final</hibernate.version>
+		<tomcat-jdbc.version>7.0.54</tomcat-jdbc.version>
+		<sitemesh.version>2.4.2</sitemesh.version>
+		<aspectj.version>1.7.4</aspectj.version>
+	</properties>
+
+	<dependencyManagement>
+		<dependencies>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
+			<version>2.5</version>
+			<scope>provided</scope>
+		</dependency>
+			<dependency>
+				<groupId>junit</groupId>
+				<artifactId>junit</artifactId>
+				<version>4.11</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>com.opple</groupId>
+				<artifactId>opplefa-biz</artifactId>
+				<version>4.0</version>
+			</dependency>
+			<!-- https://mvnrepository.com/artifact/commons-logging/commons-logging -->
+			<dependency>
+			    <groupId>commons-logging</groupId>
+			    <artifactId>commons-logging</artifactId>
+			    <version>1.1.1</version>
+			</dependency>
+
+			<!-- https://mvnrepository.com/artifact/commons-lang/commons-lang -->
+			<dependency>
+			    <groupId>commons-lang</groupId>
+			    <artifactId>commons-lang</artifactId>
+			    <version>2.4</version>
+			</dependency>
+
+			<!-- https://mvnrepository.com/artifact/commons-collections.wso2/commons-collections -->
+			<dependency>
+			    <groupId>commons-collections.wso2</groupId>
+			    <artifactId>commons-collections</artifactId>
+			    <version>3.2.0.wso2v1</version>
+			</dependency>
+
+			<!-- https://mvnrepository.com/artifact/commons-beanutils/commons-beanutils -->
+			<dependency>
+			    <groupId>commons-beanutils</groupId>
+			    <artifactId>commons-beanutils</artifactId>
+			    <version>1.8.0</version>
+			</dependency>
+			<!-- https://mvnrepository.com/artifact/net.sf.json-lib/json-lib -->
+			<dependency>
+			    <groupId>net.sf.json-lib</groupId>
+			    <artifactId>json-lib</artifactId>
+			    <version>2.3</version>
+			</dependency>
+
+			<!-- https://mvnrepository.com/artifact/net.sf.ezmorph/ezmorph -->
+			<dependency>
+			    <groupId>net.sf.ezmorph</groupId>
+			    <artifactId>ezmorph</artifactId>
+			    <version>1.0.4</version>
+			</dependency>
+			<!-- 单元测试断言包 2014-08-21 -->
+            <dependency>
+				<groupId>org.hamcrest</groupId>
+				<artifactId>hamcrest-all</artifactId>
+				<version>1.3</version>
+				<scope>test</scope>
+			</dependency>
+			
+			<dependency>
+				<groupId>com.alibaba</groupId>
+				<artifactId>fastjson</artifactId>
+				<version>1.1.38</version>
+			</dependency>
+			<dependency>
+				<groupId>net.sf.ezmorph</groupId>
+				<artifactId>ezmorph</artifactId>
+				<version>1.0.6</version>
+			</dependency>
+			<dependency>
+				<groupId>com.thoughtworks.xstream</groupId>
+				<artifactId>xstream</artifactId>
+				<version>1.4.6</version>
+			</dependency>
+			<!-- LOGGING begin -->
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-api</artifactId>
+				<version>1.7.7</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>log4j-over-slf4j</artifactId>
+				<version>1.7.7</version>
+			</dependency>
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>jcl-over-slf4j</artifactId>
+				<version>1.7.7</version>
+			</dependency>
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>jul-to-slf4j</artifactId>
+				<version>1.7.7</version>
+			</dependency>
+			<dependency>
+				<groupId>org.codehaus.jackson</groupId>
+				<artifactId>jackson-core-asl</artifactId>
+				<version>1.9.3</version>
+			</dependency>
+			<dependency>
+				<groupId>org.codehaus.jackson</groupId>
+				<artifactId>jackson-mapper-asl</artifactId>
+				<version>2.4.0</version>
+			</dependency>
+			<dependency>
+				<groupId>javax.servlet</groupId>
+				<artifactId>jstl</artifactId>
+				<version>1.2</version>
+			</dependency>
+			<dependency>
+	            <groupId>org.projectlombok</groupId>
+	            <artifactId>lombok</artifactId>
+	            <version>1.16.10</version>
+	            <scope>provided</scope>
+        	</dependency>
+        	<dependency>
+				<groupId>org.dbunit</groupId>
+				<artifactId>dbunit</artifactId>
+				<version>2.5.3</version>
+			</dependency>
+        	<dependency>
+	            <groupId>com.sap.conn.jco</groupId>
+	            <artifactId>sapjco3</artifactId>
+	            <version>3.0.11</version>
+	            <scope>provided</scope>
+        	</dependency>
+        	<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-test</artifactId>
+				<version>${spring.version}</version>
+				<scope>test</scope>
+			</dependency>
+
+			<!-- JSON begin -->
+			<dependency>
+				<groupId>com.fasterxml.jackson.module</groupId>
+				<artifactId>jackson-module-jaxb-annotations</artifactId>
+				<version>${jackson.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.fasterxml.jackson.jaxrs</groupId>
+				<artifactId>jackson-jaxrs-json-provider</artifactId>
+				<version>${jackson.version}</version>
+			</dependency>
+			<!-- JSON end -->
+			<dependency>
+				<groupId>org.apache.httpcomponents</groupId>
+				<artifactId>fluent-hc</artifactId>
+				<version>4.3.2</version>
+			</dependency>
+			<!-- connection pool -->
+			<!-- sitemesh -->
+			<dependency>
+				<groupId>opensymphony</groupId>
+				<artifactId>sitemesh</artifactId>
+				<version>${sitemesh.version}</version>
+			</dependency>
+
+			<!-- aop -->
+			<dependency>
+				<groupId>commons-collections</groupId>
+				<artifactId>commons-collections</artifactId>
+				<version>3.2.1</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-beanutils</groupId>
+				<artifactId>commons-beanutils</artifactId>
+				<version>1.9.1</version>
+			</dependency>
+			<dependency>
+				<groupId>org.codehaus.jackson</groupId>
+				<artifactId>jackson-core-asl</artifactId>
+				<version>1.9.13</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.poi</groupId>
+				<artifactId>poi-ooxml</artifactId>
+				<version>3.8</version>
+				<exclusions>
+					<exclusion>
+						<artifactId>xml-apis</artifactId>
+						<groupId>xml-apis</groupId>
+					</exclusion>
+					<exclusion>
+						<artifactId>stax-api</artifactId>
+						<groupId>stax</groupId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.poi</groupId>
+				<artifactId>poi</artifactId>
+				<version>3.8</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-fileupload</groupId>
+				<artifactId>commons-fileupload</artifactId>
+				<version>1.2.1</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+	<!-- 不同的打包环境 -->
+	<profiles>
+		<!-- 生产环境 -->
+		<profile>
+			<id>production</id>
+			<properties>
+				<env>production</env>
+			</properties>
+		</profile>
+		<!-- opple测试环境 -->
+		<profile>
+			<id>oppletest</id>
+			<properties>
+				<env>oppletest</env>
+			</properties>
+		</profile>
+		<!-- 测试环境 -->
+		<profile>
+			<id>test</id>
+			<properties>
+				<env>test</env>
+			</properties>
+		</profile>
+		<!-- 开发环境 -->
+		<profile>
+			<id>dev</id>
+			<properties>
+				<env>dev</env>
+			</properties>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+		</profile>
+	</profiles>
+	<build>
+		<filters>
+			<filter>../opplefa-parent/src/main/filters/filter-${env}.properties</filter>
+		</filters>
+		<resources>
+			<resource><!-- 不对指定的资源文件进行资源替换 -->
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+				<excludes>
+					<exclude>**/*.ftl</exclude>
+					<exclude>**/*-dynamic.xml</exclude>
+					<exclude>**/mybatis/**/*.xml</exclude>
+				</excludes>
+			</resource>
+			<resource><!-- 对ftl文件和动态sql文件进行直接复制 -->
+				<directory>src/main/resources</directory>
+				<filtering>false</filtering>
+				<includes>
+					<include>**/*.ftl</include>
+					<include>**/*-dynamic.xml</include>
+					<include>**/mybatis/**/*.xml</include>
+				</includes>
+			</resource>
+		</resources>
+		<testResources>
+			<testResource>
+				<directory>src/test/resources</directory>
+				<filtering>true</filtering>
+				<excludes>
+					<exclude>**/*.ftl</exclude>
+					<exclude>**/*-dynamic.xml</exclude>
+					<exclude>**/mybatis/**/*.xml</exclude>
+				</excludes>
+			</testResource>
+			<testResource>
+				<directory>src/test/resources</directory>
+				<filtering>false</filtering>
+				<includes>
+					<include>**/*.ftl</include>
+					<include>**/*-dynamic.xml</include>
+					<include>**/mybatis/**/*.xml</include>
+				</includes>
+			</testResource>
+		</testResources>
+
+		<plugins>
+			<!-- 工程编码插件 -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.0</version>
+				<configuration>
+					<source>1.7</source>
+					<target>1.7</target>
+					<encoding>UTF-8</encoding>
+				</configuration>
+			</plugin>
+			<!-- 生成javadoc插件 -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<configuration>
+					<charset>UTF-8</charset>
+					<encoding>UTF-8</encoding>
+				</configuration>
+			</plugin>
+			<!-- 打包java源码 -->
+			<plugin>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>2.2.1</version>
+				<configuration>
+					<attach>true</attach>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>compile</phase>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<!-- 导入eclipse工程插件 -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-eclipse-plugin</artifactId>
+				<version>2.9</version>
+				<configuration>
+					<downloadSources>true</downloadSources>
+					<downloadJavadocs>true</downloadJavadocs>
+					<wtpversion>2.0</wtpversion>
+					<additionalProjectnatures>
+						<projectnature>org.springframework.ide.eclipse.core.springnature</projectnature>
+					</additionalProjectnatures>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>2.6</version>
+				<configuration>
+					<encoding>UTF-8</encoding>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.12</version>
+				<configuration>
+					<argLine>-Xms512m -Xmx1024m -XX:PermSize=128m -XX:MaxPermSize=128m</argLine>
+					<includes>
+						<include>com/opple/**/*Test*.java</include>
+					</includes>
+					<printSummary>true</printSummary>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>cobertura-maven-plugin</artifactId>
+				<version>2.6</version>
+				<configuration>
+					<instrumentation>
+						<excludes>
+							<exclude>com/opple/**/action/**/*.class</exclude>
+							<exclude>com/opple/**/webapp/**/*.class</exclude>
+							<exclude>com/opple/**/interceptor/**/*.class</exclude>
+							<exclude>com/opple/**/taglib/**/*.class</exclude>
+							<exclude>com/opple/**/domain/**/*.class</exclude>
+							<exclude>com/opple/**/model/**/*.class</exclude>
+							<exclude>com/opple/**/dto/**/*.class</exclude>
+						</excludes>
+					</instrumentation>
+					<formats>
+						<format>xml</format>
+					</formats>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+	<distributionManagement>
+		<!-- Publish the versioned releases here -->
+		<repository>
+			<id>yh-nexus</id>
+			<name>nexus</name>
+			<url>http://10.10.0.120:8081/nexus/content/repositories/releases</url>
+		</repository>
+
+		<!-- Publish the versioned releases here -->
+		<snapshotRepository>
+			<id>yh-nexus</id>
+			<name>nexus</name>
+			<url>http://10.10.0.120:8081/nexus/content/repositories/snapshots</url>
+		</snapshotRepository>
+	</distributionManagement>
+
+	<!-- download artifacts from this repo -->
+	<repositories>
+		<repository>
+			<id>yh-nexus</id>
+			<name>yh</name>
+			<url>http://10.10.0.120:8081/nexus/content/groups/public</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
+
+	<!-- download plugins from this repo -->
+	<pluginRepositories>
+		<pluginRepository>
+			<id>yh-nexus</id>
+			<name>yh</name>
+			<url>http://10.10.0.120:8081/nexus/content/groups/public</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</pluginRepository>
+	</pluginRepositories>
+	<!-- ~~~~~~~~~~Maven私服配置结束 -->
+</project>

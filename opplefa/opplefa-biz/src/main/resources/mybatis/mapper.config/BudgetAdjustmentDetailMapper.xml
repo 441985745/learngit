@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.opple.fa.config.dao.BudgetAdjustmentDetailDAO">
+    <!-- oracle 分页头 -->
+    <sql id="pagination_Head" >
+        <![CDATA[select * from ( select row_.*, rownum rownum_ from ( ]]>
+    </sql>
+    <!-- oracle 分页尾 -->
+    <sql id="pagination_Tail">
+        <![CDATA[) row_ where rownum <= #{pager.pageSize}* #{pager.offset} ) where rownum_ >= #{pager.firstResult} + 1]]>
+    </sql>
+    <!-- count * from -->
+    <sql id="count_Start_Head">
+        <![CDATA[select count(*) from ( ]]>
+    </sql>
+    <sql id="count_Start_Tail">
+        <![CDATA[) countObj ]]>
+    </sql>
+
+    <resultMap id="budgetAdjustmentDetailResultMap" type="com.opple.fa.config.entity.BudgetAdjustmentDetail">
+        <result property="id" column="ID"/>
+        <result property="status" column="STATUS"/>
+        <result property="budgetYear" column="BUDGET_YEAR"/>
+        <result property="costCenter" column="COST_CENTER"/>
+        <result property="costCenterName" column="COST_CENTER_NAME"/>
+        <result property="platform" column="PLATFORM_NAME"/>
+        <result property="projectCode" column="PROJECT_CODE"/>
+        <result property="projectName" column="PROJECT_NAME"/>
+        <result property="assetsName" column="ASSETS_NAME"/>
+        <result property="assetsType" column="ASSETS_TYPE"/>
+        <result property="assetsModel" column="ASSETS_MODEL"/>
+        <result property="unit" column="UNIT"/>
+        <result property="beforeAdjustCount" column="BEFORE_ADJUST_COUNT"/>
+        <result property="adjustCount" column="ADJUST_COUNT"/>
+        <result property="afterAdjustCount" column="AFTER_ADJUST_COUNT"/>
+        <result property="beforeUnitPrice" column="BEFORE_UNIT_PRICE"/>
+        <result property="afterUnitPrice" column="AFTER_UNIT_PRICE"/>
+        <result property="usedSumMoney" column="USED_SUM_MONEY"/>
+        <result property="beforeAdjustMoney" column="BEFORE_ADJUST_MONEY"/>
+        <result property="adjustMoney" column="ADJUST_MONEY"/>
+        <result property="afterAdjustMoney" column="AFTER_ADJUST_MONEY"/>
+        <result property="budgetAdjustId" column="BUDGET_ADJUST_ID"/>
+        <result property="specialAdjustMark" column="SPECIAL_ADJUST_MARK"/>
+        <result property="usedAmount" column="USED_AMOUNT"/>
+
+        <result property="createBy" column="CREATE_BY"/>
+        <result property="createUserName" column="CREATE_BY_NAME"/>
+        <result property="createDate" column="CREATE_DATE"/>
+        <result property="updateBy" column="UPDATE_BY"/>
+        <result property="updateUserName" column="UPDATE_BY_NAME"/>
+        <result property="updateDate" column="UPDATE_DATE"/>
+        <result property="budgetBasedOn" column="BUDGET_BASED_ON"/>
+    </resultMap>
+    
+    <sql id="budget_adjustment_detail_domain">
+        ID, STATUS, BUDGET_YEAR, COST_CENTER, PROJECT_CODE, PROJECT_NAME, ASSETS_NAME,
+        ASSETS_TYPE, ASSETS_MODEL, UNIT, BEFORE_ADJUST_COUNT, ADJUST_COUNT, AFTER_ADJUST_COUNT,
+        BEFORE_UNIT_PRICE, AFTER_UNIT_PRICE, USED_SUM_MONEY, BEFORE_ADJUST_MONEY, ADJUST_MONEY,
+        AFTER_ADJUST_MONEY, BUDGET_ADJUST_ID, CREATE_BY, CREATE_BY_NAME, CREATE_DATE,
+        UPDATE_BY, UPDATE_BY_NAME, UPDATE_DATE, SPECIAL_ADJUST_MARK, BUDGET_BASED_ON,
+        COST_CENTER_NAME, PLATFORM_NAME, USED_AMOUNT
+    </sql>
+
+    <!--插入明细-->
+    <insert id="addBudgetAdjustmentDetail">
+        INSERT INTO TB_FA_BUDGET_ADJUST_DETAIL(
+            ID, STATUS, BUDGET_YEAR, COST_CENTER, PROJECT_CODE, PROJECT_NAME, ASSETS_NAME,
+            ASSETS_TYPE, ASSETS_MODEL, UNIT, BEFORE_ADJUST_COUNT, ADJUST_COUNT, AFTER_ADJUST_COUNT,
+            BEFORE_UNIT_PRICE, AFTER_UNIT_PRICE, USED_SUM_MONEY, BEFORE_ADJUST_MONEY, ADJUST_MONEY,
+            AFTER_ADJUST_MONEY, BUDGET_ADJUST_ID, CREATE_BY, CREATE_BY_NAME, CREATE_DATE,
+            UPDATE_BY, UPDATE_BY_NAME, UPDATE_DATE, SPECIAL_ADJUST_MARK, BUDGET_BASED_ON,
+            COST_CENTER_NAME, PLATFORM_NAME, USED_AMOUNT
+        )
+        VALUES (
+            sys_guid(),
+            #{budgetAdjustmentDetail.status},
+            #{budgetAdjustmentDetail.budgetYear},
+            #{budgetAdjustmentDetail.costCenter},
+            #{budgetAdjustmentDetail.projectCode},
+            #{budgetAdjustmentDetail.projectName},
+            #{budgetAdjustmentDetail.assetsName},
+            #{budgetAdjustmentDetail.assetsType},
+            #{budgetAdjustmentDetail.assetsModel},
+            #{budgetAdjustmentDetail.unit},
+            #{budgetAdjustmentDetail.beforeAdjustCount},
+            #{budgetAdjustmentDetail.adjustCount},
+            #{budgetAdjustmentDetail.afterAdjustCount},
+            #{budgetAdjustmentDetail.beforeUnitPrice},
+            #{budgetAdjustmentDetail.afterUnitPrice},
+            #{budgetAdjustmentDetail.usedSumMoney},
+            #{budgetAdjustmentDetail.beforeAdjustMoney},
+            #{budgetAdjustmentDetail.adjustMoney},
+            #{budgetAdjustmentDetail.afterAdjustMoney},
+            #{budgetAdjustmentDetail.budgetAdjustId},
+            #{budgetAdjustmentDetail.createBy},
+            #{budgetAdjustmentDetail.createUserName},
+            #{budgetAdjustmentDetail.createDate},
+            #{budgetAdjustmentDetail.updateBy},
+            #{budgetAdjustmentDetail.updateUserName},
+            #{budgetAdjustmentDetail.updateDate},
+            #{budgetAdjustmentDetail.specialAdjustMark},
+            #{budgetAdjustmentDetail.budgetBasedOn},
+            #{budgetAdjustmentDetail.costCenterName},
+            #{budgetAdjustmentDetail.platform},
+            #{budgetAdjustmentDetail.usedAmount}
+        )
+    </insert>
+
+    <update id="updateBudgetAdjustmentDetailsById">
+        UPDATE TB_FA_BUDGET_ADJUST_DETAIL SET
+            STATUS = #{budgetAdjustment.status},
+            UPDATE_BY = #{budgetAdjustment.updateBy},
+            UPDATE_BY_NAME = #{budgetAdjustment.updateUserName},
+            UPDATE_DATE = #{budgetAdjustment.updateDate}
+          WHERE 1 = 1
+            AND BUDGET_ADJUST_ID = #{budgetAdjustment.budgetId}
+    </update>
+
+    <!--根据单据号删除明细-->
+    <delete id="deleteBudgetAdjustmentDetailByDocument" parameterType="string">
+        DELETE FROM TB_FA_BUDGET_ADJUST_DETAIL WHERE BUDGET_ADJUST_ID IN
+            (SELECT ID FROM TB_FA_BUDGET_ADJUST WHERE CDOCUMENT = #{document})
+    </delete>
+
+    <select id="getBudgetAdjustmentDetailsByBudgetId" resultMap="budgetAdjustmentDetailResultMap">
+        SELECT <include refid="budget_adjustment_detail_domain"/>
+            FROM TB_FA_BUDGET_ADJUST_DETAIL
+          WHERE STATUS = '0'
+                AND BUDGET_ADJUST_ID = #{budgetId}
+    </select>
+    <select id="getBudgetAdjustmentDetailsByDocument" resultMap="budgetAdjustmentDetailResultMap">
+        SELECT <include refid="budget_adjustment_detail_domain"/>
+            FROM TB_FA_BUDGET_ADJUST_DETAIL
+          WHERE STATUS = '0'
+                AND BUDGET_ADJUST_ID IN
+                  (SELECT ID FROM TB_FA_BUDGET_ADJUST WHERE CDOCUMENT = #{document})
+    </select>
+
+    <insert id="addProjectCodeForDetail">
+        UPDATE TB_FA_BUDGET_ADJUST_DETAIL SET
+            PROJECT_CODE = #{budgetAdjustmentDetail.projectCode}
+          WHERE ID = #{budgetAdjustmentDetail.id}
+    </insert>
+</mapper>

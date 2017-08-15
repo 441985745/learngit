@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.opple.fa.config.dao.BudgetAdjustmentDAO">
+    <!-- oracle 分页头 -->
+    <sql id="pagination_Head" >
+        <![CDATA[select * from ( select row_.*, rownum rownum_ from ( ]]>
+    </sql>
+    <!-- oracle 分页尾 -->
+    <sql id="pagination_Tail">
+        <![CDATA[) row_ where rownum <= #{pager.pageSize}* #{pager.offset} ) where rownum_ >= #{pager.firstResult} + 1]]>
+    </sql>
+    <!-- count * from -->
+    <sql id="count_Start_Head">
+        <![CDATA[select count(*) from ( ]]>
+    </sql>
+    <sql id="count_Start_Tail">
+        <![CDATA[) countObj ]]>
+    </sql>
+    
+    <resultMap id="budgetAdjustmentResultMap" type="com.opple.fa.config.entity.BudgetAdjustment">
+        <result property="budgetId" column="ID"/>
+        <result property="applicationDate" column="APPLICATION_DATE"/>
+        <result property="document" column="CDOCUMENT"/>
+        <result property="userCode" column="USER_CODE"/>
+        <result property="userName" column="USER_NAME"/>
+        <result property="companyCode" column="COMPANY_CODE"/>
+        <result property="companyName" column="COMPANY_NAME"/>
+        <result property="departmentCode" column="DEPARTMENT_CODE"/>
+        <result property="departmentName" column="DEPARTMENT_NAME"/>
+        <result property="approvalEnd" column="CAPPROVALEND"/>
+        <result property="approvalState" column="CAPPROVALSTATE"/>
+        <result property="caUserCode" column="CAUSERCODE"/>
+        <result property="caUserName" column="CAUSERNAME"/>
+        <result property="userDepCode" column="USER_DEP_CODE"/>
+        <result property="nextHandlerCode" column="CNEXTHANDLERCODE"/>
+        <result property="nextHandlerName" column="CNEXTHANDLERNAME"/>
+        <result property="lastADate" column="DLASTADATE"/>
+        <result property="commitType" column="COMMIT_TYPE"/>
+        <result property="isMail" column="IS_MAIL"/>
+        <result property="isPhoneMessage" column="IS_PHONE_MESSAGE"/>
+        <result property="idea" column="IDEA"/>
+        <result property="status" column="STATUS"/>
+        <result property="iamoney" column="IAMONEY"/>
+        <result property="assetsBudgetType" column="ASSETS_BUDGET_TYPE"/>
+        <result property="createBy" column="CREATE_BY"/>
+        <result property="createUserName" column="CREATE_BY_NAME"/>
+        <result property="createDate" column="CREATE_DATE"/>
+        <result property="updateBy" column="UPDATE_BY"/>
+        <result property="updateUserName" column="UPDATE_BY_NAME"/>
+        <result property="updateDate" column="UPDATE_DATE"/>
+
+        <result property="callInDepartmentCode" column="CALL_IN_DEPARTMENT_CODE"/>
+        <result property="callInDepartmentName" column="CALL_IN_DEPARTMENT_NAME"/>
+        <result property="callOutDepartmentCode" column="CALL_OUT_DEPARTMENT_CODE"/>
+        <result property="callOutDepartmentName" column="CALL_OUT_DEPARTMENT_NAME"/>
+        <result property="twoDepartmentHeadCode" column="TWO_DEPARTMENT_HEAD_CODE"/>
+        <result property="twoDepartmentHeadName" column="TWO_DEPARTMENT_HEAD_NAME"/>
+        <result property="outTwoDepartmentHeadCode" column="OUT_TWO_DEPARTMENT_HEAD_CODE"/>
+        <result property="outTwoDepartmentHeadName" column="OUT_TWO_DEPARTMENT_HEAD_NAME"/>
+        <result property="costCenterCode" column="COST_CENTER_CODE"/>
+        <result property="costCenterName" column="COST_CENTER_NAME"/>
+        <result property="draft" column="DRAFT"/>
+        <result property="adjustReason" column="ADJUST_REASON"/>
+
+    </resultMap>
+    
+    <sql id="budget_adjustment_domain">
+      DISTINCT  ba.ID,ba.APPLICATION_DATE, ba.CDOCUMENT, ba.USER_CODE, ba.USER_NAME, ba.COMPANY_CODE,
+        ba.COMPANY_NAME, ba.DEPARTMENT_CODE, ba.DEPARTMENT_NAME, ba.CAPPROVALEND, ba.CAPPROVALSTATE,
+        ba.CAUSERCODE, ba.CAUSERNAME, ba.USER_DEP_CODE, ba.CNEXTHANDLERCODE, ba.CNEXTHANDLERNAME,
+        ba.DLASTADATE, ba.COMMIT_TYPE, ba.IS_MAIL, ba.IS_PHONE_MESSAGE, ba.IDEA, ba.STATUS, ba.IAMONEY,
+        ba.ASSETS_BUDGET_TYPE, ba.CREATE_BY, ba.CREATE_BY_NAME, ba.CREATE_DATE, ba.UPDATE_BY,
+        ba.UPDATE_BY_NAME, ba.UPDATE_DATE, ba.CALL_IN_DEPARTMENT_CODE, ba.CALL_IN_DEPARTMENT_NAME,
+        ba.CALL_OUT_DEPARTMENT_CODE, ba.CALL_OUT_DEPARTMENT_NAME, ba.TWO_DEPARTMENT_HEAD_CODE,
+        ba.TWO_DEPARTMENT_HEAD_NAME, ba.COST_CENTER_CODE, ba.COST_CENTER_NAME, ba.OUT_TWO_DEPARTMENT_HEAD_CODE,
+        ba.OUT_TWO_DEPARTMENT_HEAD_NAME, ba.DRAFT, ba.ADJUST_REASON
+    </sql>
+    <sql id="get_budget_adjustment_fragment">
+        SELECT
+                <include refid="budget_adjustment_domain"/>
+              FROM TB_FA_BUDGET_ADJUST ba
+            LEFT JOIN T_WF_BILL_STEP TS
+                ON ba.CDOCUMENT = TS.CBILLCODE
+        WHERE 1 = 1
+            AND STATUS = '0'
+        <if test="budgetAdjustment.document != null and budgetAdjustment.document != ''">
+            AND ba.CDOCUMENT LIKE '%' || #{budgetAdjustment.document} || '%'
+        </if>
+        <if test="budgetAdjustment.assetsBudgetType != null and budgetAdjustment.assetsBudgetType != ''">
+            AND ba.ASSETS_BUDGET_TYPE = #{budgetAdjustment.assetsBudgetType}
+        </if>
+        <if test="budgetAdjustment.userCode != null and budgetAdjustment.userCode != ''">
+            AND (ba.USER_CODE LIKE '%' || #{budgetAdjustment.userCode} || '%'
+                OR ba.USER_NAME LIKE '%' || #{budgetAdjustment.userCode} || '%')
+        </if>
+        <if test="budgetAdjustment.startDate != null and budgetAdjustment.startDate != ''">
+            <![CDATA[AND ba.APPLICATION_DATE >= to_date(#{budgetAdjustment.startDate}, 'yyyy-mm-dd') ]]>
+        </if>
+        <if test="budgetAdjustment.endDate != null and budgetAdjustment.endDate != ''">
+            <![CDATA[AND ba.APPLICATION_DATE < to_date(#{budgetAdjustment.endDate}, 'yyyy-mm-dd') ]]>
+        </if>
+        <if test="budgetAdjustment.draft != null and budgetAdjustment.draft != ''">
+            AND ba.DRAFT = #{budgetAdjustment.draft}
+        </if>
+        <if test="budgetAdjustment.approvalState != null and budgetAdjustment.approvalState != ''">
+            AND ba.CAPPROVALSTATE = #{budgetAdjustment.approvalState}
+        </if>
+        AND ID IN (
+        SELECT bad.BUDGET_ADJUST_ID FROM TB_FA_BUDGET_ADJUST_DETAIL bad
+        WHERE 1=1
+        <if test="budgetAdjustment.projectCode != null and budgetAdjustment.projectCode != ''">
+            AND bad.PROJECT_CODE = #{budgetAdjustment.projectCode}
+        </if>
+        <if test="budgetAdjustment.budgetYear != null and budgetAdjustment.budgetYear != ''">
+            AND bad.BUDGET_YEAR LIKE '%' || #{budgetAdjustment.budgetYear} || '%'
+        </if>
+        )
+        AND (
+        ba.USER_CODE = #{budgetAdjustment.loginUserCode}
+        OR ba.CNEXTHANDLERCODE = #{budgetAdjustment.loginUserCode}
+        OR TS.CUSERCODE = #{budgetAdjustment.loginUserCode}
+        OR TS.CUSERCODE IN (SELECT CAUTHORIZERCODE FROM T_APPROVALEMPOWER
+        WHERE CUSERCODE = #{budgetAdjustment.loginUserCode}
+        AND SYSDATE BETWEEN CBEGINTIME AND CENDTIME AND CSTATUS='Y' AND CAPPROVALEND='Y')
+        OR ba.CNEXTHANDLERCODE IN (SELECT CAUTHORIZERCODE FROM T_APPROVALEMPOWER
+        WHERE CUSERCODE = #{budgetAdjustment.loginUserCode}
+        AND SYSDATE BETWEEN CBEGINTIME AND CENDTIME AND CSTATUS='Y' AND CAPPROVALEND='Y')
+        OR ba.USER_CODE IN (SELECT CAUTHORIZERCODE FROM T_APPROVALEMPOWER
+        WHERE CUSERCODE = #{budgetAdjustment.loginUserCode}
+        AND SYSDATE BETWEEN CBEGINTIME AND CENDTIME AND CSTATUS='Y' AND CAPPROVALEND='Y')
+        OR EXISTS(SELECT 1 FROM t_Sys_Userrole TR
+        WHERE TR.CROLECODE=#{budgetAdjustment.assetAdminId}
+        AND TR.CUSERCODE=#{budgetAdjustment.loginUserCode} AND tr.cstatus='Y')
+        )
+        ORDER BY ba.APPLICATION_DATE DESC
+    </sql>
+    <!--模糊查询 分页-->
+    <select id="getBudgetAdjustmentList" resultMap="budgetAdjustmentResultMap">
+        <include refid="pagination_Head"/>
+        <include refid="get_budget_adjustment_fragment"/>
+        <include refid="pagination_Tail"/>
+    </select>
+    <select id="getBudgetAdjustmentListCount" resultType="long">
+        <include refid="count_Start_Head"/>
+        <include refid="get_budget_adjustment_fragment"/>
+        <include refid="count_Start_Tail"/>
+    </select>
+    <!--导出-->
+    <select id="exportBudgetAdjustmentList" resultMap="budgetAdjustmentResultMap">
+        <include refid="get_budget_adjustment_fragment"/>
+    </select>
+
+    <insert id="addBudgetAdjustment" keyProperty="budgetId" parameterType="com.opple.fa.config.entity.BudgetAdjustment" >
+        <selectKey resultType="string"  keyProperty="budgetId" order="BEFORE" >
+            SELECT SEQ_FA_BUDGET_ADJUST.NEXTVAL AS id FROM dual
+        </selectKey>
+        INSERT INTO TB_FA_BUDGET_ADJUST(
+            ID, APPLICATION_DATE, CDOCUMENT, USER_CODE, USER_NAME, COMPANY_CODE, COMPANY_NAME,
+            DEPARTMENT_CODE, DEPARTMENT_NAME, CAPPROVALEND, CAPPROVALSTATE, CAUSERCODE, CAUSERNAME,
+            USER_DEP_CODE, CNEXTHANDLERCODE, CNEXTHANDLERNAME, DLASTADATE, COMMIT_TYPE,
+            STATUS, IAMONEY, ASSETS_BUDGET_TYPE, CREATE_BY, CREATE_BY_NAME,
+            CREATE_DATE, UPDATE_BY, UPDATE_BY_NAME, UPDATE_DATE, CALL_IN_DEPARTMENT_CODE,
+            CALL_IN_DEPARTMENT_NAME, CALL_OUT_DEPARTMENT_CODE, CALL_OUT_DEPARTMENT_NAME,
+            TWO_DEPARTMENT_HEAD_CODE, TWO_DEPARTMENT_HEAD_NAME, COST_CENTER_CODE, COST_CENTER_NAME,
+        OUT_TWO_DEPARTMENT_HEAD_CODE, OUT_TWO_DEPARTMENT_HEAD_NAME, DRAFT, ADJUST_REASON
+        )
+        VALUES (
+            #{budgetId},
+            #{applicationDate},
+            #{document},
+            #{userCode},
+            #{userName},
+            #{companyCode},
+            #{companyName},
+            #{departmentCode},
+            #{departmentName},
+            #{approvalEnd},
+            #{approvalState},
+            #{caUserCode},
+            #{caUserName},
+            #{userDepCode},
+            #{nextHandlerCode},
+            #{nextHandlerName},
+            #{lastADate},
+            #{commitType},
+            #{status},
+            #{iamoney},
+            #{assetsBudgetType},
+            #{createBy},
+            #{createUserName},
+        #{createDate},
+            #{updateBy},
+            #{updateUserName},
+        #{updateDate},
+            #{callInDepartmentCode},
+            #{callInDepartmentName},
+            #{callOutDepartmentCode},
+            #{callOutDepartmentName},
+            #{twoDepartmentHeadCode},
+            #{twoDepartmentHeadName},
+            #{costCenterCode},
+            #{costCenterName},
+            #{outTwoDepartmentHeadCode},
+        #{outTwoDepartmentHeadName},
+        #{draft},
+        #{adjustReason}
+        )
+    </insert>
+
+    <update id="updateBudgetAdjustmentById">
+        UPDATE TB_FA_BUDGET_ADJUST SET
+            STATUS = #{budgetAdjustment.status},
+            UPDATE_BY = #{budgetAdjustment.updateBy},
+            UPDATE_BY_NAME = #{budgetAdjustment.updateUserName},
+        UPDATE_DATE = #{budgetAdjustment.updateDate}
+          WHERE 1=1
+            AND ID = #{budgetAdjustment.budgetId}
+    </update>
+    <update id="updateBudgetAdjustmentToDraftByDocument" parameterType="string">
+        UPDATE TB_FA_BUDGET_ADJUST SET
+            DRAFT = 'Y'
+          WHERE 1=1
+            AND CDOCUMENT = #{document}
+    </update>
+    <!--根据单据号删除单据-->
+    <delete id="deleteBudgetAdjustmentByDocument" parameterType="string">
+        DELETE FROM TB_FA_BUDGET_ADJUST WHERE CDOCUMENT = #{document}
+    </delete>
+
+    <!--根据主键查询单据-->
+    <select id="getBudgetAdjustment" resultMap="budgetAdjustmentResultMap">
+        SELECT <include refid="budget_adjustment_domain"/>
+            FROM TB_FA_BUDGET_ADJUST ba
+          WHERE ba.STATUS = '0'
+                AND ba.ID = #{budgetId}
+    </select>
+    <!--根据单据号查询单据-->
+    <select id="getBudgetAdjustmentByDocument" resultMap="budgetAdjustmentResultMap">
+        SELECT <include refid="budget_adjustment_domain"/>
+            FROM TB_FA_BUDGET_ADJUST ba
+          WHERE ba.STATUS = '0'
+                AND ba.CDOCUMENT = #{document}
+    </select>
+
+    <update id="updateBudgetAdjustmentByDocument" parameterType="com.opple.fa.config.entity.BudgetAdjustment">
+        UPDATE TB_FA_BUDGET_ADJUST SET
+        <if test="applicationDate != null and applicationDate != ''">
+            APPLICATION_DATE = #{applicationDate},
+        </if>
+        <if test="applicationDate != null and applicationDate != ''">
+            CREATE_BY = #{createBy},
+            CREATE_BY_NAME = #{createUserName},
+            CREATE_DATE = #{createDate},
+        </if>
+            STATUS = #{status},
+            IAMONEY = #{iamoney},
+        CALL_IN_DEPARTMENT_CODE = #{callInDepartmentCode},
+        CALL_IN_DEPARTMENT_NAME = #{callInDepartmentName},
+        CALL_OUT_DEPARTMENT_CODE = #{callOutDepartmentCode},
+        CALL_OUT_DEPARTMENT_NAME = #{callOutDepartmentName},
+        TWO_DEPARTMENT_HEAD_CODE = #{twoDepartmentHeadCode},
+        TWO_DEPARTMENT_HEAD_NAME = #{twoDepartmentHeadName},
+        COST_CENTER_CODE = #{costCenterCode},
+        COST_CENTER_NAME = #{costCenterName},
+            OUT_TWO_DEPARTMENT_HEAD_CODE = #{outTwoDepartmentHeadCode},
+            OUT_TWO_DEPARTMENT_HEAD_NAME = #{outTwoDepartmentHeadName},
+            DRAFT = #{draft},
+        ADJUST_REASON = #{adjustReason},
+            UPDATE_BY = #{updateBy},
+            UPDATE_BY_NAME = #{updateUserName},
+        UPDATE_DATE = sysdate
+          WHERE CDOCUMENT = #{document}
+    </update>
+
+    <select id="getDocumentByProjectCodeAndYear" resultType="string">
+        SELECT ba.CDOCUMENT FROM TB_FA_BUDGET_ADJUST ba
+          WHERE (ba.CAPPROVALEND = 'N' OR ba.CAPPROVALEND IS NULL )
+              AND ba.STATUS = '0'
+        AND ba.DRAFT = 'N'
+              AND ba.ID IN (SELECT bad.BUDGET_ADJUST_ID FROM TB_FA_BUDGET_ADJUST_DETAIL bad
+                  WHERE 1=1
+                    AND bad.PROJECT_CODE = #{budgetAdjustmentDetail.projectCode}
+                    AND bad.BUDGET_YEAR = #{budgetAdjustmentDetail.budgetYear})
+    </select>
+</mapper>

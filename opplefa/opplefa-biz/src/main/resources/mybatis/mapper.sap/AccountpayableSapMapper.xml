@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.opple.fa.sap.dao.AccountpayableSapDAO">
+	<resultMap id="accountpayableMap" type="accountpayable">
+		<result property="prId"	column="PR_ID"/>		<!--外键--> 		
+		<result property="itemnoAcc"	column="ITEMNO_ACC"/>		<!-- 会计凭证行项目编号 是    --> 		
+		<result property="vendorNo"	column="VENDOR_NO"/>		<!-- 供应商或债权人的帐号 是  --> 		
+		<result property="glAccount"	column="GL_ACCOUNT"/>		<!--  总分类帐帐目            --> 		
+		<result property="refKey1"	column="REF_KEY_1"/>		<!-- 业务伙伴参考码           --> 		
+		<result property="refKey2"	column="REF_KEY_2"/>		<!-- 业务伙伴参考码           --> 		
+		<result property="refKey3"	column="REF_KEY_3"/>		<!-- 行项目的参考码           --> 		
+		<result property="compCode"	column="COMP_CODE"/>		<!--  公司代码 是             --> 		
+		<result property="busArea"	column="BUS_AREA"/>		<!-- 业务范围 是              --> 		
+		<result property="pmnttrms"	column="PMNTTRMS"/>		<!--  付款条件代码            --> 		
+		<result property="blineDate"	column="BLINE_DATE"/>		<!-- 到期日计算的基限日期 是  --> 		
+		<result property="dsctDays1"	column="DSCT_DAYS1"/>		<!-- 第一次给予现金折扣的天数 --> 		
+		<result property="dsctDays2"	column="DSCT_DAYS2"/>		<!-- 第二次给予现金折扣的天数 --> 		
+		<result property="netterms"	column="NETTERMS"/>		<!-- 净条件截止期             --> 		
+		<result property="dsctPct1"	column="DSCT_PCT1"/>		<!-- 首次现金折扣的百分比     --> 		
+		<result property="dsctPct2"	column="DSCT_PCT2"/>		<!-- 二次现金折扣的百分比     --> 		
+		<result property="pymtMeth"	column="PYMT_METH"/>		<!-- 收付方式                 --> 		
+		<result property="pmtmthsupl"	column="PMTMTHSUPL"/>		<!--  付款方式补充            --> 		
+		<result property="pmntBlock"	column="PMNT_BLOCK"/>		<!-- 收付冻结码               --> 		
+		<result property="scbankInd"	column="SCBANK_IND"/>		<!-- 州中央银行指标           --> 		
+		<result property="supcountry"	column="SUPCOUNTRY"/>		<!--  供货国家                --> 		
+		<result property="supcountryIso"	column="SUPCOUNTRY_ISO"/>		<!--  提供国家 iso 代码       --> 		
+		<result property="bllsrvInd"	column="BLLSRV_IND"/>		<!--  服务标志(国际收付)      --> 		
+		<result property="allocNmbr"	column="ALLOC_NMBR"/>		<!--  定位号 是               --> 		
+		<result property="itemText"	column="ITEM_TEXT"/>		<!-- 项目文本 是              --> 		
+		<result property="poSubNo"	column="PO_SUB_NO"/>		<!-- por 订户号码             --> 		
+		<result property="poCheckdg"	column="PO_CHECKDG"/>		<!-- por 检查数字             --> 		
+		<result property="poRefNo"	column="PO_REF_NO"/>		<!-- por 参考号码             --> 		
+		<result property="wTaxCode"	column="W_TAX_CODE"/>		<!-- 预提税代码               --> 		
+		<result property="businessplace"	column="BUSINESSPLACE"/>		<!-- 存储                     --> 		
+		<result property="sectioncode"	column="SECTIONCODE"/>		<!--  区域编码                --> 		
+		<result property="instr1"	column="INSTR1"/>		<!--  指令码 1                --> 		
+		<result property="instr2"	column="INSTR2"/>		<!-- 指令码 2                 --> 		
+		<result property="instr3"	column="INSTR3"/>		<!-- 指令码 3                 --> 		
+		<result property="instr4"	column="INSTR4"/>		<!-- 指令码 4                 --> 		
+		<result property="branch"	column="BRANCH"/>		<!-- 分支编号                 --> 		
+		<result property="pymtCur"	column="PYMT_CUR"/>		<!-- 自动支付的货币           --> 		
+		<result property="pymtAmt"	column="PYMT_AMT"/>		<!-- 以支付货币计的金额       --> 		
+		<result property="pymtCurIso"	column="PYMT_CUR_ISO"/>		<!--  iso代码货币             --> 		
+		<result property="spGlInd"	column="SP_GL_IND"/>		<!-- 特殊总分类帐标志         --> 		
+		<result property="taxCode"	column="TAX_CODE"/>		<!-- 销售/购买税代码          --> 		
+		<result property="taxDate"	column="TAX_DATE"/>		<!--  同确定税率相关的日期    --> 		
+		<result property="taxjurcode"	column="TAXJURCODE"/>		<!-- 地区税务代码             --> 		
+		<result property="altPayee"	column="ALT_PAYEE"/>		<!--  代理收款人              --> 		
+		<result property="altPayeeBank"	column="ALT_PAYEE_BANK"/>		<!--  可替换付款人的银行类型  --> 		
+		<result property="partnerBk"	column="PARTNER_BK"/>		<!-- 对方开户行类型           --> 		
+		<result property="bankId"	column="BANK_ID"/>		<!-- 开户银行的简要键         --> 		
+		<result property="partnerGuid"	column="PARTNER_GUID"/>		<!-- 公司界面: 商业伙伴 guid  --> 		
+			
+                       	
+
+	</resultMap>
+
+	<insert id="save" parameterType="accountpayable">
+		insert into TB_FA_SAP_ACCOUNTPAYABLE
+		(
+		PR_ID,
+		ITEMNO_ACC,
+		VENDOR_NO,
+		GL_ACCOUNT,
+		REF_KEY_1,
+		REF_KEY_2,
+		REF_KEY_3,
+		COMP_CODE,
+		BUS_AREA,
+		PMNTTRMS,
+		BLINE_DATE,
+		DSCT_DAYS1,
+		DSCT_DAYS2,
+		NETTERMS,
+		DSCT_PCT1,
+		DSCT_PCT2,
+		PYMT_METH,
+		PMTMTHSUPL,
+		PMNT_BLOCK,
+		SCBANK_IND,
+		SUPCOUNTRY,
+		SUPCOUNTRY_ISO,
+		BLLSRV_IND,
+		ALLOC_NMBR,
+		ITEM_TEXT,
+		PO_SUB_NO,
+		PO_CHECKDG,
+		PO_REF_NO,
+		W_TAX_CODE,
+		BUSINESSPLACE,
+		SECTIONCODE,
+		INSTR1,
+		INSTR2,
+		INSTR3,
+		INSTR4,
+		BRANCH,
+		PYMT_CUR,
+		PYMT_AMT,
+		PYMT_CUR_ISO,
+		SP_GL_IND,
+		TAX_CODE,
+		TAX_DATE,
+		TAXJURCODE,
+		ALT_PAYEE,
+		ALT_PAYEE_BANK,
+		PARTNER_BK,
+		BANK_ID,
+		PARTNER_GUID
+
+		)
+		values
+		(
+		#{accountpayable.prId },
+		#{accountpayable.itemnoAcc },
+		#{accountpayable.vendorNo },
+		#{accountpayable.glAccount },
+		#{accountpayable.refKey1 },
+		#{accountpayable.refKey2 },
+		#{accountpayable.refKey3 },
+		#{accountpayable.compCode },
+		#{accountpayable.busArea },
+		#{accountpayable.pmnttrms },
+		#{accountpayable.blineDate },
+		#{accountpayable.dsctDays1 },
+		#{accountpayable.dsctDays2 },
+		#{accountpayable.netterms },
+		#{accountpayable.dsctPct1 },
+		#{accountpayable.dsctPct2 },
+		#{accountpayable.pymtMeth },
+		#{accountpayable.pmtmthsupl },
+		#{accountpayable.pmntBlock },
+		#{accountpayable.scbankInd },
+		#{accountpayable.supcountry },
+		#{accountpayable.supcountryIso },
+		#{accountpayable.bllsrvInd },
+		#{accountpayable.allocNmbr },
+		#{accountpayable.itemText },
+		#{accountpayable.poSubNo },
+		#{accountpayable.poCheckdg },
+		#{accountpayable.poRefNo },
+		#{accountpayable.wTaxCode },
+		#{accountpayable.businessplace },
+		#{accountpayable.sectioncode },
+		#{accountpayable.instr1 },
+		#{accountpayable.instr2 },
+		#{accountpayable.instr3 },
+		#{accountpayable.instr4 },
+		#{accountpayable.branch },
+		#{accountpayable.pymtCur },
+		#{accountpayable.pymtAmt },
+		#{accountpayable.pymtCurIso },
+		#{accountpayable.spGlInd },
+		#{accountpayable.taxCode },
+		#{accountpayable.taxDate },
+		#{accountpayable.taxjurcode },
+		#{accountpayable.altPayee },
+		#{accountpayable.altPayeeBank },
+		#{accountpayable.partnerBk },
+		#{accountpayable.bankId },
+		#{accountpayable.partnerGuid }
+
+		)
+
+	</insert>
+</mapper>
+

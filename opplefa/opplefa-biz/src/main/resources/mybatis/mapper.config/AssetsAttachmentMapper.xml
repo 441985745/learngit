@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.opple.fa.config.dao.AssetsAttachmentDAO">
+    <!-- oracle 分页头 -->
+    <sql id="pagination_Head" >
+        <![CDATA[select * from ( select row_.*, rownum rownum_ from ( ]]>
+    </sql>
+    <!-- oracle 分页尾 -->
+    <sql id="pagination_Tail">
+        <![CDATA[) row_ where rownum <= #{pager.pageSize}* #{pager.offset} ) where rownum_ >= #{pager.firstResult} + 1]]>
+    </sql>
+    <!-- count * from -->
+	<sql id="count_Start_Head">
+		<![CDATA[select count(*) from ( ]]>
+	</sql>
+	<sql id="count_Start_Tail">
+		<![CDATA[) countObj ]]>
+	</sql>
+	<resultMap id="assetsAttachmentResultMap" type="assetsAttachment">
+        <result property="id" column="ID"/>
+        <result property="costCenter" column="COMPANY_CODE"/>
+        <result property="projectCode" column="CONFIG_METHOD"/>
+        <result property="model" column="WORK_ADDRESS"/>
+        <result property="assetsType" column="ASSETS_TYPE"/>
+        <result property="assetsName" column="DEPART_TYPE"/>
+        <result property="projectName" column="ATTACH_DEPART_DIRECTOR"/>
+        <result property="unit" column="ATTACH_DEPART_DIRECTOR_CODE"/>
+        <result property="amount" column="AMOUNT"/>
+        <result property="unitPrice" column="UNIT_PRICE"/>
+        <result property="budgetBasedOn" column="BUDGET_BASED_ON"/>
+        <result property="agoYearAllEstablishmentSum" column="AGO_YEAR_ALL_ESTABLISHMENT_SUM"/>
+        <result property="agoYearAllContracts" column="AGO_YEAR_ALL_CONTRACTS"/>
+        <result property="agoYearAllPay" column="AGO_YEAR_ALL_PAY"/>
+        <result property="yearBudgetTotal" column="YEAR_BUDGET_TOTAL"/>
+        <result property="assetsCode" column="ASSETS_TYPE_CODE"/>
+        <result property="createBy" column="CREATE_BY" />
+		<result property="createDate" column="CREATE_DATE" />
+		<result property="updateBy" column="UPDATE_BY" />
+		<result property="updateDate" column="UPDATE_DATE" />
+	</resultMap>
+
+	<sql id="search_assetsAttachments_fragment" >
+        <![CDATA[
+              SELECT
+                    bb.ID,
+                    bb.COSE_CENTER,
+                    bb.PROJECT_CODE,
+                    bb.MODEL,
+                    bb.ASSETS_TYPE,
+                    bb.ASSETS_NAME,
+                    bb.PROJECT_NAME,
+                    bb.UNIT,
+                    bb.AMOUNT,
+                    bb.UNIT_PRICE,
+                    bb.BUDGET_BASED_ON,
+                    bb.AGO_YEAR_ALL_ESTABLISHMENT_SUM,
+                    bb.AGO_YEAR_ALL_CONTRACTS ,
+                    bb.AGO_YEAR_ALL_PAY,
+                    bb.YEAR_BUDGET_TOTAL,
+                    bb.ASSETS_TYPE_CODE,
+                    bb.CREATE_BY,
+					bb.CREATE_DATE,
+					bb.UPDATE_BY,
+		 			bb.UPDATE_DATE
+                FROM
+                   TB_FA_ASSETS_BUDGET bb
+
+        ]]>
+    </sql>
+
+    <select id="searchAssetsAttachments" resultMap="assetsAttachmentResultMap">
+        <include refid="pagination_Head" />
+        <include refid="search_assetsAttachments_fragment" />
+         WHERE 1=1
+		<if
+			test="assetsAttachment.projectName != null and assetsAttachment.projectName != ''">
+			AND PROJECT_NAME LIKE '%' || #{assetsAttachment.projectName} || '%' 
+		</if>
+        <include refid="pagination_Tail" />
+    </select>
+
+    <select id="searchAssetsAttachmentsCount" resultType="long">
+        <include refid="count_Start_Head" />
+        <include refid="search_assetsAttachments_fragment" />
+        WHERE 1=1
+		<if
+			test="assetsAttachment.projectName != null and assetsAttachment.projectName != ''">
+			AND PROJECT_NAME LIKE '%' || #{assetsAttachment.projectName} || '%' 
+		</if>
+        <include refid="count_Start_Tail" />
+    </select>
+
+
+    <select id="searchAssetsAttachmentsList" resultMap="assetsAttachmentResultMap">
+        <include refid="search_assetsAttachments_fragment" />
+         WHERE 1=1
+		<if
+			test="assetsAttachment.projectName != null and assetsAttachment.projectName != ''">
+			AND PROJECT_NAME LIKE '%' || #{assetsAttachment.projectName} || '%' 
+		</if>
+    </select>
+</mapper>
+

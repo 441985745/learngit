@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.opple.fa.sap.dao.AssetChangeCompanyOSapDAO">
+	<resultMap id="assetChangeCompOutMap" type="assetChangeCompOut">
+		<result property="fId"	column="F_ID"/>		<!-- ID                                --> 		
+		<result property="sapNo"	column="T_BELNR"/>		<!-- 会计凭证号码               --> 		
+		<result property="year"	column="T_GJAHR"/>		<!--  会计年度                          --> 		
+		<result property="compCode"	column="T_BUKRS"/>		<!--  公司代码                          --> 		
+		<result property="parSapNo"	column="T_PELNR"/>		<!-- 伙伴公司会计凭证号码                           --> 		
+		<result property="parYear"	column="T_PJAHR"/>		<!--     伙伴公司会计年度                  --> 		
+		<result property="parCompCoe"	column="T_PBUKR"/>		<!-- 伙伴公司代码         --> 	
+
+	</resultMap>
+
+	<insert id="save" keyProperty="id" >
+		insert into TB_FA_SAP_ASSET_CHANGE_COMP_O
+		(
+		F_ID,
+		T_BELNR,
+		T_GJAHR,
+		T_BUKRS,
+		T_PELNR,
+		T_PJAHR,
+		T_PBUKR
+		)
+		values
+		(
+		#{fId},
+		#{sapNo },
+		#{year },
+		#{compCode },
+		#{parSapNo },
+		#{parYear },
+		#{parCompCode }
+		)
+
+	</insert>
+</mapper>
+

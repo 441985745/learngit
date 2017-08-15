@@ -1,0 +1,478 @@
+﻿body {
+    font: normal 12px arial, helvetica;
+    margin: 0px;
+}
+
+/** 按钮样式  **/
+.btn {
+    border: #6b97cb 1px solid;
+    background-image: url(../Images/anniu_03.jpg);
+    padding-right: 6px;
+    padding-left: 6px;
+    padding-top: 2px;
+    cursor: hand;
+    color: black;
+    height: 22px;
+}
+
+.addbtn {
+    border: #6b97cb 1px solid;
+    background-image: url(../Images/anniu_03.jpg);
+    padding-right: 2px;
+    padding-left: 2px;
+    cursor: hand;
+    color: black;
+    padding-top: 2px;
+    width: 56px; /*图片宽度*/
+    background: url(../Images/toolbarbutton/add.png) no-repeat left top; /* 图片路径*/
+    height: 21px; /*图片高度*/
+}
+
+.button {
+    width: 56px; /*图片宽度*/
+    background: url(../Images/toolbarbutton/add.png) no-repeat left top; /* 图片路径*/
+    border: none; /*去掉边框*/
+    height: 21px; /*图片高度*/
+}
+
+/** 其它控件样式  **/
+.textarea {
+    scrollbar-face-color: #e1e9f2;
+    scrollbar-highlight-color: #fff;
+    scrollbar-shadow-color: #343434;
+    scrollbar-3dlight-color: #ababab;
+    scrollbar-arrow-color: #ababab;
+    scrollbar-track-color: #f5f8fb;
+    scrollbar-darkshadow-color: #ababab;
+    background-color: #f9f9f9;
+}
+
+.buttonbar {
+    background: #fafafa url('../Images/yuanh_07.jpg') repeat;
+    margin-left: 12px;
+    height: 24px;
+}
+
+table.formtable {
+    border: 0px;
+    background-color: #b0c4d5;
+}
+
+.tdtitle {
+    background: #fafafa;
+    height: 26px;
+    width: 15%;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.tdtext {
+    background: #fafafa;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.tdtitleNoWidth {
+    background: #e6edf7;
+    height: 26px;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.tdtextNoWidth {
+    background: #f9f9f9;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.tdRight {
+    text-align: right;
+}
+
+.tdCenter {
+    text-align: center;
+}
+
+.input {
+    border: #cccccc 1px solid;
+    padding-left: 1px;
+    font-size: 12px;
+    background-image: url(../Images/inputbg.gif);
+    color: #000000;
+    line-height: 100%;
+    padding-top: 1px;
+    letter-spacing: 1pt;
+    background-color: #f3f3f3;
+}
+
+.btnRefView {
+    border-top: #cccccc 1px solid;
+    border-bottom: #cccccc 1px solid;
+    border-right: #cccccc 1px solid;
+    border-left: #ffffff 1px solid;
+    padding-left: 1px;
+    font-size: 12px;
+    background-image: url(../Images/inputbg.gif);
+    color: #000000;
+    line-height: 17px;
+    padding-top: 1px;
+    letter-spacing: 1pt;
+    background-color: #f3f3f3;
+    cursor: hand;
+    margin-left: 0px;
+    vertical-align: top;
+    width: 20px;
+}
+
+.inputbtnRefViewGray {
+    border: #cccccc 1px solid;
+    padding-left: 1px;
+    font-size: 12px;
+    color: #000000;
+    line-height: 100%;
+    padding-top: 4px;
+    letter-spacing: 1pt;
+    width: 160px;
+    background-color: #f3f3f3;
+}
+.inputbtnRefViewGrayL {
+    border: #cccccc 1px solid;
+    padding-left: 1px;
+    font-size: 12px;
+    color: #000000;
+    line-height: 100%;
+    padding-top: 4px;
+    letter-spacing: 1pt;
+    width: 200px;
+    background-color: #f3f3f3;
+}
+
+
+.inputbtnRefViewGrayRight {
+    border: #cccccc 1px solid;
+    padding-left: 1px;
+    font-size: 12px;
+    color: #000000;
+    line-height: 100%;
+    padding-top: 4px;
+    letter-spacing: 1pt;
+    width: 160px;
+    background-color: #f3f3f3;
+    text-align: right;
+}
+
+.inputbtnRefView {
+    border: #cccccc 1px solid;
+    padding-left: 1px;
+    font-size: 12px;
+    color: #000000;
+    line-height: 100%;
+    padding-top: 4px;
+    letter-spacing: 1pt;
+    width: 160px;
+}
+
+.colorfocusRefView {
+    border: #0099cc 1px double;
+    padding-left: 1px;
+    font-size: 12px;
+    padding-top: 4px;
+    line-height: 100%;
+    letter-spacing: 1pt;
+    background-color: #e8faff;
+    width: 160px;
+}
+
+.inputbtnRefViewNoWidth {
+    border: #cccccc 1px solid;
+    padding-left: 1px;
+    font-size: 12px;
+    color: #000000;
+    line-height: 100%;
+    padding-top: 4px;
+    letter-spacing: 1pt;
+}
+
+.colorfocusRefViewNoWidth {
+    border: #0099cc 1px double;
+    padding-left: 1px;
+    font-size: 12px;
+    padding-top: 4px;
+    line-height: 100%;
+    letter-spacing: 1pt;
+    background-color: #e8faff;
+}
+
+.inputbtn {
+    border: #cccccc 1px solid;
+    padding-left: 1px;
+    font-size: 12px;
+    background-image: url(../Images/inputbg.gif);
+    color: #000000;
+    line-height: 100%;
+    padding-top: 4px;
+    letter-spacing: 1pt;
+    background-color: #f3f3f3;
+}
+
+.inputmultiline {
+    border: #cccccc 1px solid;
+    padding-left: 1px;
+    font-size: 12px;
+    color: #000000;
+    line-height: 150%;
+    padding-top: 4px;
+    letter-spacing: 1pt;
+    background-color: #f3f3f3;
+    clear: both;
+    overflow: auto;
+    scrollbar-face-color: #edf7fe;
+    scrollbar-highlight-color: #ffffff;
+    scrollbar-shadow-color: #4392d6;
+    scrollbar-3dlight-color: #4392d6;
+    scrollbar-arrow-color: #4392d6;
+    scrollbar-track-color: #f6f8ff;
+    scrollbar-darkshadow-color: #ffffff;
+}
+
+/** 录入控件样式  **/
+.colorfocus {
+    border: #0099cc 1px double;
+    background-color: #e8faff;
+    width: 200px;
+}
+
+.colorblur {
+    border: #cccccc 1px double;
+    background-color: #ffffff;
+    width: 200px;
+}
+
+.colorblurright {
+    border: #cccccc 1px double;
+    background-color: #ffffff;
+    width: 200px;
+    text-align: right;
+}
+
+.colorgray {
+    border: #cccccc 1px double;
+    background-color: #F3F3F3;
+    width: 200px;
+}
+
+.category {
+    background: #c0d0ef;
+    font-weight: bold;
+    height: 26px;
+}
+
+/** 表格样式  **/
+table.adminlist {
+    width: 100%;
+    border-collapse: collapse;
+    border: solid 1px #ccc;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+    table.adminlist td {
+        overflow: hidden;
+        font-size: 12px;
+        border-collapse: collapse;
+        border-top: solid 1px #fff;
+        border-bottom: solid 1px #fff;
+        border-left: solid 1px #fff;
+        border-right: solid 1px #fff;
+        white-space: nowrap;
+        height: 25px;
+    }
+
+    table.adminlist th {
+        overflow: hidden;
+        background: #fafafa url('../Images/yuanh_07.jpg') repeat-x left bottom;
+        border-top: solid 1px #ccc;
+        border-bottom: solid 1px #ccc;
+        border-left: solid 1px #fff;
+        border-right: solid 1px #fff;
+        margin-bottom: 1px;
+        height: 25px;
+        font-size: 12px;
+        white-space: nowrap;
+    }
+
+/** 多重表头表格样式  **/
+table.multiplelist {
+    width: 100%;
+    border-collapse: collapse;
+    border: solid 1px #becedc;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+    table.multiplelist td {
+        overflow: hidden;
+        font-size: 12px;
+        border-collapse: collapse;
+        border: solid 1px #becedc;
+        white-space: nowrap;
+        /* white-space:pre-wrap;
+            text-wrap:avoid;*/
+    }
+
+    table.multiplelist th {
+        overflow: visible;
+        background: #EEEEEE;
+        border: 1px solid #ccc;
+        margin-bottom: 1px;
+        height: 35px;
+        font-size: 12px;
+        white-space: nowrap;
+        letter-spacing: 1px;
+        line-height: 120%;
+    }
+
+/** 多重表头表格样式-可换行  **/
+table.multiplelistWarp {
+    width: 100%;
+    border-collapse: collapse;
+    border: solid 1px #becedc;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+    table.multiplelistWarp td {
+        overflow: hidden;
+        font-size: 12px;
+        border-collapse: collapse;
+        border: solid 1px #becedc;
+        white-space: normal;
+        /*white-space:pre-wrap;
+            text-wrap:avoid;*/
+    }
+
+    table.multiplelistWarp th {
+        overflow: visible;
+        background: #f9f9f9;
+        border: 1px solid #ccc;
+        margin-bottom: 1px;
+        height: 35px;
+        font-size: 12px;
+        white-space: nowrap;
+        letter-spacing: 1px;
+        line-height: 120%;
+    }
+
+.TotalHead {
+    overflow: visible;
+    background: #EEEEEE;
+    border: 1px solid #ccc;
+    margin-bottom: 1px;
+    height: 35px;
+    font-size: 12px;
+    white-space: nowrap;
+    font-weight: 100;
+    line-height: 100%;
+    letter-spacing: 0px;
+    text-align: right;
+}
+
+firstcol {
+    background: url("../Images/yuanh_17.jpg");
+    font-size: 12px;
+}
+
+.gwcolhidden {
+    display: none;
+}
+
+.controlhidden {
+    display: none;
+}
+
+.tdbgcolor {
+    width: 20px;
+    background: #CCCCFF;
+}
+
+.splitLine {
+    float: left;
+    width: 100%;
+    border-bottom: solid 1px #e6edf7;
+    margin-top: 2px;
+    margin-bottom: 2px;
+}
+
+#gridview {
+    overflow: auto;
+}
+
+.gridview {
+    overflow: auto;
+}
+
+.txtborder {
+    border-bottom: 1px solid;
+    border-right: none;
+    border-left: none;
+    border-top: none;
+    width: 60px;
+    text-align: right;
+}
+
+.expBtn {
+    cursor: pointer;
+}
+
+#masks {
+    position: fixed !important;
+    position: absolute;
+    opacity: .4;
+    filter: alpha(opacity=40);
+    left: 0px;
+    top: 0px;
+    background-color: #f3f3f1;
+    width: 100%;
+    height: 100%;
+    z-index: 1002;
+}
+
+.textNum {
+ 
+ text-align:right;
+}
+
+.divs{width:25px; height:41px; display:block; margin-left:23px; margin-right:2px; text-align:center; line-height:20px;}
+.divss{ width:70px; line-height:21px; text-align:center; word-wrap: break-word; word-break: break-all;}
+.flowleft {width:13px;background:url(../Images/bj_left.png) no-repeat 0 15px;}
+.flowmiddle {background:url(../Images/bj_middle.png) repeat-x 0 15px;}
+.flowright{width:10px;background:url(../Images/bj_right.png) no-repeat 0 15px;}
+.flowred {background:url(../Images/red.png) no-repeat;}
+.flowgreen {background:url(../Images/green.png) no-repeat;}
+.flowyellow {background:url(../Images/yellow.png) no-repeat;}
+.flowwhite {background:url(../Images/white.png) no-repeat;}
+.flowred {background:url(../Images/red.png) no-repeat;}
+
+.txtMiniWidth {
+    width:30px;
+}
+
+.txtShortWidth {
+    width:80px;
+}
+
+.txtMiddleWidth {
+    width:100px;
+}
+
+.txtLongWidth {
+    width:150px;
+} 
+#pagination_right ul li {
+    display: inline;
+    padding: 2px;
+}
+
+#pagination_right ul li.active > a {
+    color: #FF0000;
+}
