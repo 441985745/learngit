@@ -1,8 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="war" name="opplefa-web:war">
-    <output-path>$PROJECT_DIR$/opplefa-web/target</output-path>
-    <root id="archive" name="opplefa.20170807-0149.war">
-      <element id="artifact" artifact-name="opplefa-web:war exploded" />
-    </root>
-  </artifact>
-</component>
